@@ -6,6 +6,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include <iostream>
 
 // About OpenGL function loaders: modern OpenGL doesn't have a standard header file and requires individual function pointers to be loaded manually. 
 // Helper libraries are often used for this purpose! Here we are supporting a few common ones: gl3w, glew, glad.
@@ -21,6 +22,49 @@
 #endif
 
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
+
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GL_CALL(x) GLClearError();\
+                   x;\
+                   ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+
+void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+bool GLLogCall(const char* function, const char* file, int line)
+{
+    while (GLenum error = glGetError())
+    {
+        std::cout << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+const char* vertexShaderSource = R"(
+        #version 330 core
+        
+        layout (location = 0) in vec3 aPos;
+
+        void main()
+        {
+            gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+        }
+)";
+
+const char* fragmentShaderSource = R"(
+        #version 330 core
+
+        out vec4 FragColor;
+
+        void main()
+        {
+            FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+        }
+)";
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -105,6 +149,72 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    ///////////////////////// SHADER /////////////////////////
+
+    // VERTEX SHADER
+    GL_CALL(unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER));
+    GL_CALL(glShaderSource(vertexShader, 1, &vertexShaderSource, NULL));
+    GL_CALL(glCompileShader(vertexShader));
+
+    int success;
+    char infoLog[512];
+    GL_CALL(glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
+    if (!success)
+    {
+        GL_CALL(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    // FRAGMENT SHADER
+    GL_CALL(unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER));
+    GL_CALL(glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL));
+    GL_CALL(glCompileShader(fragmentShader));
+
+    GL_CALL(glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success));
+    if (!success)
+    {
+        GL_CALL(glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    // LINKING SHADERS
+    GL_CALL(unsigned int shaderProgram = glCreateProgram());
+    GL_CALL(glAttachShader(shaderProgram, vertexShader));
+    GL_CALL(glAttachShader(shaderProgram, fragmentShader));
+    GL_CALL(glLinkProgram(shaderProgram));
+
+    GL_CALL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success));
+    if (!success)
+    {
+        GL_CALL(glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog));
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+
+    // DELETING SHADERS
+    GL_CALL(glDeleteShader(vertexShader));
+    GL_CALL(glDeleteShader(fragmentShader));
+
+    ///////////////////////// VERTEX DATA /////////////////////////
+
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
+    };
+
+    unsigned int VAO, VBO;
+    GL_CALL(glGenVertexArrays(1, &VAO));
+    GL_CALL(glGenBuffers(1, &VBO));
+
+    GL_CALL(glBindVertexArray(VAO));
+
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, VBO));
+    GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+
+    GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+    GL_CALL(glEnableVertexAttribArray(0));
+
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -162,10 +272,14 @@ int main(int, char**)
         int display_w, display_h;
         glfwMakeContextCurrent(window);
         glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        GL_CALL(glViewport(0, 0, display_w, display_h));
+        GL_CALL(glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w));
+        GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        GL_CALL(glUseProgram(shaderProgram));
+        GL_CALL(glBindVertexArray(VAO));
+        GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 3));
 
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
