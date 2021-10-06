@@ -23,48 +23,8 @@
 
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GL_CALL(x) GLClearError();\
-                   x;\
-                   ASSERT(GLLogCall(#x, __FILE__, __LINE__));
-
-void GLClearError()
-{
-    while (glGetError() != GL_NO_ERROR);
-}
-
-bool GLLogCall(const char* function, const char* file, int line)
-{
-    while (GLenum error = glGetError())
-    {
-        std::cout << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-const char* vertexShaderSource = R"(
-        #version 330 core
-        
-        layout (location = 0) in vec3 aPos;
-
-        void main()
-        {
-            gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-        }
-)";
-
-const char* fragmentShaderSource = R"(
-        #version 330 core
-
-        out vec4 FragColor;
-
-        void main()
-        {
-            FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-        }
-)";
+#include "Renderer.h"
+#include "Shader.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -151,48 +111,7 @@ int main(int, char**)
 
     ///////////////////////// SHADER /////////////////////////
 
-    // VERTEX SHADER
-    GL_CALL(unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER));
-    GL_CALL(glShaderSource(vertexShader, 1, &vertexShaderSource, NULL));
-    GL_CALL(glCompileShader(vertexShader));
-
-    int success;
-    char infoLog[512];
-    GL_CALL(glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success));
-    if (!success)
-    {
-        GL_CALL(glGetShaderInfoLog(vertexShader, 512, NULL, infoLog));
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    // FRAGMENT SHADER
-    GL_CALL(unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER));
-    GL_CALL(glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL));
-    GL_CALL(glCompileShader(fragmentShader));
-
-    GL_CALL(glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success));
-    if (!success)
-    {
-        GL_CALL(glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog));
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    // LINKING SHADERS
-    GL_CALL(unsigned int shaderProgram = glCreateProgram());
-    GL_CALL(glAttachShader(shaderProgram, vertexShader));
-    GL_CALL(glAttachShader(shaderProgram, fragmentShader));
-    GL_CALL(glLinkProgram(shaderProgram));
-
-    GL_CALL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success));
-    if (!success)
-    {
-        GL_CALL(glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog));
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-
-    // DELETING SHADERS
-    GL_CALL(glDeleteShader(vertexShader));
-    GL_CALL(glDeleteShader(fragmentShader));
+    Shader basicShader("res/shaders/basic.vert", "res/shaders/basic.frag");
 
     ///////////////////////// VERTEX DATA /////////////////////////
 
@@ -277,9 +196,11 @@ int main(int, char**)
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        GL_CALL(glUseProgram(shaderProgram));
+        basicShader.Use();
         GL_CALL(glBindVertexArray(VAO));
         GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 3));
+
+
 
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
