@@ -115,6 +115,8 @@ int main(int, char**)
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
     Model firstModel("res/models/backpack.obj");
 
+    GL_CALL(glEnable(GL_DEPTH_TEST));
+
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
@@ -174,17 +176,26 @@ int main(int, char**)
         glfwGetFramebufferSize(window, &display_w, &display_h);
         GL_CALL(glViewport(0, 0, display_w, display_h));
         GL_CALL(glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w));
-        GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+        GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         shader.Use();
 
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        shader.SetMat4("view", view);
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        shader.SetMat4("projection", projection);
+
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(.25f, .25f, .25f));
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         shader.SetMat4("model", model);
-        firstModel.Draw(shader);
 
+        firstModel.Draw(shader);
 
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
