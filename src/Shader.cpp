@@ -55,6 +55,26 @@ void Shader::Use() const
     GL_CALL(glUseProgram(id));
 }
 
+void Shader::SetBool(const std::string& name, bool value) const
+{
+    GL_CALL(glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value));
+}
+
+void Shader::SetInt(const std::string& name, int value) const
+{
+    GL_CALL(glUniform1i(glGetUniformLocation(id, name.c_str()), value));
+}
+
+void Shader::SetFloat(const std::string& name, float value) const
+{
+    GL_CALL(glUniform1f(glGetUniformLocation(id, name.c_str()), value));
+}
+
+void Shader::SetMat4(const std::string& name, glm::mat4& mat) const
+{
+    GL_CALL(glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &mat[0][0]));
+}
+
 unsigned int Shader::CompileShader(unsigned int type, const char* source)
 {
     GL_CALL(unsigned int shader = glCreateShader(type));

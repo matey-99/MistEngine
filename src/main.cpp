@@ -22,9 +22,12 @@
 #endif
 
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Renderer.h"
-#include "Shader.h"
+#include "Model.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -107,32 +110,10 @@ int main(int, char**)
 
     bool show_demo_window = true;
     bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
 
-    ///////////////////////// SHADER /////////////////////////
-
-    Shader basicShader("res/shaders/basic.vert", "res/shaders/basic.frag");
-
-    ///////////////////////// VERTEX DATA /////////////////////////
-
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
-
-    unsigned int VAO, VBO;
-    GL_CALL(glGenVertexArrays(1, &VAO));
-    GL_CALL(glGenBuffers(1, &VBO));
-
-    GL_CALL(glBindVertexArray(VAO));
-
-    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
-
-    GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
-    GL_CALL(glEnableVertexAttribArray(0));
-
+    Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+    Model firstModel("res/models/backpack.obj");
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -196,10 +177,13 @@ int main(int, char**)
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        basicShader.Use();
-        GL_CALL(glBindVertexArray(VAO));
-        GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 3));
+        shader.Use();
 
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(.25f, .25f, .25f));
+        shader.SetMat4("model", model);
+        firstModel.Draw(shader);
 
 
         glfwMakeContextCurrent(window);
