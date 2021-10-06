@@ -34,6 +34,92 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float cameraYaw = -90.0f;
+float cameraPitch = 0.0f;
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+bool rotateCamera = false;
+bool moveCamera = false;
+
+const float mouseSensitivity = 0.1f;
+const float scrollSensitivity = 0.1f;
+float lastMouseX = 400, lastMouseY = 300;
+
+
+void ProcessInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    const float cameraSpeed = 2.5f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        moveCamera = true;
+    }
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        rotateCamera = true;
+        moveCamera = false;
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        rotateCamera = false;
+        moveCamera = false;
+    }
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    float xoffset = xpos - lastMouseX;
+    float yoffset = lastMouseY - ypos;
+    lastMouseX = xpos;
+    lastMouseY = ypos;
+
+    xoffset *= mouseSensitivity;
+    yoffset *= mouseSensitivity;
+
+    if (rotateCamera)
+    {
+        cameraYaw += xoffset;
+        cameraPitch += yoffset;
+
+        cameraYaw = glm::mod(cameraYaw, 360.0f);
+        cameraPitch = glm::clamp(cameraPitch, -89.0f, 89.0f);
+    }
+
+    if (moveCamera)
+    {
+        cameraPos += xoffset * glm::normalize(glm::cross(cameraFront, cameraUp)) * deltaTime;
+        cameraPos += yoffset * cameraUp * deltaTime;
+    }
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    cameraPos += (float)yoffset * scrollSensitivity * deltaTime * cameraFront;
+}
+
 int main(int, char**)
 {
     // Setup window
@@ -64,6 +150,9 @@ int main(int, char**)
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
+
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
@@ -143,7 +232,10 @@ int main(int, char**)
 
             ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+            ImGui::Text("Camera Position");               
+            ImGui::Text("x = %f, y = %f, z = %f", cameraPos.x, cameraPos.y, cameraPos.z);   
+
+
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
             ImGui::Checkbox("Another Window", &show_another_window);
 
@@ -177,12 +269,16 @@ int main(int, char**)
         GL_CALL(glViewport(0, 0, display_w, display_h));
         GL_CALL(glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w));
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        glm::vec3 cameraDirection;
+        cameraDirection.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+        cameraDirection.y = sin(glm::radians(cameraPitch));
+        cameraDirection.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+        cameraFront = glm::normalize(cameraDirection);
 
         shader.Use();
-
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         shader.SetMat4("view", view);
 
         glm::mat4 projection;
@@ -192,11 +288,17 @@ int main(int, char**)
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(.25f, .25f, .25f));
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         shader.SetMat4("model", model);
 
         firstModel.Draw(shader);
 
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        ProcessInput(window);
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
