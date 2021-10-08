@@ -28,22 +28,18 @@
 
 #include "Renderer.h"
 #include "Model.h"
+#include "Camera.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-float cameraYaw = -90.0f;
-float cameraPitch = 0.0f;
-
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+//////// CAMERA ////////
+Camera g_Camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 bool rotateCamera = false;
 bool moveCamera = false;
@@ -58,17 +54,14 @@ void ProcessInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    const float cameraSpeed = 2.5f * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
+        g_Camera.Move(CameraMovement::Forward, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
+        g_Camera.Move(CameraMovement::Backward, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        g_Camera.Move(CameraMovement::Left, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-
-
+        g_Camera.Move(CameraMovement::Right, deltaTime);
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
     {
@@ -101,23 +94,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
     if (rotateCamera)
     {
-        cameraYaw += xoffset;
-        cameraPitch += yoffset;
-
-        cameraYaw = glm::mod(cameraYaw, 360.0f);
-        cameraPitch = glm::clamp(cameraPitch, -89.0f, 89.0f);
+        g_Camera.Rotate(xoffset, yoffset);
     }
 
     if (moveCamera)
     {
-        cameraPos += xoffset * glm::normalize(glm::cross(cameraFront, cameraUp)) * deltaTime;
-        cameraPos += yoffset * cameraUp * deltaTime;
+        g_Camera.Move(xoffset, yoffset, deltaTime);
     }
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    cameraPos += (float)yoffset * scrollSensitivity * deltaTime * cameraFront;
+    g_Camera.Move(yoffset, deltaTime);
 }
 
 int main(int, char**)
@@ -145,7 +133,7 @@ int main(int, char**)
 #endif
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Graphics Programming Project by Mateusz Michalak", NULL, NULL);
     if (window == NULL)
         return 1;
     glfwMakeContextCurrent(window);
@@ -233,7 +221,7 @@ int main(int, char**)
             ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
             ImGui::Text("Camera Position");               
-            ImGui::Text("x = %f, y = %f, z = %f", cameraPos.x, cameraPos.y, cameraPos.z);   
+            ImGui::Text("x = %f, y = %f, z = %f", g_Camera.Position.x, g_Camera.Position.y, g_Camera.Position.z);
 
 
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
@@ -270,15 +258,11 @@ int main(int, char**)
         GL_CALL(glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w));
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-        glm::vec3 cameraDirection;
-        cameraDirection.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
-        cameraDirection.y = sin(glm::radians(cameraPitch));
-        cameraDirection.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
-        cameraFront = glm::normalize(cameraDirection);
+        g_Camera.Update();
 
         shader.Use();
         
-        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        glm::mat4 view = glm::lookAt(g_Camera.Position, g_Camera.Position + g_Camera.Front, g_Camera.Up);
         shader.SetMat4("view", view);
 
         glm::mat4 projection;
