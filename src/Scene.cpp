@@ -36,17 +36,17 @@ void Scene::Draw(Shader& shader)
 	}
 }
 
-Ref<Entity> Scene::AddEntity(const char* path)
+Ref<Entity> Scene::AddEntity(const char* path, std::string name)
 {
-	Ref<Entity> entity = CreateRef<Entity>(path);
+	Ref<Entity> entity = CreateRef<Entity>(path, name);
 	m_Entities.push_back(entity);
 
 	return entity;
 }
 
-Ref<Entity> Scene::AddEntity(const char* path, Ref<Transform> parent)
+Ref<Entity> Scene::AddEntity(const char* path, std::string name, Ref<Transform> parent)
 {
-	Ref<Entity> entity = CreateRef<Entity>(path);
+	Ref<Entity> entity = CreateRef<Entity>(path, name);
 	entity->GetTransform()->SetParent(parent);
 	m_Entities.push_back(entity);
 

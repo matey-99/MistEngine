@@ -29,13 +29,15 @@
 #include "Renderer.h"
 #include "typedefs.h"
 #include "Scene.h"
+#include "Editor/Editor.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-Scene scene = Scene();
+Ref<Scene> scene = CreateRef<Scene>();
+Ref<Editor> editor = CreateRef<Editor>();
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -54,13 +56,13 @@ void ProcessInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        scene.GetCamera()->Move(CameraMovement::Forward, deltaTime);
+        scene->GetCamera()->Move(CameraMovement::Forward, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        scene.GetCamera()->Move(CameraMovement::Backward, deltaTime);
+        scene->GetCamera()->Move(CameraMovement::Backward, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        scene.GetCamera()->Move(CameraMovement::Left, deltaTime);
+        scene->GetCamera()->Move(CameraMovement::Left, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        scene.GetCamera()->Move(CameraMovement::Right, deltaTime);
+        scene->GetCamera()->Move(CameraMovement::Right, deltaTime);
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
     {
@@ -93,18 +95,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
     if (rotateCamera)
     {
-        scene.GetCamera()->Rotate(xoffset, yoffset);
+        scene->GetCamera()->Rotate(xoffset, yoffset);
     }
 
     if (moveCamera)
     {
-        scene.GetCamera()->Move(xoffset, yoffset, deltaTime);
+        scene->GetCamera()->Move(xoffset, yoffset, deltaTime);
     }
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    scene.GetCamera()->Move(yoffset, deltaTime);
+    scene->GetCamera()->Move(yoffset, deltaTime);
 }
 
 int main(int, char**)
@@ -190,13 +192,13 @@ int main(int, char**)
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 
-    Ref<Entity> entity = scene.AddEntity("res/models/backpack.obj");
-    scene.AddEntity("res/models/backpack.obj", entity->GetTransform());
+    Ref<Entity> entity = scene->AddEntity("res/models/backpack.obj", "backpack");
+    scene->AddEntity("res/models/backpack.obj", "backpack2", entity->GetTransform());
 
     GL_CALL(glEnable(GL_DEPTH_TEST));
 
-    Ref<Entity> selectedEntity;
-    bool details = false;
+    editor->Initialize(scene);
+
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -221,47 +223,11 @@ int main(int, char**)
         ImGui::End();
 
         ImGui::Begin("Camera");
-        ImGui::Text("Position: x = %f, y = %f, z = %f", scene.GetCamera()->Position.x, scene.GetCamera()->Position.y, scene.GetCamera()->Position.z);
-        ImGui::InputFloat("Movement speed", &scene.GetCamera()->MovementSpeed);
+        ImGui::Text("Position: x = %f, y = %f, z = %f", scene->GetCamera()->Position.x, scene->GetCamera()->Position.y, scene->GetCamera()->Position.z);
+        ImGui::InputFloat("Movement speed", &scene->GetCamera()->MovementSpeed);
         ImGui::End();
 
-        ImGui::Begin("Scene Hierarchy");
-        if (ImGui::Button("entity"))
-        {
-            selectedEntity = scene.GetEntities()[0];
-            details = true;
-        }
-        else if (ImGui::Button("child entity"))
-        {
-            selectedEntity = scene.GetEntities()[1];
-            details = true;
-        }
-        ImGui::End();
-
-        if (details)
-        {
-            ImGui::Begin("Details");
-            float* arr[3];
-            arr[0] = &selectedEntity->GetTransform()->Position.x;
-            arr[1] = &selectedEntity->GetTransform()->Position.y;
-            arr[2] = &selectedEntity->GetTransform()->Position.z;
-            ImGui::SliderFloat3("Position", *arr, -3.0f, 3.0f);
-
-            arr[0] = &selectedEntity->GetTransform()->Rotation.x;
-            arr[1] = &selectedEntity->GetTransform()->Rotation.y;
-            arr[2] = &selectedEntity->GetTransform()->Rotation.z;
-            ImGui::SliderFloat3("Rotation", *arr, -180.0f, 180.0f);
-
-            arr[0] = &selectedEntity->GetTransform()->Scale.x;
-            arr[1] = &selectedEntity->GetTransform()->Scale.y;
-            arr[2] = &selectedEntity->GetTransform()->Scale.z;
-            ImGui::SliderFloat3("Scale", *arr, 0.1f, 1.0f);
-
-            if (ImGui::Button("Close"))
-                details = false;
-            ImGui::End();
-        }
-
+        editor->Update();
 
         // Rendering
         ImGui::Render();
@@ -272,9 +238,9 @@ int main(int, char**)
         GL_CALL(glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w));
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-        scene.GetCamera()->Update();
-        scene.Update();
-        scene.Draw(shader);
+        scene->GetCamera()->Update();
+        scene->Update();
+        scene->Draw(shader);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;

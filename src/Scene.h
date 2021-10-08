@@ -17,8 +17,8 @@ public:
 	void Update();
 	void Draw(Shader& shader);
 
-	Ref<Entity> AddEntity(const char* path);
-	Ref<Entity> AddEntity(const char* path, Ref<Transform> parent);
+	Ref<Entity> AddEntity(const char* path, std::string name);
+	Ref<Entity> AddEntity(const char* path, std::string name, Ref<Transform> parent);
 	void RemoveEntity(Ref<Entity> entity);
 
 	inline Ref<Camera> GetCamera() const { return m_Camera; }

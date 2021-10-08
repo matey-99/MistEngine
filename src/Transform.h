@@ -25,7 +25,6 @@ public:
 	void CalculateModelMatrix();
 	void CalculateModelMatrix(const glm::mat4& parentGlobalModelMatrix);
 
-
 	Ref<Transform> GetReference();
 
 private:

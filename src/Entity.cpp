@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-Entity::Entity(const char* path) : Model(path)
+Entity::Entity(const char* path, std::string name) : Model(path), m_Name(name)
 {
 	m_Transform = CreateRef<Transform>();
 }
