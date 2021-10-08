@@ -25,6 +25,8 @@ public:
 	void CalculateModelMatrix();
 	void CalculateModelMatrix(const glm::mat4& parentGlobalModelMatrix);
 
+	unsigned int FindDepth(Ref<Transform> transform);
+
 	Ref<Transform> GetReference();
 
 private:

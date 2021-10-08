@@ -21,6 +21,14 @@ void Transform::CalculateModelMatrix(const glm::mat4& parentGlobalModelMatrix)
 	ModelMatrix = parentGlobalModelMatrix * GetLocalModelMatrix();
 }
 
+unsigned int Transform::FindDepth(Ref<Transform> transform)
+{
+	if (!transform->Parent)
+		return 0;
+
+	return FindDepth(transform->Parent) + 1;
+}
+
 void Transform::AddChild(Ref<Transform> child)
 {
 	Children.emplace_back(child);

@@ -13,6 +13,12 @@ void SceneHierarchyPanel::Render()
 	ImGui::Begin("Scene Hierarchy");
 	for (auto entity : m_Scene->GetEntities())
 	{
+		for (unsigned int i = 0; i < entity->GetTransform()->FindDepth(entity->GetTransform()); i++)
+		{
+			ImGui::Text("->");
+			ImGui::SameLine();
+		}
+
 		bool selected = false;
 		ImGui::Selectable(entity->GetName().c_str(), &selected);
 

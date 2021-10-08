@@ -11,7 +11,6 @@ private:
 	Ref<Scene> m_Scene;
 	Ref<Entity> m_SelectedEntity;
 
-
 public:
 	SceneHierarchyPanel(Ref<Editor> editor, Ref<Scene> scene);
 	void Render();
