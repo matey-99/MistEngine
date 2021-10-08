@@ -4,6 +4,7 @@ Editor::Editor()
 {
 	m_SceneHierarchyPanel = Ref<SceneHierarchyPanel>();
 	m_EntityDetailsPanel = Ref<EntityDetailsPanel>();
+	m_ContentBrowserPanel = Ref<ContentBrowserPanel>();
 
 	m_DetailsPanel = false;
 }
@@ -12,6 +13,7 @@ void Editor::Initialize(Ref<Scene> scene)
 {
 	m_SceneHierarchyPanel = CreateRef<SceneHierarchyPanel>(GetReference(), scene);
 	m_EntityDetailsPanel = CreateRef<EntityDetailsPanel>(GetReference());
+	m_ContentBrowserPanel = CreateRef<ContentBrowserPanel>(scene);
 }
 
 void Editor::Update()
@@ -22,6 +24,8 @@ void Editor::Update()
 	{
 		m_EntityDetailsPanel->Render();
 	}
+
+	m_ContentBrowserPanel->Render();
 }
 
 void Editor::ShowDetails(Ref<Entity> entity)

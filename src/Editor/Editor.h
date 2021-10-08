@@ -3,12 +3,14 @@
 #include "typedefs.h"
 #include "SceneHierarchyPanel.h"
 #include "EntityDetailsPanel.h"
+#include "ContentBrowserPanel.h"
 
 class Editor : public std::enable_shared_from_this<Editor>
 {
 private:
 	Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
 	Ref<EntityDetailsPanel> m_EntityDetailsPanel;
+	Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 
 	bool m_DetailsPanel;
 
