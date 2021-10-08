@@ -27,19 +27,18 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Renderer.h"
-#include "Model.h"
-#include "Camera.h"
+#include "typedefs.h"
+#include "Scene.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
+Scene scene = Scene();
+
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-//////// CAMERA ////////
-Camera g_Camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 bool rotateCamera = false;
 bool moveCamera = false;
@@ -55,13 +54,13 @@ void ProcessInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        g_Camera.Move(CameraMovement::Forward, deltaTime);
+        scene.GetCamera()->Move(CameraMovement::Forward, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        g_Camera.Move(CameraMovement::Backward, deltaTime);
+        scene.GetCamera()->Move(CameraMovement::Backward, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        g_Camera.Move(CameraMovement::Left, deltaTime);
+        scene.GetCamera()->Move(CameraMovement::Left, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        g_Camera.Move(CameraMovement::Right, deltaTime);
+        scene.GetCamera()->Move(CameraMovement::Right, deltaTime);
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
     {
@@ -94,18 +93,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
     if (rotateCamera)
     {
-        g_Camera.Rotate(xoffset, yoffset);
+        scene.GetCamera()->Rotate(xoffset, yoffset);
     }
 
     if (moveCamera)
     {
-        g_Camera.Move(xoffset, yoffset, deltaTime);
+        scene.GetCamera()->Move(xoffset, yoffset, deltaTime);
     }
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    g_Camera.Move(yoffset, deltaTime);
+    scene.GetCamera()->Move(yoffset, deltaTime);
 }
 
 int main(int, char**)
@@ -190,9 +189,14 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
 
     Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
-    Model firstModel("res/models/backpack.obj");
+
+    Ref<Entity> entity = scene.AddEntity("res/models/backpack.obj");
+    scene.AddEntity("res/models/backpack.obj", entity->GetTransform());
 
     GL_CALL(glEnable(GL_DEPTH_TEST));
+
+    Ref<Entity> selectedEntity;
+    bool details = false;
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -209,45 +213,55 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
+        //if (show_demo_window)
+        //    ImGui::ShowDemoWindow(&show_demo_window);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+        ImGui::Begin("DEBUG");
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
+
+        ImGui::Begin("Camera");
+        ImGui::Text("Position: x = %f, y = %f, z = %f", scene.GetCamera()->Position.x, scene.GetCamera()->Position.y, scene.GetCamera()->Position.z);
+        ImGui::InputFloat("Movement speed", &scene.GetCamera()->MovementSpeed);
+        ImGui::End();
+
+        ImGui::Begin("Scene Hierarchy");
+        if (ImGui::Button("entity"))
         {
-            static float f = 0.0f;
-            static int counter = 0;
+            selectedEntity = scene.GetEntities()[0];
+            details = true;
+        }
+        else if (ImGui::Button("child entity"))
+        {
+            selectedEntity = scene.GetEntities()[1];
+            details = true;
+        }
+        ImGui::End();
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        if (details)
+        {
+            ImGui::Begin("Details");
+            float* arr[3];
+            arr[0] = &selectedEntity->GetTransform()->Position.x;
+            arr[1] = &selectedEntity->GetTransform()->Position.y;
+            arr[2] = &selectedEntity->GetTransform()->Position.z;
+            ImGui::SliderFloat3("Position", *arr, -3.0f, 3.0f);
 
-            ImGui::Text("Camera Position");               
-            ImGui::Text("x = %f, y = %f, z = %f", g_Camera.Position.x, g_Camera.Position.y, g_Camera.Position.z);
+            arr[0] = &selectedEntity->GetTransform()->Rotation.x;
+            arr[1] = &selectedEntity->GetTransform()->Rotation.y;
+            arr[2] = &selectedEntity->GetTransform()->Rotation.z;
+            ImGui::SliderFloat3("Rotation", *arr, -180.0f, 180.0f);
 
+            arr[0] = &selectedEntity->GetTransform()->Scale.x;
+            arr[1] = &selectedEntity->GetTransform()->Scale.y;
+            arr[2] = &selectedEntity->GetTransform()->Scale.z;
+            ImGui::SliderFloat3("Scale", *arr, 0.1f, 1.0f);
 
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            if (ImGui::Button("Close"))
+                details = false;
             ImGui::End();
         }
 
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
-            ImGui::End();
-        }
 
         // Rendering
         ImGui::Render();
@@ -258,23 +272,9 @@ int main(int, char**)
         GL_CALL(glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w));
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-        g_Camera.Update();
-
-        shader.Use();
-        
-        glm::mat4 view = glm::lookAt(g_Camera.Position, g_Camera.Position + g_Camera.Front, g_Camera.Up);
-        shader.SetMat4("view", view);
-
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-        shader.SetMat4("projection", projection);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(.25f, .25f, .25f));
-        shader.SetMat4("model", model);
-
-        firstModel.Draw(shader);
+        scene.GetCamera()->Update();
+        scene.Update();
+        scene.Draw(shader);
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
