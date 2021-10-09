@@ -1,15 +1,28 @@
 #entity
-	name='backpack'
-	path='res/models/backpack.obj'
+	name='default_cone'
+	path='res/models/default_cone.obj'
 	#entity_transform
-		#vec3:position:x='-14.500000':y='0.000000':z='0.000000'
+		#vec3:position:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
 #entity
-	name='nanosuit'
-	path='res/models/nanosuit/nanosuit.obj'
+	name='backpack'
+	path='res/models/backpack.obj'
 	#entity_transform
-		parent='backpack'
-		#vec3:position:x='-6.000000':y='0.000000':z='0.000000'
+		#vec3:position:x='-4.000000':y='0.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='default_cube'
+	path='res/models/default_cube.obj'
+	#entity_transform
+		#vec3:position:x='4.000000':y='0.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='default_sphere'
+	path='res/models/default_sphere.obj'
+	#entity_transform
+		#vec3:position:x='7.500000':y='0.000000':z='0.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'

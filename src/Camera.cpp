@@ -33,8 +33,8 @@ void Camera::Move(CameraMovement movementDirection, float deltaTime)
 
 void Camera::Move(float xoffset, float yoffset, float deltaTime)
 {
-	Position += xoffset * Right * deltaTime;
-	Position += yoffset * Up * deltaTime;
+	Position += xoffset * MovementSpeed * Right * deltaTime;
+	Position += yoffset * MovementSpeed * Up * deltaTime;
 }
 
 void Camera::Move(float yoffset, float deltaTime)
