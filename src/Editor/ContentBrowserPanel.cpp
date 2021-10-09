@@ -6,7 +6,6 @@
 ContentBrowserPanel::ContentBrowserPanel(Ref<Scene> scene) : m_Scene(scene)
 {
 	m_SupportedFileFormats.push_back("obj");
-	m_SupportedFileFormats.push_back("blend");
 	m_SupportedFileFormats.push_back("3ds");
 	m_SupportedFileFormats.push_back("fbx");
 }
@@ -37,6 +36,16 @@ void ContentBrowserPanel::Render()
 		std::string filename = filepath.substr(filepath.find_last_of("\\") + 1, filepath.find_last_of('"') - (filepath.find_last_of("\\") + 1));
 		std::string entityName = filepath.substr(filepath.find_last_of("\\") + 1, filepath.find_last_of('.') - (filepath.find_last_of("\\") + 1));
 		std::string correctedFilepath = filepath.substr(filepath.find_first_of('"') + 1, filepath.length() - 2);
+		
+		std::size_t index = 0;
+		while (true)
+		{
+			index = correctedFilepath.find("\\\\", index);
+			if (index == std::string::npos)
+				break;
+
+			correctedFilepath.replace(index, 2, "/");
+		}
 
 		bool selected = false;
 		ImGui::Selectable(filename.c_str(), &selected);
@@ -54,7 +63,7 @@ void ContentBrowserPanel::Render()
 				entityName += " (" + std::to_string(countSameName) + ")";
 			}
 
-			m_Scene->AddEntity(correctedFilepath.c_str(), entityName);
+			m_Scene->AddEntity(correctedFilepath, entityName);
 		}
 	}
 
