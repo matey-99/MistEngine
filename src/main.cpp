@@ -29,6 +29,7 @@
 #include "Renderer.h"
 #include "typedefs.h"
 #include "Scene.h"
+#include "Serialization/SceneSerializer.h"
 #include "Editor/Editor.h"
 
 static void glfw_error_callback(int error, const char* description)
@@ -36,7 +37,7 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-Ref<Scene> scene = CreateRef<Scene>();
+Ref<Scene> scene = Ref<Scene>();
 Ref<Editor> editor = CreateRef<Editor>();
 
 float deltaTime = 0.0f;
@@ -190,10 +191,11 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
 
-    Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+    SceneSerializer serializer = SceneSerializer();
+    if (!(scene = serializer.Deserialize("../../res/scenes/basic.scene")))
+        scene = CreateRef<Scene>();
 
-    Ref<Entity> entity = scene->AddEntity("res/models/backpack.obj", "backpack");
-    scene->AddEntity("res/models/backpack.obj", "backpack2", entity->GetTransform());
+    Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
 
     GL_CALL(glEnable(GL_DEPTH_TEST));
 
@@ -252,6 +254,8 @@ int main(int, char**)
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
+
+    serializer.Serialize(scene);
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();

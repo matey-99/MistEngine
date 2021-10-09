@@ -1,0 +1,22 @@
+#entity
+	name='backpack'
+	path='res/models\\backpack.obj'
+	#entity_transform
+		parent='nanosuit'
+		#vec3:position:x='-17.000000':y='9.500000':z='9.000000'
+		#vec3:rotation:x='-42.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='nanosuit'
+	path='res/models\\nanosuit\\nanosuit.obj'
+	#entity_transform
+		#vec3:position:x='19.500000':y='0.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='backpack (1)'
+	path='res/models\\backpack.obj'
+	#entity_transform
+		#vec3:position:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
