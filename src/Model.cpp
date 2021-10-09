@@ -5,14 +5,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Model::Model(const char* path)
+Model::Model(const char* path, Ref<Material> material) : m_Material(material)
 {
 	LoadModel(path);
 }
 
-void Model::Draw(Shader& shader)
+void Model::Draw(Ref<Shader> shader)
 {
-	for (auto mesh : meshes)
+	for (auto mesh : m_Meshes)
 	{
 		mesh.Draw(shader);
 	}
@@ -29,7 +29,7 @@ void Model::LoadModel(std::string path)
 		return;
 	}
 
-	directory = path.substr(0, path.find_last_of('/'));
+	m_Directory = path.substr(0, path.find_last_of('/'));
 
 	ProcessNode(scene->mRootNode, scene);
 }
@@ -39,7 +39,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(ProcessMesh(mesh, scene));
+		m_Meshes.push_back(ProcessMesh(mesh, scene));
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -114,11 +114,11 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		aiString str;
 		mat->GetTexture(type, i, &str);
 		bool skip = false;
-		for (unsigned int j = 0; j < loadedTextures.size(); j++)
+		for (unsigned int j = 0; j < m_LoadedTextures.size(); j++)
 		{
-			if (std::strcmp(loadedTextures[j].path.data(), str.C_Str()) == 0)
+			if (std::strcmp(m_LoadedTextures[j].path.data(), str.C_Str()) == 0)
 			{
-				textures.push_back(loadedTextures[j]);
+				textures.push_back(m_LoadedTextures[j]);
 				skip = true;
 				break;
 			}
@@ -127,12 +127,12 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		if (!skip)
 		{
 			Texture texture;
-			texture.id = TextureFromFile(str.C_Str(), directory);
+			texture.id = TextureFromFile(str.C_Str(), m_Directory);
 			texture.type = typeName;
 			texture.path = str.C_Str();
 
 			textures.push_back(texture);
-			loadedTextures.push_back(texture);
+			m_LoadedTextures.push_back(texture);
 		}
 	}
 

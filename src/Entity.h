@@ -12,7 +12,7 @@ private:
 	Ref<Transform> m_Transform;
 
 public:
-	Entity(std::string path, std::string name);
+	Entity(std::string path, Ref<Material> material, std::string name);
 	void Initialize();
 
 	void Update();

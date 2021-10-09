@@ -5,17 +5,23 @@
 #include <assimp/postprocess.h>
 
 #include "Mesh.h"
+#include "Material.h"
+#include "ShaderLibrary.h"
 
 class Model
 {
 private:
-	std::vector<Texture> loadedTextures;
-	std::vector<Mesh> meshes;
-	std::string directory;
+	std::vector<Texture> m_LoadedTextures;
+	std::vector<Mesh> m_Meshes;
+	std::string m_Directory;
+	Ref<Material> m_Material;
 
 public:
-	Model(const char* path);
-	void Draw(Shader& shader);
+	Model(const char* path, Ref<Material> material);
+	void Draw(Ref<Shader> shader);
+
+	inline Ref<Material> GetMaterial() const { return m_Material; }
+	inline void SetMaterial(Ref<Material> material) { m_Material = material; }
 
 private:
 	void LoadModel(std::string path);

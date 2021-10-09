@@ -4,11 +4,13 @@ Scene::Scene()
 {
 	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
 	m_Entities = std::vector<Ref<Entity>>();
+	m_ShaderLibrary = CreateRef<ShaderLibrary>();
 }
 
 Scene::Scene(Ref<Camera> camera) : m_Camera(camera)
 {
 	m_Entities = std::vector<Ref<Entity>>();
+	m_ShaderLibrary = CreateRef<ShaderLibrary>();
 }
 
 void Scene::Update()
@@ -19,28 +21,28 @@ void Scene::Update()
 	}
 }
 
-void Scene::Draw(Shader& shader)
+void Scene::Draw()
 {
-	shader.Use();
-
-	shader.SetVec4("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-	glm::mat4 view = glm::lookAt(m_Camera->Position, m_Camera->Position + m_Camera->Front, m_Camera->Up);
-	shader.SetMat4("view", view);
-
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-	shader.SetMat4("projection", projection);
-
 	for (auto entity : m_Entities)
 	{
-		shader.SetMat4("model", entity->GetTransform()->ModelMatrix);
-		entity->Draw(shader);
+		entity->GetMaterial()->Use();
+
+		Ref<Shader> sh = entity->GetMaterial()->GetShader();
+
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		sh->SetMat4("u_Projection", projection);
+
+		glm::mat4 view = glm::lookAt(m_Camera->Position, m_Camera->Position + m_Camera->Front, m_Camera->Up);
+		sh->SetMat4("u_View", view);
+
+		sh->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
+		entity->Draw(sh);
 	}
 }
 
 Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 {
-	Ref<Entity> entity = CreateRef<Entity>(path, name);
+	Ref<Entity> entity = CreateRef<Entity>(path, CreateRef<Material>("Default", m_ShaderLibrary->GetShader("Default")), name);
 	entity->Initialize();
 	m_Entities.push_back(entity);
 
@@ -49,7 +51,7 @@ Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 
 Ref<Entity> Scene::AddEntity(std::string path, std::string name, Ref<Transform> parent)
 {
-	Ref<Entity> entity = CreateRef<Entity>(path, name);
+	Ref<Entity> entity = CreateRef<Entity>(path, CreateRef<Material>("Default", m_ShaderLibrary->GetShader("Default")), name);
 	entity->Initialize();
 	entity->GetTransform()->SetParent(parent);
 	m_Entities.push_back(entity);

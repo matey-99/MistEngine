@@ -143,10 +143,23 @@ int main(int, char**)
     if (!(scene = serializer.Deserialize("../../res/scenes/basic.scene")))
         scene = CreateRef<Scene>();
 
-    scene->GetCamera()->Position = glm::vec3(0.0f, 7.0f, 12.0f);
+    scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
-    Shader shader("res/shaders/default.vert", "res/shaders/default.frag");
+    Ref<Material> sphereMaterial = CreateRef<Material>("sphere_material", scene->GetShaderLibrary()->GetShader("Default"));
+    sphereMaterial->SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    scene->FindEntity("default_sphere")->SetMaterial(sphereMaterial);
+
+    Ref<Material> cubeMaterial = CreateRef<Material>("cube_material", scene->GetShaderLibrary()->GetShader("Default"));
+    cubeMaterial->SetColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    scene->FindEntity("default_cube")->SetMaterial(cubeMaterial);
+
+    Ref<Material> coneMaterial = CreateRef<Material>("cone_material", scene->GetShaderLibrary()->GetShader("Default"));
+    coneMaterial->SetColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+    scene->FindEntity("default_cone")->SetMaterial(coneMaterial);
+
+    Ref<Material> backpackMaterial = CreateRef<Material>("backpack_material", scene->GetShaderLibrary()->GetShader("Texture"));
+    scene->FindEntity("backpack")->SetMaterial(backpackMaterial);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -193,7 +206,7 @@ int main(int, char**)
 
         scene->GetCamera()->Update();
         scene->Update();
-        scene->Draw(shader);
+        scene->Draw();
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;

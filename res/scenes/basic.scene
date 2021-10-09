@@ -1,21 +1,39 @@
 #entity
 	name='default_cone'
-	path='res/models/default_cone.obj'
+	path='res/models/defaults/default_cone.obj'
 	#entity_transform
-		#vec3:position:x='4.000000':y='0.000000':z='0.000000'
+		parent='default_plane'
+		#vec3:position:x='4.000000':y='1.000000':z='0.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
 #entity
 	name='default_cube'
-	path='res/models/default_cube.obj'
+	path='res/models/defaults/default_cube.obj'
 	#entity_transform
-		#vec3:position:x='0.000000':y='0.000000':z='0.000000'
+		parent='default_plane'
+		#vec3:position:x='0.000000':y='1.000000':z='0.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
 #entity
 	name='default_sphere'
-	path='res/models/default_sphere.obj'
+	path='res/models/defaults/default_sphere.obj'
 	#entity_transform
-		#vec3:position:x='-4.000000':y='0.000000':z='0.000000'
+		parent='default_plane'
+		#vec3:position:x='-4.000000':y='1.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='default_plane'
+	path='res/models/defaults/default_plane.obj'
+	#entity_transform
+		#vec3:position:x='0.000000':y='-1.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='backpack'
+	path='res/models/backpack/backpack.obj'
+	#entity_transform
+		parent='default_plane'
+		#vec3:position:x='0.000000':y='1.750000':z='-7.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
