@@ -1,7 +1,7 @@
 #include "Transform.h"
 
-Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
-	: Position(position), Rotation(rotation), Scale(scale), Parent(parent)
+Transform::Transform(Ref<Entity> owner, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
+	: Owner(owner), Position(position), Rotation(rotation), Scale(scale), Parent(parent)
 {
 
 }

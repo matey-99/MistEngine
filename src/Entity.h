@@ -4,7 +4,7 @@
 #include "Model.h"
 #include "Transform.h"
 
-class Entity : public Model
+class Entity : public Model, public std::enable_shared_from_this<Entity>
 {
 private:
 	std::string m_Name;
@@ -12,6 +12,7 @@ private:
 
 public:
 	Entity(const char* path, std::string name);
+	void Initialize();
 
 	void Update();
 

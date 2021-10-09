@@ -2,7 +2,12 @@
 
 Entity::Entity(const char* path, std::string name) : Model(path), m_Name(name)
 {
-	m_Transform = CreateRef<Transform>();
+	m_Transform = Ref<Transform>();
+}
+
+void Entity::Initialize()
+{
+	m_Transform = CreateRef<Transform>(shared_from_this());
 }
 
 void Entity::Update()
