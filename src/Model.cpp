@@ -1,5 +1,7 @@
 #include "Model.h"
 
+#include <glad/glad.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -143,7 +145,7 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 	filename = directory + '/' + filename;
 
 	unsigned int textureId;
-	GL_CALL(glGenTextures(1, &textureId));
+	glGenTextures(1, &textureId);
 
 	stbi_set_flip_vertically_on_load(true);
 
@@ -159,14 +161,14 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 		else if (nrComponents == 4)
 			format = GL_RGBA;
 
-		GL_CALL(glBindTexture(GL_TEXTURE_2D, textureId));
-		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
-		GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		stbi_image_free(data);
 	}

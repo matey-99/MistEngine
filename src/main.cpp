@@ -12,7 +12,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Renderer.h"
 #include "typedefs.h"
 #include "Scene.h"
 #include "Serialization/SceneSerializer.h"
@@ -144,15 +143,14 @@ int main(int, char**)
     if (!(scene = serializer.Deserialize("../../res/scenes/basic.scene")))
         scene = CreateRef<Scene>();
 
-    scene->GetCamera()->Position = glm::vec3(2.0f, 7.0f, 12.0f);
+    scene->GetCamera()->Position = glm::vec3(0.0f, 7.0f, 12.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
-    Shader shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+    Shader shader("res/shaders/default.vert", "res/shaders/default.frag");
 
-    GL_CALL(glEnable(GL_DEPTH_TEST));
+    glEnable(GL_DEPTH_TEST);
 
     editor->Initialize(scene);
-
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -170,6 +168,10 @@ int main(int, char**)
 
         ImGui::Begin("Scene");
         ImGui::ColorEdit3("Background color", (float*)&backgroundColor);
+
+        if (ImGui::Button("Save scene"))
+            serializer.Serialize(scene);
+
         ImGui::End();
 
         ImGui::Begin("Camera");
@@ -185,9 +187,9 @@ int main(int, char**)
         int display_w, display_h;
         glfwMakeContextCurrent(window);
         glfwGetFramebufferSize(window, &display_w, &display_h);
-        GL_CALL(glViewport(0, 0, display_w, display_h));
-        GL_CALL(glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w));
-        GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        glViewport(0, 0, display_w, display_h);
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         scene->GetCamera()->Update();
         scene->Update();
@@ -203,8 +205,6 @@ int main(int, char**)
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
-
-    serializer.Serialize(scene);
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();

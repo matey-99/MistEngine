@@ -23,6 +23,8 @@ void Scene::Draw(Shader& shader)
 {
 	shader.Use();
 
+	shader.SetVec4("u_Color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
 	glm::mat4 view = glm::lookAt(m_Camera->Position, m_Camera->Position + m_Camera->Front, m_Camera->Up);
 	shader.SetMat4("view", view);
 
