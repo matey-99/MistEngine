@@ -39,6 +39,7 @@ void SceneHierarchyPanel::Render()
 		if (ImGui::BeginDragDropSource())
 		{
 			ImGui::SetDragDropPayload("ENTITY", &entity, sizeof(Entity));
+			ImGui::Text(entity->GetName().c_str());
 			ImGui::EndDragDropSource();
 		}
 		if (ImGui::BeginDragDropTarget())

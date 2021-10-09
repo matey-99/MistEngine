@@ -35,5 +35,6 @@ public:
 
 private:
 	void AddChild(Ref<Transform> child);
+	void RemoveChild(Ref<Transform> child);
 	glm::mat4 GetLocalModelMatrix();
 };

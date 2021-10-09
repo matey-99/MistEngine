@@ -8,6 +8,9 @@ Transform::Transform(Ref<Entity> owner, glm::vec3 position, glm::vec3 rotation, 
 
 void Transform::SetParent(Ref<Transform> parent)
 {
+	if (Parent)
+		Parent->RemoveChild(shared_from_this());
+
 	Parent = parent;
 	Parent->AddChild(GetReference());
 }
@@ -32,6 +35,11 @@ unsigned int Transform::FindDepth(Ref<Transform> transform)
 void Transform::AddChild(Ref<Transform> child)
 {
 	Children.emplace_back(child);
+}
+
+void Transform::RemoveChild(Ref<Transform> child)
+{
+	Children.erase(std::remove(Children.begin(), Children.end(), child));
 }
 
 Ref<Transform> Transform::GetReference()
