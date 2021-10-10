@@ -4,17 +4,24 @@ Scene::Scene()
 {
 	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
 	m_Entities = std::vector<Ref<Entity>>();
+	m_LightSources = std::vector<Ref<LightSource>>();
 	m_ShaderLibrary = CreateRef<ShaderLibrary>();
 }
 
 Scene::Scene(Ref<Camera> camera) : m_Camera(camera)
 {
 	m_Entities = std::vector<Ref<Entity>>();
+	m_LightSources = std::vector<Ref<LightSource>>();
 	m_ShaderLibrary = CreateRef<ShaderLibrary>();
 }
 
 void Scene::Update()
 {
+	for (auto source : m_LightSources)
+	{
+		source->Update();
+	}
+
 	for (auto entity : m_Entities)
 	{
 		entity->Update();
@@ -23,6 +30,11 @@ void Scene::Update()
 
 void Scene::Draw()
 {
+	for (auto source : m_LightSources)
+	{
+		source->Use();
+	}
+
 	for (auto entity : m_Entities)
 	{
 		entity->GetMaterial()->Use();
@@ -72,4 +84,24 @@ Ref<Entity> Scene::FindEntity(std::string name)
 	}
 
 	return Ref<Entity>();
+}
+
+Ref<LightSource> Scene::AddLightSource(std::string name, LightSourceType type)
+{
+	Ref<LightSource> lightSource = CreateRef<LightSource>(name, type, m_ShaderLibrary->GetShader("LightSource"), m_ShaderLibrary, m_Camera);
+	lightSource->Initialize();
+	m_LightSources.push_back(lightSource);
+
+	return lightSource;
+}
+
+Ref<LightSource> Scene::FindLightSource(std::string name)
+{
+	for (auto source : m_LightSources)
+	{
+		if (source->GetName() == name)
+			return source;
+	}
+
+	return Ref<LightSource>();
 }

@@ -3,7 +3,13 @@
 Transform::Transform(Ref<Entity> owner, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
 	: Owner(owner), Position(position), Rotation(rotation), Scale(scale), Parent(parent)
 {
+	LightSourceOwner = Ref<LightSource>();
+}
 
+Transform::Transform(Ref<LightSource> owner, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
+	: LightSourceOwner(owner), Position(position), Rotation(rotation), Scale(scale), Parent(parent)
+{
+	Owner = Ref<Entity>();
 }
 
 void Transform::SetParent(Ref<Transform> parent)

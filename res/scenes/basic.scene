@@ -19,7 +19,7 @@
 	path='res/models/defaults/default_sphere.obj'
 	#entity_transform
 		parent='default_plane'
-		#vec3:position:x='-4.000000':y='1.000000':z='0.000000'
+		#vec3:position:x='-4.000000':y='4.006040':z='0.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
 #entity
@@ -37,3 +37,11 @@
 		#vec3:position:x='0.000000':y='1.750000':z='-7.000000'
 		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
 		#vec3:scale:x='1.000000':y='1.000000':z='1.000000'
+#entity
+	name='default_sphere (1)'
+	path='res/models/defaults/default_sphere.obj'
+	#entity_transform
+		parent='default_sphere'
+		#vec3:position:x='-2.000000':y='2.000000':z='0.000000'
+		#vec3:rotation:x='0.000000':y='0.000000':z='0.000000'
+		#vec3:scale:x='0.500000':y='0.500000':z='0.500000'

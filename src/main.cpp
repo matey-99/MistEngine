@@ -146,24 +146,45 @@ int main(int, char**)
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
-    Ref<Material> sphereMaterial = CreateRef<Material>("sphere_material", scene->GetShaderLibrary()->GetShader("Default"));
-    sphereMaterial->SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    scene->FindEntity("default_sphere")->SetMaterial(sphereMaterial);
+    Ref<Material> turquoise = CreateRef<Material>("turquoise", scene->GetShaderLibrary()->GetShader("Default"));
+    turquoise->SetAmbient(glm::vec3(0.1f, 0.18725f, 0.1745f));
+    turquoise->SetDiffuse(glm::vec3(0.396f, 0.74151f, 0.69102f));
+    turquoise->SetSpecular(glm::vec3(0.297254f, 0.30829f, 0.306678f));
+    turquoise->SetShininess(32.0f);
+    scene->FindEntity("default_sphere")->SetMaterial(turquoise);
 
-    Ref<Material> cubeMaterial = CreateRef<Material>("cube_material", scene->GetShaderLibrary()->GetShader("Default"));
-    cubeMaterial->SetColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-    scene->FindEntity("default_cube")->SetMaterial(cubeMaterial);
+    Ref<Material> gold = CreateRef<Material>("gold", scene->GetShaderLibrary()->GetShader("Default"));
+    gold->SetAmbient(glm::vec3(0.24725f, 0.1995f, 0.0745f));
+    gold->SetDiffuse(glm::vec3(0.75164f, 0.60648f, 0.22648f));
+    gold->SetSpecular(glm::vec3(0.628281f, 0.555802f, 0.366065f));
+    gold->SetShininess(32.0f);
+    scene->FindEntity("default_cube")->SetMaterial(gold);
 
-    Ref<Material> coneMaterial = CreateRef<Material>("cone_material", scene->GetShaderLibrary()->GetShader("Default"));
-    coneMaterial->SetColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-    scene->FindEntity("default_cone")->SetMaterial(coneMaterial);
+    Ref<Material> chrome = CreateRef<Material>("chrome", scene->GetShaderLibrary()->GetShader("Default"));
+    chrome->SetAmbient(glm::vec3(0.25f, 0.25f, 0.25f));
+    chrome->SetDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
+    chrome->SetSpecular(glm::vec3(0.774597f, 0.774597f, 0.774597f));
+    chrome->SetShininess(32.0f);
+    scene->FindEntity("default_cone")->SetMaterial(chrome);
+    scene->FindEntity("default_plane")->SetMaterial(chrome);
+    scene->FindEntity("default_sphere (1)")->SetMaterial(chrome);
 
-    Ref<Material> backpackMaterial = CreateRef<Material>("backpack_material", scene->GetShaderLibrary()->GetShader("Texture"));
+    Ref<Material> backpackMaterial = CreateRef<Material>("backpack_material", scene->GetShaderLibrary()->GetShader("Texture"), MaterialType::Texture);
+    backpackMaterial->SetShininess(32.0f);
     scene->FindEntity("backpack")->SetMaterial(backpackMaterial);
+
+    scene->AddLightSource("light", LightSourceType::Ambient);
+    scene->FindLightSource("light")->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
+    scene->FindLightSource("light")->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
+    scene->FindLightSource("light")->SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
+    scene->FindLightSource("light")->GetTransform()->Position = glm::vec3(0.0f, 1.0f, 3.5f);
+    scene->FindLightSource("light")->GetTransform()->Scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
 
     editor->Initialize(scene);
+
+    int direction = 1;
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -203,6 +224,18 @@ int main(int, char**)
         glViewport(0, 0, display_w, display_h);
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Ref<Transform> sphereTransform = scene->FindEntity("default_sphere")->GetTransform();
+        if (sphereTransform->Position.y > 5.0f)
+        {
+            direction = -1;
+        }
+        else if (sphereTransform->Position.y < 1.0f)
+        {
+            direction = 1;
+        }
+
+        sphereTransform->Position.y += direction * deltaTime;
 
         scene->GetCamera()->Update();
         scene->Update();

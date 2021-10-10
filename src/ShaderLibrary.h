@@ -15,4 +15,5 @@ public:
 	ShaderLibrary();
 
 	Ref<Shader> GetShader(std::string name);
+	std::vector<Ref<Shader>> GetAllShaders();
 };
