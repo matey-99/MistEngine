@@ -7,8 +7,9 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "ShaderLibrary.h"
+#include "Component.h"
 
-class Model
+class Model : public Component
 {
 private:
 	std::vector<Texture> m_LoadedTextures;
@@ -19,6 +20,9 @@ private:
 public:
 	Model(const char* path, Ref<Material> material);
 	void Draw(Ref<Shader> shader);
+
+	virtual void Begin() override;
+	virtual void Update() override;
 
 	inline Ref<Material> GetMaterial() const { return m_Material; }
 	inline void SetMaterial(Ref<Material> material) { m_Material = material; }

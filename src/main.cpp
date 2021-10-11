@@ -16,6 +16,9 @@
 #include "Scene.h"
 #include "Serialization/SceneSerializer.h"
 #include "Editor/Editor.h"
+#include "Material.h"
+#include "Model.h"
+#include "Light.h"
 
 Ref<Scene> scene = Ref<Scene>();
 Ref<Editor> editor = CreateRef<Editor>();
@@ -87,6 +90,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     scene->GetCamera()->Move(yoffset, deltaTime);
+
+    ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
 
 static void glfw_error_callback(int error, const char* description)
@@ -115,9 +120,6 @@ int main(int, char**)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-
     // Initialize OpenGL loader
     bool err = !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     if (err)
@@ -134,14 +136,19 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+
     // Setup style
     ImGui::StyleColorsDark();
 
     ImVec4 backgroundColor = ImVec4(0.4f, 0.4f, 0.4f, 1.00f);
 
-    SceneSerializer serializer = SceneSerializer();
-    if (!(scene = serializer.Deserialize("../../res/scenes/basic.scene")))
-        scene = CreateRef<Scene>();
+    //SceneSerializer serializer = SceneSerializer();
+    //if (!(scene = serializer.Deserialize("../../res/scenes/basic.scene")))
+    //    scene = CreateRef<Scene>();
+
+    scene = CreateRef<Scene>();
 
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
@@ -151,40 +158,44 @@ int main(int, char**)
     turquoise->SetDiffuse(glm::vec3(0.396f, 0.74151f, 0.69102f));
     turquoise->SetSpecular(glm::vec3(0.297254f, 0.30829f, 0.306678f));
     turquoise->SetShininess(32.0f);
-    scene->FindEntity("default_sphere")->SetMaterial(turquoise);
 
-    Ref<Material> gold = CreateRef<Material>("gold", scene->GetShaderLibrary()->GetShader("Default"));
-    gold->SetAmbient(glm::vec3(0.24725f, 0.1995f, 0.0745f));
-    gold->SetDiffuse(glm::vec3(0.75164f, 0.60648f, 0.22648f));
-    gold->SetSpecular(glm::vec3(0.628281f, 0.555802f, 0.366065f));
-    gold->SetShininess(32.0f);
-    scene->FindEntity("default_cube")->SetMaterial(gold);
+    auto cube = scene->AddEntity("cube");
+    cube->Begin();
+    cube->AddComponent<Model>("res/models/defaults/default_cube.obj", turquoise);
 
-    Ref<Material> chrome = CreateRef<Material>("chrome", scene->GetShaderLibrary()->GetShader("Default"));
-    chrome->SetAmbient(glm::vec3(0.25f, 0.25f, 0.25f));
-    chrome->SetDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-    chrome->SetSpecular(glm::vec3(0.774597f, 0.774597f, 0.774597f));
-    chrome->SetShininess(32.0f);
-    scene->FindEntity("default_cone")->SetMaterial(chrome);
-    scene->FindEntity("default_plane")->SetMaterial(chrome);
-    scene->FindEntity("default_sphere (1)")->SetMaterial(chrome);
+    auto light = scene->AddEntity("light");
+    light->Begin();
+    light->AddComponent<Light>(light, scene->GetCamera(), scene->GetShaderLibrary());
+    light->GetTransform()->Position = glm::vec3(0.0f, 1.0f, 3.5f);
 
-    Ref<Material> backpackMaterial = CreateRef<Material>("backpack_material", scene->GetShaderLibrary()->GetShader("Texture"), MaterialType::Texture);
-    backpackMaterial->SetShininess(32.0f);
-    scene->FindEntity("backpack")->SetMaterial(backpackMaterial);
+    auto lightComponent = light->GetComponent<Light>();
+    lightComponent->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
+    lightComponent->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
+    lightComponent->SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
 
-    scene->AddLightSource("light", LightSourceType::Ambient);
-    scene->FindLightSource("light")->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
-    scene->FindLightSource("light")->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
-    scene->FindLightSource("light")->SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-    scene->FindLightSource("light")->GetTransform()->Position = glm::vec3(0.0f, 1.0f, 3.5f);
-    scene->FindLightSource("light")->GetTransform()->Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    //Ref<Material> gold = CreateRef<Material>("gold", scene->GetShaderLibrary()->GetShader("Default"));
+    //gold->SetAmbient(glm::vec3(0.24725f, 0.1995f, 0.0745f));
+    //gold->SetDiffuse(glm::vec3(0.75164f, 0.60648f, 0.22648f));
+    //gold->SetSpecular(glm::vec3(0.628281f, 0.555802f, 0.366065f));
+    //gold->SetShininess(32.0f);
+    //scene->FindEntity("default_cube")->GetComponent<Model>()->SetMaterial(gold);
+
+    //Ref<Material> chrome = CreateRef<Material>("chrome", scene->GetShaderLibrary()->GetShader("Default"));
+    //chrome->SetAmbient(glm::vec3(0.25f, 0.25f, 0.25f));
+    //chrome->SetDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
+    //chrome->SetSpecular(glm::vec3(0.774597f, 0.774597f, 0.774597f));
+    //chrome->SetShininess(32.0f);
+    //scene->FindEntity("default_cone")->GetComponent<Model>()->SetMaterial(chrome);
+    //scene->FindEntity("default_plane")->GetComponent<Model>()->SetMaterial(chrome);
+    //scene->FindEntity("default_sphere (1)")->GetComponent<Model>()->SetMaterial(chrome);
+
+    //Ref<Material> backpackMaterial = CreateRef<Material>("backpack_material", scene->GetShaderLibrary()->GetShader("Texture"), MaterialType::Texture);
+    //backpackMaterial->SetShininess(32.0f);
+    //scene->FindEntity("backpack")->SetMaterial(backpackMaterial);
 
     glEnable(GL_DEPTH_TEST);
 
     editor->Initialize(scene);
-
-    int direction = 1;
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -203,8 +214,8 @@ int main(int, char**)
         ImGui::Begin("Scene");
         ImGui::ColorEdit3("Background color", (float*)&backgroundColor);
 
-        if (ImGui::Button("Save scene"))
-            serializer.Serialize(scene);
+        //if (ImGui::Button("Save scene"))
+        //    serializer.Serialize(scene);
 
         ImGui::End();
 
@@ -225,17 +236,17 @@ int main(int, char**)
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Ref<Transform> sphereTransform = scene->FindEntity("default_sphere")->GetTransform();
-        if (sphereTransform->Position.y > 5.0f)
-        {
-            direction = -1;
-        }
-        else if (sphereTransform->Position.y < 1.0f)
-        {
-            direction = 1;
-        }
+        //Ref<Transform> sphereTransform = scene->FindEntity("default_sphere")->GetTransform();
+        //if (sphereTransform->Position.y > 5.0f)
+        //{
+        //    direction = -1;
+        //}
+        //else if (sphereTransform->Position.y < 1.0f)
+        //{
+        //    direction = 1;
+        //}
 
-        sphereTransform->Position.y += direction * deltaTime;
+        //sphereTransform->Position.y += direction * deltaTime;
 
         scene->GetCamera()->Update();
         scene->Update();

@@ -58,9 +58,9 @@ void SceneHierarchyPanel::AddEntityChildren(Ref<Entity> parent)
 {
 	for (auto entity : parent->GetTransform()->Children)
 	{
-		m_OrderedEntities.push_back(entity->Owner);
+		m_OrderedEntities.push_back(entity->GetEntity());
 
 		if (entity->Children.size() > 0)
-			AddEntityChildren(entity->Owner);
+			AddEntityChildren(entity->GetEntity());
 	}
 }

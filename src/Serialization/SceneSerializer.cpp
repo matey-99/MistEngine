@@ -2,7 +2,7 @@
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
 {
-	std::ofstream file("../../res/scenes/basic.scene", std::ios::trunc);
+	/*std::ofstream file("../../res/scenes/basic.scene", std::ios::trunc);
 	if (file.is_open())
 	{
 		std::string text = "";
@@ -32,89 +32,89 @@ void SceneSerializer::Serialize(Ref<Scene> scene)
 		file << text;
 	}
 
-	file.close();
+	file.close();*/
 
 }
 
 Ref<Scene> SceneSerializer::Deserialize(std::string path)
 {
-	std::ifstream file(path);
-	if (!file.is_open())
-	{
-		file.close();
-		return false;
-	}
+	//std::ifstream file(path);
+	//if (!file.is_open())
+	//{
+	//	file.close();
+	//	return false;
+	//}
 
-	Ref<Scene> scene = CreateRef<Scene>();
+	Ref<Scene> scene = Ref<Scene>();
 
-	std::string serializedScene = "";
-	std::string line;
-	std::vector<std::string> parentsNames = std::vector<std::string>();
+	//std::string serializedScene = "";
+	//std::string line;
+	//std::vector<std::string> parentsNames = std::vector<std::string>();
 
-	while (std::getline(file, line))
-	{
-		if (line == "#entity")
-		{
-			std::getline(file, line);
-			std::string name = GetData(line);
+	//while (std::getline(file, line))
+	//{
+	//	if (line == "#entity")
+	//	{
+	//		std::getline(file, line);
+	//		std::string name = GetData(line);
 
-			std::getline(file, line);
-			std::string path = GetData(line);
+	//		std::getline(file, line);
+	//		std::string path = GetData(line);
 
-			std::getline(file, line);
-			std::getline(file, line);
+	//		std::getline(file, line);
+	//		std::getline(file, line);
 
-			std::string parentName = "NULL";
-			if ((int)line.find("parent", 0) > -1)
-			{
-				parentName = GetData(line);
-				std::getline(file, line);
-			}
-			parentsNames.push_back(parentName);
+	//		std::string parentName = "NULL";
+	//		if ((int)line.find("parent", 0) > -1)
+	//		{
+	//			parentName = GetData(line);
+	//			std::getline(file, line);
+	//		}
+	//		parentsNames.push_back(parentName);
 
-			float x[3], y[3], z[3];
-			for (int i = 0; i < 3; i++)
-			{
-				int index = line.find("x=");
-				x[i] = std::stof(line.substr(line.find("x='") + 3, line.find("':y") - (line.find("x='") + 3)));
-				line = line.substr(line.find("':") + 2);
+	//		float x[3], y[3], z[3];
+	//		for (int i = 0; i < 3; i++)
+	//		{
+	//			int index = line.find("x=");
+	//			x[i] = std::stof(line.substr(line.find("x='") + 3, line.find("':y") - (line.find("x='") + 3)));
+	//			line = line.substr(line.find("':") + 2);
 
-				y[i] = std::stof(line.substr(3, line.find("':z") - 3));
-				line = line.substr(line.find("':") + 2);
+	//			y[i] = std::stof(line.substr(3, line.find("':z") - 3));
+	//			line = line.substr(line.find("':") + 2);
 
-				z[i] = std::stof(GetData(line));
+	//			z[i] = std::stof(GetData(line));
 
-				if (i < 2)
-					getline(file, line);
-			}
+	//			if (i < 2)
+	//				getline(file, line);
+	//		}
 
-			scene->AddEntity(path, name);
+	//		scene->AddEntity(path, name);
 
-			Ref<Transform> transform = scene->FindEntity(name)->GetTransform();
+	//		Ref<Transform> transform = scene->FindEntity(name)->GetTransform();
 
-			transform->Position.x = x[0];
-			transform->Position.y = y[0];
-			transform->Position.z = z[0];
+	//		transform->Position.x = x[0];
+	//		transform->Position.y = y[0];
+	//		transform->Position.z = z[0];
 
-			transform->Rotation.x = x[1];
-			transform->Rotation.y = y[1];
-			transform->Rotation.z = z[1];
+	//		transform->Rotation.x = x[1];
+	//		transform->Rotation.y = y[1];
+	//		transform->Rotation.z = z[1];
 
-			transform->Scale.x = x[2];
-			transform->Scale.y = y[2];
-			transform->Scale.z = z[2];
-		}
-	}
+	//		transform->Scale.x = x[2];
+	//		transform->Scale.y = y[2];
+	//		transform->Scale.z = z[2];
+	//	}
+	//}
 
-	for (int i = 0; i < parentsNames.size(); i++)
-	{
-		if (parentsNames[i] == "NULL")
-			continue;
+	//for (int i = 0; i < parentsNames.size(); i++)
+	//{
+	//	if (parentsNames[i] == "NULL")
+	//		continue;
 
-		scene->GetEntities()[i]->GetTransform()->SetParent(scene->FindEntity(parentsNames[i])->GetTransform());
-	}
+	//	scene->GetEntities()[i]->GetTransform()->SetParent(scene->FindEntity(parentsNames[i])->GetTransform());
+	//}
 
-	file.close();
+	//file.close();
 	return scene;
 }
 

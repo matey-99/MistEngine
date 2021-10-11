@@ -63,7 +63,7 @@ void ContentBrowserPanel::Render()
 				entityName += " (" + std::to_string(countSameName) + ")";
 			}
 
-			m_Scene->AddEntity(correctedFilepath, entityName);
+			//m_Scene->AddEntity(correctedFilepath, entityName);
 		}
 	}
 

@@ -39,7 +39,7 @@ void Camera::Move(float xoffset, float yoffset, float deltaTime)
 
 void Camera::Move(float yoffset, float deltaTime)
 {
-	Position += (float)yoffset * MovementSpeed * deltaTime * Front;
+	Position += (float)yoffset * 3 * MovementSpeed * deltaTime * Front;
 }
 
 void Camera::Rotate(float yaw, float pitch)

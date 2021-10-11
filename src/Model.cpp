@@ -18,6 +18,16 @@ void Model::Draw(Ref<Shader> shader)
 	}
 }
 
+void Model::Begin()
+{
+
+}
+
+void Model::Update()
+{
+
+}
+
 void Model::LoadModel(std::string path)
 {
 	Assimp::Importer importer;
