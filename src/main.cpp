@@ -157,7 +157,9 @@ int main(int, char**)
     turquoise->SetSpecular(glm::vec3(0.297254f, 0.30829f, 0.306678f));
     turquoise->SetShininess(32.0f);
     auto cube = scene->FindEntity("cube");
+    auto cube2 = scene->FindEntity("cube2");
     cube->AddComponent<Model>("res/models/defaults/default_cube.obj", turquoise);
+    cube2->AddComponent<Model>("res/models/defaults/default_cube.obj", turquoise);
 
     auto light = scene->FindEntity("light");
     light->AddComponent<Light>(light, scene->GetCamera(), scene->GetShaderLibrary());

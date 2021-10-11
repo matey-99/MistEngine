@@ -87,6 +87,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 			Ref<Entity> e = scene->AddEntity(entity["Entity"].as<std::string>());
 			
 			auto transform = entity["Transform"];
+			e->GetTransform()->ID = transform["ID"].as<uint64_t>();
 			if (auto parent = transform["Parent"])
 			{
 				parentsIDs.push_back(parent.as<uint64_t>());
@@ -122,6 +123,7 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	Ref<Transform> transform = entity->GetTransform();
 	out << YAML::Key << "Transform";
 	out << YAML::BeginMap;
+	out << YAML::Key << "ID" << YAML::Value << transform->ID;
 	if (transform->Parent)
 	{
 		out << YAML::Key << "Parent" << YAML::Value << transform->Parent->ID;
