@@ -95,3 +95,25 @@ Ref<Entity> Scene::FindEntity(std::string name)
 
 	return Ref<Entity>();
 }
+
+Ref<Entity> Scene::FindEntity(uint64_t transformID)
+{
+	for (auto entity : m_Entities)
+	{
+		if (entity->GetTransform()->ID == transformID)
+			return entity;
+	}
+
+	return Ref<Entity>();
+}
+
+Ref<Transform> Scene::FindTransform(uint64_t id)
+{
+	for (auto entity : m_Entities)
+	{
+		if (entity->GetTransform()->ID == id)
+			return entity->GetTransform();
+	}
+
+	return Ref<Transform>();
+}

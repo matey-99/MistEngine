@@ -2,11 +2,11 @@
 
 Entity::Entity(std::string name) : m_Name(name)
 {
+	m_Transform = CreateRef<Transform>();
 }
 
 void Entity::Begin()
 {
-	m_Transform = CreateRef<Transform>(shared_from_this());
 	m_Transform->Begin();
 
 	for (auto component : m_Components)

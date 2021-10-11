@@ -1,124 +1,134 @@
 #include "SceneSerializer.h"
 
-void SceneSerializer::Serialize(Ref<Scene> scene)
+namespace YAML
 {
-	/*std::ofstream file("../../res/scenes/basic.scene", std::ios::trunc);
-	if (file.is_open())
+	template<>
+	struct convert<glm::vec3>
 	{
-		std::string text = "";
-		
-		for (auto entity : scene->GetEntities())
+		static Node encode(const glm::vec3& rhs)
 		{
-			text += "#entity\n";
-			text += "\tname='" + entity->GetName() + "'\n";
-			text += "\tpath='" + entity->GetPath() + "'\n";
-
-			text += "\t#entity_transform\n";
-
-			if (entity->GetTransform()->Parent)
-				text += "\t\tparent='" + entity->GetTransform()->Parent->Owner->GetName() + "'\n";
-
-			text += "\t\t#vec3:position:x='" + std::to_string(entity->GetTransform()->Position.x) 
-				+ "':y='" + std::to_string(entity->GetTransform()->Position.y) 
-				+ "':z='" + std::to_string(entity->GetTransform()->Position.z) + "'\n";
-			text += "\t\t#vec3:rotation:x='" + std::to_string(entity->GetTransform()->Rotation.x)
-				+ "':y='" + std::to_string(entity->GetTransform()->Rotation.y)
-				+ "':z='" + std::to_string(entity->GetTransform()->Rotation.z) + "'\n";
-			text += "\t\t#vec3:scale:x='" + std::to_string(entity->GetTransform()->Scale.x)
-				+ "':y='" + std::to_string(entity->GetTransform()->Scale.y)
-				+ "':z='" + std::to_string(entity->GetTransform()->Scale.z) + "'\n";
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			return node;
 		}
 
-		file << text;
+		static bool decode(const Node& node, glm::vec3& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 3)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			return true;
+		}
+	};
+}
+
+
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
+{
+	out << YAML::Flow;
+	out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
+	return out;
+}
+
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
+{
+	out << YAML::Flow;
+	out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+	return out;
+}
+
+void SceneSerializer::Serialize(Ref<Scene> scene)
+{
+	YAML::Emitter out;
+	out << YAML::BeginMap;
+	out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+	out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+	for (auto entity : scene->GetEntities())
+	{
+		SerializeEntity(out, entity);
 	}
+	out << YAML::EndSeq;
+	out << YAML::EndMap;
 
-	file.close();*/
-
+	std::ofstream file("../../res/scenes/untitled.scene");
+	file << out.c_str();
+	file.close();
 }
 
 Ref<Scene> SceneSerializer::Deserialize(std::string path)
 {
-	//std::ifstream file(path);
-	//if (!file.is_open())
-	//{
-	//	file.close();
-	//	return false;
-	//}
+	Ref<Scene> scene = CreateRef<Scene>();
 
-	Ref<Scene> scene = Ref<Scene>();
+	std::ifstream file(path);
+	std::stringstream ss;
+	ss << file.rdbuf();
 
-	//std::string serializedScene = "";
-	//std::string line;
-	//std::vector<std::string> parentsNames = std::vector<std::string>();
+	YAML::Node data = YAML::Load(ss.str());
+	if (!data["Scene"])
+	{
+		std::cout << "Cannot load scene!" << std::endl;
+		return Ref<Scene>();
+	}
+	
+	std::string sceneName = data["Scene"].as<std::string>();
+	
+	YAML::Node entities = data["Entities"];
+	if (entities)
+	{
+		auto parentsIDs = std::vector<uint64_t>();
 
-	//while (std::getline(file, line))
-	//{
-	//	if (line == "#entity")
-	//	{
-	//		std::getline(file, line);
-	//		std::string name = GetData(line);
+		for (auto entity : entities)
+		{
+			Ref<Entity> e = scene->AddEntity(entity["Entity"].as<std::string>());
+			
+			auto transform = entity["Transform"];
+			if (auto parent = transform["Parent"])
+			{
+				parentsIDs.push_back(parent.as<uint64_t>());
+			}
+			else
+			{
+				parentsIDs.push_back(0);
+			}
 
-	//		std::getline(file, line);
-	//		std::string path = GetData(line);
+			e->GetTransform()->Position = transform["Position"].as<glm::vec3>();
+			e->GetTransform()->Rotation = transform["Rotation"].as<glm::vec3>();
+			e->GetTransform()->Scale = transform["Scale"].as<glm::vec3>();
+		}
 
-	//		std::getline(file, line);
-	//		std::getline(file, line);
+		for (int i = 0; i < parentsIDs.size(); i++)
+		{
+			if (parentsIDs[i] == 0)
+				continue;
 
-	//		std::string parentName = "NULL";
-	//		if ((int)line.find("parent", 0) > -1)
-	//		{
-	//			parentName = GetData(line);
-	//			std::getline(file, line);
-	//		}
-	//		parentsNames.push_back(parentName);
+			scene->GetEntities()[i]->GetTransform()->SetParent(scene->FindTransform(parentsIDs[i]));
+		}
+	}
 
-	//		float x[3], y[3], z[3];
-	//		for (int i = 0; i < 3; i++)
-	//		{
-	//			int index = line.find("x=");
-	//			x[i] = std::stof(line.substr(line.find("x='") + 3, line.find("':y") - (line.find("x='") + 3)));
-	//			line = line.substr(line.find("':") + 2);
-
-	//			y[i] = std::stof(line.substr(3, line.find("':z") - 3));
-	//			line = line.substr(line.find("':") + 2);
-
-	//			z[i] = std::stof(GetData(line));
-
-	//			if (i < 2)
-	//				getline(file, line);
-	//		}
-
-	//		scene->AddEntity(path, name);
-
-	//		Ref<Transform> transform = scene->FindEntity(name)->GetTransform();
-
-	//		transform->Position.x = x[0];
-	//		transform->Position.y = y[0];
-	//		transform->Position.z = z[0];
-
-	//		transform->Rotation.x = x[1];
-	//		transform->Rotation.y = y[1];
-	//		transform->Rotation.z = z[1];
-
-	//		transform->Scale.x = x[2];
-	//		transform->Scale.y = y[2];
-	//		transform->Scale.z = z[2];
-	//	}
-	//}
-
-	//for (int i = 0; i < parentsNames.size(); i++)
-	//{
-	//	if (parentsNames[i] == "NULL")
-	//		continue;
-
-	//	scene->GetEntities()[i]->GetTransform()->SetParent(scene->FindEntity(parentsNames[i])->GetTransform());
-	//}
-
-	//file.close();
+	file.close();
 	return scene;
 }
 
-std::string SceneSerializer::GetData(std::string line)
+void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 {
-	return line.substr(line.find_first_of("'") + 1, line.find_last_of("'") - (line.find_first_of("'") + 1));
+	out << YAML::BeginMap;
+	out << YAML::Key << "Entity" << YAML::Value << entity->GetName();
+
+	Ref<Transform> transform = entity->GetTransform();
+	out << YAML::Key << "Transform";
+	out << YAML::BeginMap;
+	if (transform->Parent)
+	{
+		out << YAML::Key << "Parent" << YAML::Value << transform->Parent->ID;
+	}
+	out << YAML::Key << "Position" << YAML::Value << transform->Position;
+	out << YAML::Key << "Rotation" << YAML::Value << transform->Rotation;
+	out << YAML::Key << "Scale" << YAML::Value << transform->Scale;
+	out << YAML::EndMap;
+	out << YAML::EndMap;
 }

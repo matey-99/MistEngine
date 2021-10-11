@@ -144,11 +144,9 @@ int main(int, char**)
 
     ImVec4 backgroundColor = ImVec4(0.4f, 0.4f, 0.4f, 1.00f);
 
-    //SceneSerializer serializer = SceneSerializer();
-    //if (!(scene = serializer.Deserialize("../../res/scenes/basic.scene")))
-    //    scene = CreateRef<Scene>();
-
-    scene = CreateRef<Scene>();
+    SceneSerializer serializer = SceneSerializer();
+    if (!(scene = serializer.Deserialize("../../res/scenes/untitled.scene")))
+        scene = CreateRef<Scene>();
 
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
@@ -158,15 +156,11 @@ int main(int, char**)
     turquoise->SetDiffuse(glm::vec3(0.396f, 0.74151f, 0.69102f));
     turquoise->SetSpecular(glm::vec3(0.297254f, 0.30829f, 0.306678f));
     turquoise->SetShininess(32.0f);
-
-    auto cube = scene->AddEntity("cube");
-    cube->Begin();
+    auto cube = scene->FindEntity("cube");
     cube->AddComponent<Model>("res/models/defaults/default_cube.obj", turquoise);
 
-    auto light = scene->AddEntity("light");
-    light->Begin();
+    auto light = scene->FindEntity("light");
     light->AddComponent<Light>(light, scene->GetCamera(), scene->GetShaderLibrary());
-    light->GetTransform()->Position = glm::vec3(0.0f, 1.0f, 3.5f);
 
     auto lightComponent = light->GetComponent<Light>();
     lightComponent->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
@@ -214,8 +208,8 @@ int main(int, char**)
         ImGui::Begin("Scene");
         ImGui::ColorEdit3("Background color", (float*)&backgroundColor);
 
-        //if (ImGui::Button("Save scene"))
-        //    serializer.Serialize(scene);
+        if (ImGui::Button("Save scene"))
+            serializer.Serialize(scene);
 
         ImGui::End();
 

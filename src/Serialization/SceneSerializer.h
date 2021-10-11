@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+#include <yaml-cpp/yaml.h>
+
 class SceneSerializer
 {
 public:
@@ -9,5 +11,5 @@ public:
 	Ref<Scene> Deserialize(std::string path);
 
 private:
-	std::string GetData(std::string line);
+	void SerializeEntity(YAML::Emitter& out, Ref<Entity> entity);
 };

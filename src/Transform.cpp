@@ -1,9 +1,13 @@
 #include "Transform.h"
 
-Transform::Transform(Ref<Entity> entity, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
-	: m_Entity(entity), Position(position), Rotation(rotation), Scale(scale), Parent(parent)
+Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
+	: Position(position), Rotation(rotation), Scale(scale), Parent(parent)
 {
-	
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution distribution(1, 999999999);
+
+	ID = distribution(gen);
 }
 
 void Transform::Begin()

@@ -56,11 +56,12 @@ void SceneHierarchyPanel::Render()
 
 void SceneHierarchyPanel::AddEntityChildren(Ref<Entity> parent)
 {
-	for (auto entity : parent->GetTransform()->Children)
+	for (auto transform : parent->GetTransform()->Children)
 	{
-		m_OrderedEntities.push_back(entity->GetEntity());
+		auto entity = m_Scene->FindEntity(transform->ID);
+		m_OrderedEntities.push_back(entity);
 
-		if (entity->Children.size() > 0)
-			AddEntityChildren(entity->GetEntity());
+		if (transform->Children.size() > 0)
+			AddEntityChildren(entity);
 	}
 }

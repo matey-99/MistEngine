@@ -84,3 +84,25 @@ target_include_directories("stb_image" PRIVATE "${STB_IMAGE_DIR}")
 
 set(STB_IMAGE_LIBRARY "stb_image")
 set(STB_IMAGE_INCLUDE_DIR "${STB_IMAGE_DIR}")
+
+# yaml-cpp
+find_library(YAML_CPP_LIBRARY "yaml-cpp" "/usr/lib" "/usr/local/lib")
+find_path(YAML_CPP_INCLUDE_DIR "yaml-cpp/yaml.h" "/usr/include" "/usr/local/include")
+
+if((NOT YAML_CPP_LIBRARY) OR (NOT YAML_CPP_INCLUDE_DIR))
+	set(YAML_CPP_DIR "${THIRDPARTY_DIR}/yaml-cpp")
+
+	message("Unable to find yaml-cpp, cloning...")
+    execute_process(COMMAND git submodule update --init ${YAML_CPP_DIR}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+	set(YAML_CPP_BUILD_EXAMPLES OFF CACHE INTERNAL "Build the yaml-cpp example programs")
+	set(YAML_CPP_BUILD_TESTS    OFF CACHE INTERNAL "Build the yaml-cpp test programs")
+	set(YAML_CPP_BUILD_DOCS     OFF CACHE INTERNAL "Build the yaml-cpp documentation")
+	set(YAML_CPP_INSTALL        OFF CACHE INTERNAL "Generate installation target")
+
+    add_subdirectory("${YAML_CPP_DIR}")
+
+	set(YAML_CPP_LIBRARY "yaml-cpp" "${YAML_CPP_LIBRARIES}")
+	set(YAML_CPP_INCLUDE_DIR "${YAML_CPP_DIR}/include")
+endif()

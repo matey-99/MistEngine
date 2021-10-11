@@ -10,3 +10,6 @@
 [submodule "thirdparty/assimp"]
 	path = thirdparty/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "thirdparty/yaml-cpp"]
+	path = thirdparty/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
