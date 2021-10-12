@@ -9,12 +9,19 @@
 #include "Camera.h"
 #include "ShaderLibrary.h"
 
+enum class LightType
+{
+	Point, Directional
+};
+
 class Light : public Component
 {
 private:
 	Ref<Entity> m_Entity;
 	Ref<ShaderLibrary> m_ShaderLibrary;
 	Ref<Camera> m_Camera;
+
+	LightType m_LightType;
 
 	glm::vec3 m_Ambient;
 	glm::vec3 m_Diffuse;
@@ -27,6 +34,11 @@ public:
 	virtual void Update() override;
 
 	void Use();
+
+	inline LightType GetLightType() const { return m_LightType; }
+	inline glm::vec3 GetAmbient() const { return m_Ambient; }
+	inline glm::vec3 GetDiffuse() const { return m_Diffuse; }
+	inline glm::vec3 GetSpecular() const { return m_Specular; }
 
 	inline void SetAmbient(glm::vec3 ambient) { m_Ambient = ambient; }
 	inline void SetDiffuse(glm::vec3 diffuse) { m_Diffuse = diffuse; }

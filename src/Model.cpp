@@ -6,18 +6,26 @@
 
 #include "MaterialManager.h"
 
-Model::Model(const char* path)
+Model::Model(const char* path) : m_Path(path)
 {
 	LoadModel(path);
 
 	if (m_LoadedTextures.size() > 0)
 	{
-		m_Material = MaterialManager::GetInstance()->LoadMaterial("../../res/materials/Default_Texture.mat");
+		m_MaterialPath = "../../res/materials/Default_Texture.mat";
 	}
 	else
 	{
-		m_Material = MaterialManager::GetInstance()->LoadMaterial("../../res/materials/Default.mat");
+		m_MaterialPath = "../../res/materials/Default.mat";
 	}
+
+	m_Material = MaterialManager::GetInstance()->LoadMaterial(m_MaterialPath);
+}
+
+Model::Model(const char* path, std::string materialPath) : m_Path(path), m_MaterialPath(materialPath)
+{
+	LoadModel(path);
+	m_Material = MaterialManager::GetInstance()->LoadMaterial(materialPath);
 }
 
 void Model::Draw(Ref<Shader> shader)

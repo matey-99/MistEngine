@@ -3,6 +3,7 @@
 Light::Light(Ref<Entity> entity, Ref<Camera> camera, Ref<ShaderLibrary> shaderLibrary)
 	: m_Entity(entity), m_Camera(camera), m_ShaderLibrary(shaderLibrary)
 {
+	m_LightType = LightType::Point;
 }
 
 void Light::Begin()

@@ -1,6 +1,9 @@
 #include "SceneSerializer.h"
 
 #include "yaml.h"
+#include "Model.h"
+#include "Light.h"
+#include "MaterialManager.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
 {
@@ -60,6 +63,28 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 			e->GetTransform()->Position = transform["Position"].as<glm::vec3>();
 			e->GetTransform()->Rotation = transform["Rotation"].as<glm::vec3>();
 			e->GetTransform()->Scale = transform["Scale"].as<glm::vec3>();
+
+			if (auto model = entity["Model"])
+			{
+				std::string path = model["Mesh"].as<std::string>();
+				std::string materialPath = model["Material"].as<std::string>();
+				e->AddComponent<Model>(path.c_str(), materialPath);
+			}
+
+			if (auto light = entity["Light"])
+			{
+				e->AddComponent<Light>(e, scene->GetCamera(), MaterialManager::GetInstance()->GetShaderLibrary());
+
+				LightType lt = (LightType)light["LightType"].as<int>();
+				glm::vec3 ambient = light["Ambient"].as<glm::vec3>();
+				glm::vec3 diffuse = light["Diffuse"].as<glm::vec3>();
+				glm::vec3 specular = light["Specular"].as<glm::vec3>();
+
+				auto l = e->GetComponent<Light>();
+				l->SetAmbient(ambient);
+				l->SetDiffuse(diffuse);
+				l->SetSpecular(specular);
+			}
 		}
 
 		for (int i = 0; i < parentsIDs.size(); i++)
@@ -92,5 +117,25 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	out << YAML::Key << "Rotation" << YAML::Value << transform->Rotation;
 	out << YAML::Key << "Scale" << YAML::Value << transform->Scale;
 	out << YAML::EndMap;
+
+	if (auto model = entity->GetComponent<Model>())
+	{
+		out << YAML::Key << "Model";
+		out << YAML::BeginMap;
+		out << YAML::Key << "Mesh" << YAML::Value << model->GetPath();
+		out << YAML::Key << "Material" << YAML::Value << model->GetMaterialPath();
+		out << YAML::EndMap;
+	}
+	if (auto light = entity->GetComponent<Light>())
+	{
+		out << YAML::Key << "Light";
+		out << YAML::BeginMap;
+		out << YAML::Key << "LightType" << YAML::Value << (int)light->GetLightType();
+		out << YAML::Key << "Ambient" << YAML::Value << light->GetAmbient();
+		out << YAML::Key << "Diffuse" << YAML::Value << light->GetDiffuse();
+		out << YAML::Key << "Specular" << YAML::Value << light->GetSpecular();
+		out << YAML::EndMap;
+	}
+
 	out << YAML::EndMap;
 }
