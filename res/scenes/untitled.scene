@@ -1,21 +1,14 @@
 Scene: Untitled
 Entities:
-  - Entity: cube
-    Transform:
-      ID: 773792009
-      Parent: 4418438
-      Position: [-4.5, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: cube2
-    Transform:
-      ID: 4418438
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
   - Entity: light
     Transform:
       ID: 291419723
-      Position: [0, 0, 0]
+      Position: [-1.5, 2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: default_cube
+    Transform:
+      ID: 348901802
+      Position: [1, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]

@@ -18,7 +18,7 @@ private:
 	Ref<Material> m_Material;
 
 public:
-	Model(const char* path, Ref<Material> material);
+	Model(const char* path);
 	void Draw(Ref<Shader> shader);
 
 	virtual void Begin() override;

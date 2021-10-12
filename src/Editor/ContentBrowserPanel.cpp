@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Material.h"
 #include "Serialization/MaterialSerializer.h"
+#include "MaterialManager.h"
 
 ContentBrowserPanel::ContentBrowserPanel(Ref<Editor> editor, Ref<Scene> scene) : m_Editor(editor), m_Scene(scene)
 {
@@ -12,11 +13,48 @@ ContentBrowserPanel::ContentBrowserPanel(Ref<Editor> editor, Ref<Scene> scene) :
 	m_SupportedFileFormats.push_back("3ds");
 	m_SupportedFileFormats.push_back("fbx");
 	m_SupportedFileFormats.push_back("mat");
+
+	m_ResourcesDirectory = "../../res";
+	m_DisplayedDirectory = m_ResourcesDirectory;
 }
 
 void ContentBrowserPanel::Render()
 {
 	ImGui::Begin("Content Browser");
+
+	if (m_DisplayedDirectory != m_ResourcesDirectory)
+	{
+		bool selected = false;
+		ImGui::Selectable("..", &selected);
+		if (selected)
+		{
+			m_DisplayedDirectory = m_DisplayedDirectory.substr(0, m_DisplayedDirectory.find_last_of("/"));
+		}
+	}
+
+	for (auto& p : std::filesystem::directory_iterator(m_DisplayedDirectory))
+	{
+		std::stringstream ss;
+		ss << p.path();
+		std::string path = ss.str();
+		CorrectPath(path);
+		std::string name = path.substr(path.find_last_of("/") + 1);
+
+		bool selected = false;
+		ImGui::Selectable(name.c_str(), &selected);
+		if (selected)
+		{
+			if (p.is_directory())
+			{
+				m_DisplayedDirectory += "/" + name;
+			}
+			else
+			{
+				std::string extension = name.substr(name.find_first_of('.') + 1);
+				MakeAction(path, extension);
+			}
+		}
+	}
 
 	bool createMaterial = false;
 	if (ImGui::BeginPopupContextWindow())
@@ -28,79 +66,64 @@ void ContentBrowserPanel::Render()
 
 	if (createMaterial)
 	{
-		Ref<Material> material = CreateRef<Material>("New material", m_Scene->GetShaderLibrary()->GetShader("Default"));
-		MaterialSerializer::Serialize(material);
+		int count = 0;
+		for (auto& p : std::filesystem::directory_iterator(m_DisplayedDirectory))
+		{
+			if (p.is_directory())
+				continue;
+
+			std::stringstream ss;
+			ss << p.path();
+			std::string path = ss.str();
+			CorrectPath(path);
+			std::string filename = path.substr(path.find_last_of("/") + 1);
+
+			if (filename.substr(0, 12) == "New material")
+				count++;
+		}
+		MaterialManager::GetInstance()->CreateMaterial("New material " + std::to_string(count), "Default");
 	}
-	
-	ShowObjects();
 
 	ImGui::End();
 }
 
-void ContentBrowserPanel::ShowObjects()
+void ContentBrowserPanel::MakeAction(std::string path, std::string extension)
 {
-	std::string path = "res";
-	for (auto& file : std::filesystem::recursive_directory_iterator(path))
+	if (extension == "mat")
 	{
-		std::stringstream ss;
-		ss << file.path();
-		std::string filepath = ss.str();
+		Ref<Material> material = MaterialManager::GetInstance()->LoadMaterial(path);
+		m_Editor->ShowMaterialEditor(material);
+	}
+	else if (extension == "obj" || extension == "fbx" || extension == "3ds")
+	{
+		std::string entityName = path.substr(path.find_last_of('/') + 1, path.find_last_of('.') - (path.find_last_of('/') + 1));
 
-		bool supported = false;
-		for (std::string str : m_SupportedFileFormats)
+		unsigned int countSameName = 0;
+		for (auto entity : m_Scene->GetEntities())
 		{
-			if (str == filepath.substr(filepath.find_last_of(".") + 1, filepath.find_last_of('"') - (filepath.find_last_of(".") + 1)))
-			{
-				supported = true;
-				break;
-			}
+			if (entity->GetName().substr(0, entity->GetName().find_last_of(" ")) == entityName)
+				countSameName++;
 		}
-		if (!supported)
-			continue;
-
-		std::string filename = filepath.substr(filepath.find_last_of("\\") + 1, filepath.find_last_of('"') - (filepath.find_last_of("\\") + 1));
-		std::string entityName = filepath.substr(filepath.find_last_of("\\") + 1, filepath.find_last_of('.') - (filepath.find_last_of("\\") + 1));
-		std::string correctedFilepath = filepath.substr(filepath.find_first_of('"') + 1, filepath.length() - 2);
-
-		std::size_t index = 0;
-		while (true)
+		if (countSameName > 0)
 		{
-			index = correctedFilepath.find("\\\\", index);
-			if (index == std::string::npos)
-				break;
-
-			correctedFilepath.replace(index, 2, "/");
+			entityName += " (" + std::to_string(countSameName) + ")";
 		}
 
-		bool selected = false;
-		ImGui::Selectable(filename.c_str(), &selected);
-
-		if (selected)
-		{
-			auto str = filename.substr(filename.find_first_of('.') + 1);
-			if (str == "mat")
-			{
-				auto material = MaterialSerializer::Deserialize(correctedFilepath, m_Scene->GetShaderLibrary());
-				m_Editor->ShowMaterialEditor(material);
-			}
-
-			unsigned int countSameName = 0;
-			for (auto entity : m_Scene->GetEntities())
-			{
-				if (entity->GetName().substr(0, entity->GetName().find_last_of(" ")) == entityName)
-					countSameName++;
-			}
-			if (countSameName > 0)
-			{
-				entityName += " (" + std::to_string(countSameName) + ")";
-			}
-
-			//m_Scene->AddEntity(correctedFilepath, entityName);
-		}
+		m_Scene->AddEntity(path, entityName);
 	}
 }
 
-void ContentBrowserPanel::ShowContextMenu()
+void ContentBrowserPanel::CorrectPath(std::string& path)
 {
+	path = path.substr(path.find_first_of('"') + 1, path.length() - 2);
 
+	std::size_t index = 0;
+	while (true)
+	{
+		index = path.find("\\\\", index);
+		if (index == std::string::npos)
+			break;
+
+		path.replace(index, 2, "/");
+	}
 }

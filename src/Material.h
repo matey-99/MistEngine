@@ -14,6 +14,7 @@ enum class MaterialType
 class Material
 {
 private:
+	uint64_t m_ID;
 	std::string m_Name;
 	Ref<Shader> m_Shader;
 	MaterialType m_Type;
@@ -25,9 +26,11 @@ private:
 
 public:
 	Material(std::string name = "Default", Ref<Shader> shader = Ref<Shader>(), MaterialType type = MaterialType::Default);
+	Material(uint64_t id, std::string name = "Default", Ref<Shader> shader = Ref<Shader>(), MaterialType type = MaterialType::Default);
 
 	void Use();
 
+	inline uint64_t GetID() const { return m_ID; }
 	inline std::string GetName() const { return m_Name; }
 	inline Ref<Shader> GetShader() const { return m_Shader; }
 	inline glm::vec3 GetAmbient() const { return m_Ambient; }

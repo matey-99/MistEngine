@@ -10,8 +10,6 @@ class Scene
 private:
 	Ref<Camera> m_Camera;
 	std::vector<Ref<Entity>> m_Entities;
-	Ref<ShaderLibrary> m_ShaderLibrary;
-
 public:
 	Scene();
 	Scene(Ref<Camera> camera);
@@ -22,6 +20,7 @@ public:
 
 	Ref<Entity> AddEntity(std::string name);
 	Ref<Entity> AddEntity(std::string name, Ref<Transform> parent);
+	Ref<Entity> AddEntity(std::string path, std::string name);
 	void RemoveEntity(Ref<Entity> entity);
 	Ref<Entity> FindEntity(std::string name);
 	Ref<Entity> FindEntity(uint64_t transformID);
@@ -29,5 +28,4 @@ public:
 
 	inline Ref<Camera> GetCamera() const { return m_Camera; }
 	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }
-	inline Ref<ShaderLibrary> GetShaderLibrary() const { return m_ShaderLibrary; }
 };

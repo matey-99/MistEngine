@@ -19,6 +19,7 @@
 #include "Material.h"
 #include "Model.h"
 #include "Light.h"
+#include "MaterialManager.h"
 
 Ref<Scene> scene = Ref<Scene>();
 Ref<Editor> editor = CreateRef<Editor>();
@@ -151,43 +152,13 @@ int main(int, char**)
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
-    Ref<Material> turquoise = CreateRef<Material>("turquoise", scene->GetShaderLibrary()->GetShader("Default"));
-    turquoise->SetAmbient(glm::vec3(0.1f, 0.18725f, 0.1745f));
-    turquoise->SetDiffuse(glm::vec3(0.396f, 0.74151f, 0.69102f));
-    turquoise->SetSpecular(glm::vec3(0.297254f, 0.30829f, 0.306678f));
-    turquoise->SetShininess(32.0f);
-    auto cube = scene->FindEntity("cube");
-    auto cube2 = scene->FindEntity("cube2");
-    cube->AddComponent<Model>("res/models/defaults/default_cube.obj", turquoise);
-    cube2->AddComponent<Model>("res/models/defaults/default_cube.obj", turquoise);
-
     auto light = scene->FindEntity("light");
-    light->AddComponent<Light>(light, scene->GetCamera(), scene->GetShaderLibrary());
+    light->AddComponent<Light>(light, scene->GetCamera(), MaterialManager::GetInstance()->GetShaderLibrary());
 
     auto lightComponent = light->GetComponent<Light>();
     lightComponent->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
     lightComponent->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
     lightComponent->SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-
-    //Ref<Material> gold = CreateRef<Material>("gold", scene->GetShaderLibrary()->GetShader("Default"));
-    //gold->SetAmbient(glm::vec3(0.24725f, 0.1995f, 0.0745f));
-    //gold->SetDiffuse(glm::vec3(0.75164f, 0.60648f, 0.22648f));
-    //gold->SetSpecular(glm::vec3(0.628281f, 0.555802f, 0.366065f));
-    //gold->SetShininess(32.0f);
-    //scene->FindEntity("default_cube")->GetComponent<Model>()->SetMaterial(gold);
-
-    //Ref<Material> chrome = CreateRef<Material>("chrome", scene->GetShaderLibrary()->GetShader("Default"));
-    //chrome->SetAmbient(glm::vec3(0.25f, 0.25f, 0.25f));
-    //chrome->SetDiffuse(glm::vec3(0.4f, 0.4f, 0.4f));
-    //chrome->SetSpecular(glm::vec3(0.774597f, 0.774597f, 0.774597f));
-    //chrome->SetShininess(32.0f);
-    //scene->FindEntity("default_cone")->GetComponent<Model>()->SetMaterial(chrome);
-    //scene->FindEntity("default_plane")->GetComponent<Model>()->SetMaterial(chrome);
-    //scene->FindEntity("default_sphere (1)")->GetComponent<Model>()->SetMaterial(chrome);
-
-    //Ref<Material> backpackMaterial = CreateRef<Material>("backpack_material", scene->GetShaderLibrary()->GetShader("Texture"), MaterialType::Texture);
-    //backpackMaterial->SetShininess(32.0f);
-    //scene->FindEntity("backpack")->SetMaterial(backpackMaterial);
 
     glEnable(GL_DEPTH_TEST);
 

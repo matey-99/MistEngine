@@ -4,10 +4,22 @@
 Material::Material(std::string name, Ref<Shader> shader, MaterialType type)
 	: m_Name(name), m_Shader(shader), m_Type(type)
 {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution distribution(1, 999999999);
+
+	m_ID = distribution(gen);
+
 	m_Ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_Diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_Specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_Shininess = 32.0f;
+}
+
+Material::Material(uint64_t id, std::string name, Ref<Shader> shader, MaterialType type)
+	: m_ID(id), m_Name(name), m_Shader(shader), m_Type(type)
+{
+
 }
 
 void Material::Use()

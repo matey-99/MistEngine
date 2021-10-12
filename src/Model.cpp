@@ -1,13 +1,23 @@
 #include "Model.h"
 
 #include <glad/glad.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Model::Model(const char* path, Ref<Material> material) : m_Material(material)
+#include "MaterialManager.h"
+
+Model::Model(const char* path)
 {
 	LoadModel(path);
+
+	if (m_LoadedTextures.size() > 0)
+	{
+		m_Material = MaterialManager::GetInstance()->LoadMaterial("../../res/materials/Default_Texture.mat");
+	}
+	else
+	{
+		m_Material = MaterialManager::GetInstance()->LoadMaterial("../../res/materials/Default.mat");
+	}
 }
 
 void Model::Draw(Ref<Shader> shader)

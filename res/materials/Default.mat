@@ -1,4 +1,5 @@
-Material: New material
+Material: Default
+ID: 0
 Shader: Default
 Ambient: [1, 1, 1]
 Diffuse: [1, 1, 1]

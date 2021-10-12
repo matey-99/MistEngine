@@ -1,11 +1,11 @@
 #include "Scene.h"
 #include "Model.h"
 #include "Light.h"
+#include "MaterialManager.h"
 
 Scene::Scene()
 {
 	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
-	m_ShaderLibrary = CreateRef<ShaderLibrary>();
 
 	m_Entities = std::vector<Ref<Entity>>();
 }
@@ -13,7 +13,6 @@ Scene::Scene()
 Scene::Scene(Ref<Camera> camera) : m_Camera(camera)
 {
 	m_Entities = std::vector<Ref<Entity>>();
-	m_ShaderLibrary = CreateRef<ShaderLibrary>();
 }
 
 void Scene::Begin()
@@ -72,10 +71,21 @@ Ref<Entity> Scene::AddEntity(std::string name)
 	return entity;
 }
 
+
+
 Ref<Entity> Scene::AddEntity(std::string name, Ref<Transform> parent)
 {
 	Ref<Entity> entity = CreateRef<Entity>(name);
 	entity->GetTransform()->SetParent(parent);
+	m_Entities.push_back(entity);
+
+	return entity;
+}
+
+Ref<Entity> Scene::AddEntity(std::string path, std::string name)
+{
+	Ref<Entity> entity = CreateRef<Entity>(name);
+	entity->AddComponent<Model>(path.c_str());
 	m_Entities.push_back(entity);
 
 	return entity;

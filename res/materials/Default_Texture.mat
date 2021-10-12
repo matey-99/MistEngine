@@ -1,0 +1,7 @@
+Material: Default_Texture
+ID: 1
+Shader: Texture
+Ambient: [1, 1, 1]
+Diffuse: [1, 1, 1]
+Specular: [1, 1, 1]
+Shininess: 32
