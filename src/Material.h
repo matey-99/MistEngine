@@ -28,10 +28,17 @@ public:
 
 	void Use();
 
+	inline std::string GetName() const { return m_Name; }
 	inline Ref<Shader> GetShader() const { return m_Shader; }
+	inline glm::vec3 GetAmbient() const { return m_Ambient; }
+	inline glm::vec3 GetDiffuse() const { return m_Diffuse; }
+	inline glm::vec3 GetSpecular() const { return m_Specular; }
+	inline float GetShininess() const { return m_Shininess; }
 
 	inline void SetAmbient(glm::vec3 ambient) { m_Ambient = ambient; }
 	inline void SetDiffuse(glm::vec3 diffuse) { m_Diffuse = diffuse; }
 	inline void SetSpecular(glm::vec3 specular) { m_Specular = specular; }
 	inline void SetShininess(float shininess) { m_Shininess = shininess; }
+
+	friend class MaterialEditorPanel;
 };

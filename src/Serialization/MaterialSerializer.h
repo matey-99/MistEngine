@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Serializer.h"
 #include "Material.h"
+#include "ShaderLibrary.h"
 
-class MaterialSerializer : public Serializer<Material>
+class MaterialSerializer
 {
 public:
-	virtual void Serialize(Ref<Material> scene) override;
-	virtual Ref<Material> Deserialize(std::string path) override;
+	static void Serialize(Ref<Material> material);
+	static Ref<Material> Deserialize(std::string path, Ref<ShaderLibrary> shaderLibrary);
 };

@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPath) : m_Name(name)
 {
     std::string vertexSource, fragmentSource;
     std::ifstream filestream;

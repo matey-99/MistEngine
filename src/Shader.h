@@ -7,8 +7,14 @@ class Shader
 public:
 	unsigned int id;
 
-	Shader(const char* vertexPath, const char* fragmentPath);
+private:
+	std::string m_Name;
+
+public:
+	Shader(std::string name, const char* vertexPath, const char* fragmentPath);
 	void Use() const;
+
+	inline std::string GetName() const { return m_Name; }
 
 	// uniforms
 	void SetBool(const std::string& name, bool value) const;

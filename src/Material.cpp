@@ -7,7 +7,7 @@ Material::Material(std::string name, Ref<Shader> shader, MaterialType type)
 	m_Ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_Diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_Specular = glm::vec3(1.0f, 1.0f, 1.0f);
-	m_Shininess = 0.1f;
+	m_Shininess = 32.0f;
 }
 
 void Material::Use()

@@ -1,0 +1,6 @@
+Material: New material
+Shader: Default
+Ambient: [1, 1, 1]
+Diffuse: [1, 1, 1]
+Specular: [1, 1, 1]
+Shininess: 32
