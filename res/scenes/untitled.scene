@@ -1,9 +1,16 @@
 Scene: Untitled
 Entities:
+  - Entity: Root
+    Transform:
+      ID: 0
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
   - Entity: light
     Transform:
       ID: 291419723
-      Position: [3.5, 2, 0]
+      Parent: 0
+      Position: [1, 2, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Light:
@@ -14,6 +21,7 @@ Entities:
   - Entity: default_cube
     Transform:
       ID: 543673375
+      Parent: 40901528
       Position: [0, 1, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
@@ -23,6 +31,7 @@ Entities:
   - Entity: default_plane
     Transform:
       ID: 40901528
+      Parent: 0
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
@@ -31,10 +40,31 @@ Entities:
       Material: ../../res/materials/Default.mat
   - Entity: backpack
     Transform:
-      ID: 479516149
-      Position: [0, 2.5, -4.5]
+      ID: 89110833
+      Parent: 0
+      Position: [-5.5, 2, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/backpack/backpack.obj
       Material: ../../res/materials/Default_Texture.mat
+  - Entity: default_sphere
+    Transform:
+      ID: 150066843
+      Parent: 0
+      Position: [0, 5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_sphere.obj
+      Material: ../../res/materials/New material 0.mat
+  - Entity: default_cone
+    Transform:
+      ID: 670760048
+      Parent: 0
+      Position: [4, 1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cone.obj
+      Material: ../../res/materials/New material 0.mat

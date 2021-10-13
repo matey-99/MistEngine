@@ -9,6 +9,7 @@ class Scene
 {
 private:
 	Ref<Camera> m_Camera;
+	Ref<Entity> m_Root;
 	std::vector<Ref<Entity>> m_Entities;
 public:
 	Scene();
@@ -18,9 +19,11 @@ public:
 	void Update();
 	void Draw();
 
+	Ref<Entity> AddRoot();
 	Ref<Entity> AddEntity(std::string name);
-	Ref<Entity> AddEntity(std::string name, Ref<Transform> parent);
 	Ref<Entity> AddEntity(std::string path, std::string name);
+	Ref<Entity> AddEntity(std::string path, std::string name, Ref<Transform> parent);
+
 	void RemoveEntity(Ref<Entity> entity);
 	Ref<Entity> FindEntity(std::string name);
 	Ref<Entity> FindEntity(uint64_t transformID);
@@ -28,4 +31,5 @@ public:
 
 	inline Ref<Camera> GetCamera() const { return m_Camera; }
 	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }
+	inline Ref<Entity> GetRoot() const { return m_Root; }
 };

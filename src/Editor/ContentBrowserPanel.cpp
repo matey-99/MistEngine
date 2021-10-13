@@ -109,7 +109,7 @@ void ContentBrowserPanel::MakeAction(std::string path, std::string extension)
 			entityName += " (" + std::to_string(countSameName) + ")";
 		}
 
-		m_Scene->AddEntity(path, entityName);
+		m_Scene->AddEntity(path, entityName, m_Scene->FindTransform(0));
 	}
 }
 

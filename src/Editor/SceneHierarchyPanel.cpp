@@ -51,6 +51,20 @@ void SceneHierarchyPanel::Render()
 			}
 		}
 	}
+
+	bool addEntity = false;
+	if (ImGui::BeginPopupContextWindow())
+	{
+		ImGui::MenuItem("Add Entity", "", &addEntity);
+
+		ImGui::EndPopup();
+	}
+
+	if (addEntity)
+	{
+		m_Scene->AddEntity("New Entity");
+	}
+
 	ImGui::End();
 }
 

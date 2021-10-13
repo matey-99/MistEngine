@@ -10,6 +10,11 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Re
 	ID = distribution(gen);
 }
 
+Transform::Transform(uint64_t id, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
+	: ID(id), Position(position), Rotation(rotation), Scale(scale), Parent(parent)
+{
+}
+
 void Transform::Begin()
 {
 }

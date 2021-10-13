@@ -7,11 +7,13 @@ Scene::Scene()
 {
 	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
 
+	m_Root = Ref<Entity>();
 	m_Entities = std::vector<Ref<Entity>>();
 }
 
 Scene::Scene(Ref<Camera> camera) : m_Camera(camera)
 {
+	m_Root = Ref<Entity>();
 	m_Entities = std::vector<Ref<Entity>>();
 }
 
@@ -63,20 +65,19 @@ void Scene::Draw()
 	}
 }
 
+Ref<Entity> Scene::AddRoot()
+{
+	Ref<Entity> root = CreateRef<Entity>("Root");
+	m_Root = root;
+	m_Entities.push_back(root);
+
+	return root;
+}
+
 Ref<Entity> Scene::AddEntity(std::string name)
 {
 	Ref<Entity> entity = CreateRef<Entity>(name);
-	m_Entities.push_back(entity);
-
-	return entity;
-}
-
-
-
-Ref<Entity> Scene::AddEntity(std::string name, Ref<Transform> parent)
-{
-	Ref<Entity> entity = CreateRef<Entity>(name);
-	entity->GetTransform()->SetParent(parent);
+	entity->GetTransform()->SetParent(m_Root->GetTransform());
 	m_Entities.push_back(entity);
 
 	return entity;
@@ -85,6 +86,17 @@ Ref<Entity> Scene::AddEntity(std::string name, Ref<Transform> parent)
 Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 {
 	Ref<Entity> entity = CreateRef<Entity>(name);
+	entity->GetTransform()->SetParent(m_Root->GetTransform());
+	entity->AddComponent<Model>(path.c_str());
+	m_Entities.push_back(entity);
+
+	return entity;
+}
+
+Ref<Entity> Scene::AddEntity(std::string path, std::string name, Ref<Transform> parent)
+{
+	Ref<Entity> entity = CreateRef<Entity>(name);
+	entity->GetTransform()->SetParent(parent);
 	entity->AddComponent<Model>(path.c_str());
 	m_Entities.push_back(entity);
 

@@ -67,6 +67,7 @@ void Model::LoadModel(std::string path)
 
 void Model::LoadMaterial(std::string path)
 {
+	m_MaterialPath = path;
 	m_Material = MaterialManager::GetInstance()->LoadMaterial(path);
 }
 

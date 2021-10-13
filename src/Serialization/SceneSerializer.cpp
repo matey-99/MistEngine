@@ -47,17 +47,31 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 		for (auto entity : entities)
 		{
-			Ref<Entity> e = scene->AddEntity(entity["Entity"].as<std::string>());
+			Ref<Entity> e = Ref<Entity>();
+			if (entity["Transform"]["ID"].as<uint64_t>() == 0)
+			{
+				e = scene->AddRoot();
+			}
+			else
+			{
+				if (!scene->GetRoot())
+				{
+					std::cout << "Loaded scene doesn't contain root entity!" << std::endl;
+				}
+
+				e = scene->AddEntity(entity["Entity"].as<std::string>());
+			}
 			
 			auto transform = entity["Transform"];
 			e->GetTransform()->ID = transform["ID"].as<uint64_t>();
+			
 			if (auto parent = transform["Parent"])
 			{
 				parentsIDs.push_back(parent.as<uint64_t>());
 			}
 			else
 			{
-				parentsIDs.push_back(0);
+				parentsIDs.push_back(-1);
 			}
 
 			e->GetTransform()->Position = transform["Position"].as<glm::vec3>();
@@ -89,7 +103,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 		for (int i = 0; i < parentsIDs.size(); i++)
 		{
-			if (parentsIDs[i] == 0)
+			if (parentsIDs[i] == -1)
 				continue;
 
 			scene->GetEntities()[i]->GetTransform()->SetParent(scene->FindTransform(parentsIDs[i]));
