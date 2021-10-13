@@ -16,4 +16,8 @@ public:
 	void Render();
 
 	inline void SetEntity(Ref<Entity> entity) { m_Entity = entity; }
+
+private:
+	void DisplayResources(std::vector<std::string> extensions);
+	void CorrectPath(std::string& path);
 };

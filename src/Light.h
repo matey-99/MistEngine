@@ -40,7 +40,10 @@ public:
 	inline glm::vec3 GetDiffuse() const { return m_Diffuse; }
 	inline glm::vec3 GetSpecular() const { return m_Specular; }
 
+	inline void SetLightType(LightType type) { m_LightType = type; }
 	inline void SetAmbient(glm::vec3 ambient) { m_Ambient = ambient; }
 	inline void SetDiffuse(glm::vec3 diffuse) { m_Diffuse = diffuse; }
 	inline void SetSpecular(glm::vec3 specular) { m_Specular = specular; }
+
+	friend class EntityDetailsPanel;
 };

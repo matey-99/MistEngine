@@ -48,6 +48,9 @@ void Model::Update()
 
 void Model::LoadModel(std::string path)
 {
+	m_Meshes.clear();
+	m_LoadedTextures.clear();
+
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -60,6 +63,11 @@ void Model::LoadModel(std::string path)
 	m_Directory = path.substr(0, path.find_last_of('/'));
 
 	ProcessNode(scene->mRootNode, scene);
+}
+
+void Model::LoadMaterial(std::string path)
+{
+	m_Material = MaterialManager::GetInstance()->LoadMaterial(path);
 }
 
 void Model::ProcessNode(aiNode* node, const aiScene* scene)

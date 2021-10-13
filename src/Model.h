@@ -24,6 +24,9 @@ public:
 	Model(const char* path, std::string materialPath);
 	void Draw(Ref<Shader> shader);
 
+	void LoadModel(std::string path);
+	void LoadMaterial(std::string path);
+
 	virtual void Begin() override;
 	virtual void Update() override;
 
@@ -34,7 +37,7 @@ public:
 	inline void SetMaterial(Ref<Material> material) { m_Material = material; }
 
 private:
-	void LoadModel(std::string path);
+	
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
