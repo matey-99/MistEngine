@@ -6,6 +6,11 @@
 
 #include "MaterialManager.h"
 
+Model::Model() : Model("../../res/models/defaults/default_cube.obj")
+{
+	
+}
+
 Model::Model(const char* path) : m_Path(path)
 {
 	LoadModel(path);

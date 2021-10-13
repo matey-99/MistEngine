@@ -7,7 +7,6 @@
 #include "Entity.h"
 #include "Shader.h"
 #include "Camera.h"
-#include "ShaderLibrary.h"
 
 enum class LightType
 {
@@ -18,8 +17,6 @@ class Light : public Component
 {
 private:
 	Ref<Entity> m_Entity;
-	Ref<ShaderLibrary> m_ShaderLibrary;
-	Ref<Camera> m_Camera;
 
 	LightType m_LightType;
 
@@ -28,12 +25,12 @@ private:
 	glm::vec3 m_Specular;
 
 public:
-	Light(Ref<Entity> entity, Ref<Camera> camera, Ref<ShaderLibrary> shaderLibrary);
+	Light(Ref<Entity> entity);
 
 	virtual void Begin() override;
 	virtual void Update() override;
 
-	void Use();
+	void Use(glm::vec3 cameraPosition);
 
 	inline LightType GetLightType() const { return m_LightType; }
 	inline glm::vec3 GetAmbient() const { return m_Ambient; }

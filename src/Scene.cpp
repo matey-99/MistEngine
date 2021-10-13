@@ -40,7 +40,7 @@ void Scene::Draw()
 		auto light = entity->GetComponent<Light>();
 		if (light)
 		{
-			light->Use();
+			light->Use(m_Camera->Position);
 		}
 
 		auto model = entity->GetComponent<Model>();

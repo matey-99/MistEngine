@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <cstdio>
 #include <fstream>
 #include <filesystem>
 #include <sstream>

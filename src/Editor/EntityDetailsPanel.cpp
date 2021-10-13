@@ -117,6 +117,27 @@ void EntityDetailsPanel::Render()
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 
+    bool addComponent = false;
+    bool meshRenderer = false;
+    bool light = false;
+    if (ImGui::BeginPopupContextWindow())
+    {
+        if (ImGui::BeginMenu("Add Component"))
+        {
+            ImGui::MenuItem("Mesh Renderer", "", &meshRenderer);
+            ImGui::MenuItem("Light", "", &light);
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndPopup();
+    }
+
+    if (meshRenderer)
+        m_Entity->AddComponent<Model>();
+    if (light)
+        m_Entity->AddComponent<Light>(m_Entity);
+
     if (ImGui::Button("Close"))
         m_Editor->HideDetails();
 

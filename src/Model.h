@@ -20,6 +20,7 @@ private:
 	std::string m_MaterialPath;
 
 public:
+	Model();
 	Model(const char* path);
 	Model(const char* path, std::string materialPath);
 	void Draw(Ref<Shader> shader);

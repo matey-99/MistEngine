@@ -1,9 +1,13 @@
 #include "Light.h"
+#include "MaterialManager.h"
 
-Light::Light(Ref<Entity> entity, Ref<Camera> camera, Ref<ShaderLibrary> shaderLibrary)
-	: m_Entity(entity), m_Camera(camera), m_ShaderLibrary(shaderLibrary)
+Light::Light(Ref<Entity> entity)
+	: m_Entity(entity)
 {
 	m_LightType = LightType::Point;
+	m_Ambient = glm::vec3(0.2f);
+	m_Diffuse = glm::vec3(0.5f);
+	m_Specular = glm::vec3(1.0f);
 }
 
 void Light::Begin()
@@ -14,13 +18,14 @@ void Light::Update()
 {
 }
 
-void Light::Use()
+void Light::Use(glm::vec3 cameraPosition)
 {
-	for (auto shader : m_ShaderLibrary->GetAllShaders())
+	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
+	for (auto shader : shaderLibrary->GetAllShaders())
 	{
 		shader->Use();
 
-		shader->SetVec3("u_ViewPosition", m_Camera->Position);
+		shader->SetVec3("u_ViewPosition", cameraPosition);
 		shader->SetVec3("u_Light.position", m_Entity->GetTransform()->Position);
 
 		shader->SetVec3("u_Light.ambient", m_Ambient);

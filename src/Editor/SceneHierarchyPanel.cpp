@@ -62,7 +62,24 @@ void SceneHierarchyPanel::Render()
 
 	if (addEntity)
 	{
-		m_Scene->AddEntity("New Entity");
+		std::string entityName = "New Entity";
+		bool unique = false;
+		int nr = 1;
+		while (!unique)
+		{
+			unique = true;
+			for (auto entity : m_Scene->GetEntities())
+			{
+				if (entity->GetName() == entityName)
+				{
+					entityName = "New Entity (" + std::to_string(nr) + ")";
+					nr++;
+					unique = false;
+				}
+			}
+		}
+
+		m_Scene->AddEntity(entityName);
 	}
 
 	ImGui::End();

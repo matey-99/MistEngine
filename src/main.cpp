@@ -152,14 +152,6 @@ int main(int, char**)
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
-    auto light = scene->FindEntity("light");
-    light->AddComponent<Light>(light, scene->GetCamera(), MaterialManager::GetInstance()->GetShaderLibrary());
-
-    auto lightComponent = light->GetComponent<Light>();
-    lightComponent->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
-    lightComponent->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
-    lightComponent->SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
-
     glEnable(GL_DEPTH_TEST);
 
     editor->Initialize(scene);

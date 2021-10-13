@@ -87,7 +87,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 			if (auto light = entity["Light"])
 			{
-				e->AddComponent<Light>(e, scene->GetCamera(), MaterialManager::GetInstance()->GetShaderLibrary());
+				e->AddComponent<Light>(e);
 
 				LightType lt = (LightType)light["LightType"].as<int>();
 				glm::vec3 ambient = light["Ambient"].as<glm::vec3>();
