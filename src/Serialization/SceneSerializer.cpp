@@ -128,6 +128,8 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				glm::vec3 direction = spotLight["Direction"].as<glm::vec3>();
 				float innerCutOff = spotLight["Inner Cut Off"].as<float>();
 				float outerCutOff = spotLight["Outer Cut Off"].as<float>();
+				float linear = spotLight["Linear"].as<float>();
+				float quadratic = spotLight["Quadratic"].as<float>();
 				glm::vec3 ambient = spotLight["Ambient"].as<glm::vec3>();
 				glm::vec3 diffuse = spotLight["Diffuse"].as<glm::vec3>();
 				glm::vec3 specular = spotLight["Specular"].as<glm::vec3>();
@@ -136,6 +138,8 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				l->SetDirection(direction);
 				l->SetInnerCutOff(innerCutOff);
 				l->SetOuterCutOff(outerCutOff);
+				l->SetLinear(linear);
+				l->SetQuadratic(quadratic);
 				l->SetAmbient(ambient);
 				l->SetDiffuse(diffuse);
 				l->SetSpecular(specular);
@@ -209,6 +213,8 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Direction" << YAML::Value << spotLight->GetDirection();
 		out << YAML::Key << "Inner Cut Off" << YAML::Value << spotLight->GetInnerCutOff();
 		out << YAML::Key << "Outer Cut Off" << YAML::Value << spotLight->GetOuterCutOff();
+		out << YAML::Key << "Linear" << YAML::Value << spotLight->GetLinear();
+		out << YAML::Key << "Quadratic" << YAML::Value << spotLight->GetQuadratic();
 		out << YAML::Key << "Ambient" << YAML::Value << spotLight->GetAmbient();
 		out << YAML::Key << "Diffuse" << YAML::Value << spotLight->GetDiffuse();
 		out << YAML::Key << "Specular" << YAML::Value << spotLight->GetSpecular();

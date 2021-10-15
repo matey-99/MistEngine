@@ -29,10 +29,14 @@ public:
 	inline glm::vec3 GetDirection() const { return m_Direction; }
 	inline float GetInnerCutOff() const { return m_InnerCutOff; }
 	inline float GetOuterCutOff() const { return m_OuterCutOff; }
+	inline float GetLinear() const { return m_Linear; }
+	inline float GetQuadratic() const { return m_Quadratic; }
 
 	inline void SetDirection(glm::vec3 direction) { m_Direction = direction; }
 	inline void SetInnerCutOff(float innerCutOff) { m_InnerCutOff = innerCutOff; }
 	inline void SetOuterCutOff(float outerCutOff) { m_OuterCutOff = outerCutOff; }
+	inline void SetLinear(float linear) { m_Linear = linear; }
+	inline void SetQuadratic(float quadratic) { m_Quadratic = quadratic; }
 
 	friend class EntityDetailsPanel;
 };

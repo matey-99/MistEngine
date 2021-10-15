@@ -140,6 +140,8 @@ void EntityDetailsPanel::Render()
 
             ImGui::DragFloat("Inner Cut Off", &spotLight->m_InnerCutOff, 0.01f, 0.0f, 1.0f);
             ImGui::DragFloat("Outer Cut Off", &spotLight->m_OuterCutOff, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Linear", &spotLight->m_Linear, 0.001f, 0.0f, 1.0f);
+            ImGui::DragFloat("Quadratic", &spotLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
         }
 
         float* arr[3];
