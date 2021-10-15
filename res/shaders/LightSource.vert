@@ -1,10 +1,10 @@
-#version 330 core
+#version 450 core
 
 layout (location = 0) in vec3 a_Position;
 
-uniform mat4 u_Projection;
-uniform mat4 u_View;
-uniform mat4 u_Model;
+layout (location = 0) uniform mat4 u_Projection;
+layout (location = 1) uniform mat4 u_View;
+layout (location = 2) uniform mat4 u_Model;
 
 void main()
 {

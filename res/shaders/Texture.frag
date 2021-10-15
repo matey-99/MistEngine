@@ -1,6 +1,6 @@
-#version 330 core
+#version 450 core
 
-layout(location = 0) out vec4 f_Color;
+layout (location = 0) out vec4 f_Color;
 
 struct Material
 {
@@ -18,14 +18,13 @@ struct Light
     vec3 specular;
 };
 
-in vec3 v_Position;
-in vec3 v_Normal;
-in vec2 v_TexCoord;
+layout (location = 0) in vec3 v_Position;
+layout (location = 1) in vec3 v_Normal;
+layout (location = 2) in vec2 v_TexCoord;
 
-uniform Material u_Material;
-uniform Light u_Light;
-
-uniform vec3 u_ViewPosition;
+layout (location = 3) uniform vec3 u_ViewPosition;
+layout (location = 4) uniform Material u_Material;
+layout (location = 7) uniform Light u_Light;
 
 void main()
 {    
