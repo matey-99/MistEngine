@@ -2,7 +2,9 @@
 
 #include "yaml.h"
 #include "Model.h"
-#include "Light.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 #include "MaterialManager.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
@@ -85,16 +87,55 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				e->AddComponent<Model>(path.c_str(), materialPath);
 			}
 
-			if (auto light = entity["Light"])
+			if (auto dirLight = entity["Directional Light"])
 			{
-				e->AddComponent<Light>(e);
+				e->AddComponent<DirectionalLight>(e);
 
-				LightType lt = (LightType)light["LightType"].as<int>();
-				glm::vec3 ambient = light["Ambient"].as<glm::vec3>();
-				glm::vec3 diffuse = light["Diffuse"].as<glm::vec3>();
-				glm::vec3 specular = light["Specular"].as<glm::vec3>();
+				glm::vec3 direction = dirLight["Direction"].as<glm::vec3>();
+				glm::vec3 ambient = dirLight["Ambient"].as<glm::vec3>();
+				glm::vec3 diffuse = dirLight["Diffuse"].as<glm::vec3>();
+				glm::vec3 specular = dirLight["Specular"].as<glm::vec3>();
 
-				auto l = e->GetComponent<Light>();
+				auto l = e->GetComponent<DirectionalLight>();
+				l->SetDirection(direction);
+				l->SetAmbient(ambient);
+				l->SetDiffuse(diffuse);
+				l->SetSpecular(specular);
+			}
+
+			if (auto pointLight = entity["Point Light"])
+			{
+				e->AddComponent<PointLight>(e);
+
+				float linear = pointLight["Linear"].as<float>();
+				float quadratic = pointLight["Quadratic"].as<float>();
+				glm::vec3 ambient = pointLight["Ambient"].as<glm::vec3>();
+				glm::vec3 diffuse = pointLight["Diffuse"].as<glm::vec3>();
+				glm::vec3 specular = pointLight["Specular"].as<glm::vec3>();
+
+				auto l = e->GetComponent<PointLight>();
+				l->SetLinear(linear);
+				l->SetQuadratic(quadratic);
+				l->SetAmbient(ambient);
+				l->SetDiffuse(diffuse);
+				l->SetSpecular(specular);
+			}
+
+			if (auto spotLight = entity["Spot Light"])
+			{
+				e->AddComponent<SpotLight>(e);
+
+				glm::vec3 direction = spotLight["Direction"].as<glm::vec3>();
+				float innerCutOff = spotLight["Inner Cut Off"].as<float>();
+				float outerCutOff = spotLight["Outer Cut Off"].as<float>();
+				glm::vec3 ambient = spotLight["Ambient"].as<glm::vec3>();
+				glm::vec3 diffuse = spotLight["Diffuse"].as<glm::vec3>();
+				glm::vec3 specular = spotLight["Specular"].as<glm::vec3>();
+
+				auto l = e->GetComponent<SpotLight>();
+				l->SetDirection(direction);
+				l->SetInnerCutOff(innerCutOff);
+				l->SetOuterCutOff(outerCutOff);
 				l->SetAmbient(ambient);
 				l->SetDiffuse(diffuse);
 				l->SetSpecular(specular);
@@ -140,14 +181,37 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Material" << YAML::Value << model->GetMaterialPath();
 		out << YAML::EndMap;
 	}
-	if (auto light = entity->GetComponent<Light>())
+	if (auto dirLight = entity->GetComponent<DirectionalLight>())
 	{
-		out << YAML::Key << "Light";
+		out << YAML::Key << "Directional Light";
 		out << YAML::BeginMap;
-		out << YAML::Key << "LightType" << YAML::Value << (int)light->GetLightType();
-		out << YAML::Key << "Ambient" << YAML::Value << light->GetAmbient();
-		out << YAML::Key << "Diffuse" << YAML::Value << light->GetDiffuse();
-		out << YAML::Key << "Specular" << YAML::Value << light->GetSpecular();
+		out << YAML::Key << "Direction" << YAML::Value << dirLight->GetDirection();
+		out << YAML::Key << "Ambient" << YAML::Value << dirLight->GetAmbient();
+		out << YAML::Key << "Diffuse" << YAML::Value << dirLight->GetDiffuse();
+		out << YAML::Key << "Specular" << YAML::Value << dirLight->GetSpecular();
+		out << YAML::EndMap;
+	}
+	if (auto pointLight = entity->GetComponent<PointLight>())
+	{
+		out << YAML::Key << "Point Light";
+		out << YAML::BeginMap;
+		out << YAML::Key << "Linear" << YAML::Value << pointLight->GetLinear();
+		out << YAML::Key << "Quadratic" << YAML::Value << pointLight->GetQuadratic();
+		out << YAML::Key << "Ambient" << YAML::Value << pointLight->GetAmbient();
+		out << YAML::Key << "Diffuse" << YAML::Value << pointLight->GetDiffuse();
+		out << YAML::Key << "Specular" << YAML::Value << pointLight->GetSpecular();
+		out << YAML::EndMap;
+	}
+	if (auto spotLight = entity->GetComponent<SpotLight>())
+	{
+		out << YAML::Key << "Spot Light";
+		out << YAML::BeginMap;
+		out << YAML::Key << "Direction" << YAML::Value << spotLight->GetDirection();
+		out << YAML::Key << "Inner Cut Off" << YAML::Value << spotLight->GetInnerCutOff();
+		out << YAML::Key << "Outer Cut Off" << YAML::Value << spotLight->GetOuterCutOff();
+		out << YAML::Key << "Ambient" << YAML::Value << spotLight->GetAmbient();
+		out << YAML::Key << "Diffuse" << YAML::Value << spotLight->GetDiffuse();
+		out << YAML::Key << "Specular" << YAML::Value << spotLight->GetSpecular();
 		out << YAML::EndMap;
 	}
 

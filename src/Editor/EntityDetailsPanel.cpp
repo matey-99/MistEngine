@@ -3,7 +3,9 @@
 #include "imgui.h"
 #include "Editor.h"
 #include "Model.h"
-#include "Light.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 EntityDetailsPanel::EntityDetailsPanel(Ref<Editor> editor) : m_Editor(editor)
 {
@@ -76,27 +78,68 @@ void EntityDetailsPanel::Render()
 
         ImGui::Text("Light Type: ");
         const char* type = "";
-        switch (light->GetLightType())
-        {
-        case LightType::Point:
-            type = "Point";
-            break;
-        case LightType::Directional:
+
+        if (std::dynamic_pointer_cast<DirectionalLight>(light))
             type = "Directional";
-            break;
-        }
+        else if (std::dynamic_pointer_cast<PointLight>(light))
+            type = "Point";
+        else if (std::dynamic_pointer_cast<SpotLight>(light))
+            type = "Spot";
+
         ImGui::SameLine();
         if (ImGui::BeginMenu(type))
         {
-            if (ImGui::MenuItem("Point"))
-            {
-                light->SetLightType(LightType::Point);
-            }
             if (ImGui::MenuItem("Directional"))
             {
-                light->SetLightType(LightType::Directional);
+                if (!std::dynamic_pointer_cast<DirectionalLight>(light))
+                {
+                    m_Entity->RemoveComponent<Light>();
+                    m_Entity->AddComponent<DirectionalLight>(m_Entity);
+                }
             }
+            if (ImGui::MenuItem("Point"))
+            {
+                if (!std::dynamic_pointer_cast<PointLight>(light))
+                {
+                    m_Entity->RemoveComponent<Light>();
+                    m_Entity->AddComponent<PointLight>(m_Entity);
+                }
+            }
+            if (ImGui::MenuItem("Spot"))
+            {
+                if (!std::dynamic_pointer_cast<SpotLight>(light))
+                {
+                    m_Entity->RemoveComponent<Light>();
+                    m_Entity->AddComponent<SpotLight>(m_Entity);
+                }
+            }
+
             ImGui::EndMenu();
+        }
+
+        if (auto dirLight = m_Entity->GetComponent<DirectionalLight>())
+        {
+            float* arr[3];
+            arr[0] = &dirLight->m_Direction.x;
+            arr[1] = &dirLight->m_Direction.y;
+            arr[2] = &dirLight->m_Direction.z;
+            ImGui::DragFloat3("Direction", *arr, 0.01f, -1.0f, 1.0f);
+        }
+        else if (auto pointLight = m_Entity->GetComponent<PointLight>())
+        {
+            ImGui::DragFloat("Linear", &pointLight->m_Linear, 0.001f, 0.0f, 1.0f);
+            ImGui::DragFloat("Quadratic", &pointLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
+        }
+        else if (auto spotLight = m_Entity->GetComponent<SpotLight>())
+        {
+            float* arr[3];
+            arr[0] = &spotLight->m_Direction.x;
+            arr[1] = &spotLight->m_Direction.y;
+            arr[2] = &spotLight->m_Direction.z;
+            ImGui::DragFloat3("Direction", *arr, 0.01f, -1.0f, 1.0f);
+
+            ImGui::DragFloat("Inner Cut Off", &spotLight->m_InnerCutOff, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Outer Cut Off", &spotLight->m_OuterCutOff, 0.01f, 0.0f, 1.0f);
         }
 
         float* arr[3];
@@ -119,13 +162,22 @@ void EntityDetailsPanel::Render()
 
     bool addComponent = false;
     bool meshRenderer = false;
-    bool light = false;
+    bool dirLight = false;
+    bool pointLight = false;
+    bool spotLight = false;
     if (ImGui::BeginPopupContextWindow())
     {
         if (ImGui::BeginMenu("Add Component"))
         {
             ImGui::MenuItem("Mesh Renderer", "", &meshRenderer);
-            ImGui::MenuItem("Light", "", &light);
+            if (ImGui::BeginMenu("Light"))
+            {
+                ImGui::MenuItem("Directional Light", "", &dirLight);
+                ImGui::MenuItem("Point Light", "", &pointLight);
+                ImGui::MenuItem("Spot Light", "", &spotLight);
+
+                ImGui::EndMenu();
+            }
 
             ImGui::EndMenu();
         }
@@ -135,8 +187,12 @@ void EntityDetailsPanel::Render()
 
     if (meshRenderer)
         m_Entity->AddComponent<Model>();
-    if (light)
-        m_Entity->AddComponent<Light>(m_Entity);
+    if (dirLight)
+        m_Entity->AddComponent<DirectionalLight>(m_Entity);
+    if (pointLight)
+        m_Entity->AddComponent<PointLight>(m_Entity);
+    if (spotLight)
+        m_Entity->AddComponent<SpotLight>(m_Entity);
 
     if (ImGui::Button("Close"))
         m_Editor->HideDetails();

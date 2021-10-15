@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include "Model.h"
-#include "Light.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 #include "MaterialManager.h"
 
 Scene::Scene()
@@ -35,12 +37,48 @@ void Scene::Update()
 
 void Scene::Draw()
 {
+	int pointLightsCount = 0;
+	int spotLightsCount = 0;
 	for (auto entity : m_Entities)
 	{
-		auto light = entity->GetComponent<Light>();
-		if (light)
+		if (entity->GetComponent<PointLight>())
 		{
-			light->Use(m_Camera->Position);
+			pointLightsCount++;
+		}
+		if (entity->GetComponent<SpotLight>())
+		{
+			spotLightsCount++;
+		}
+	}
+	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
+	for (auto shader : shaderLibrary->GetAllShaders())
+	{
+		shader->Use();
+		shader->SetInt("u_PointLightsCount", pointLightsCount);
+		shader->SetInt("u_SpotLightsCount", spotLightsCount);
+	}
+
+	int pointLightIndex = 0;
+	int spotLightIndex = 0;
+	for (auto entity : m_Entities)
+	{
+		if (auto dirLight = entity->GetComponent<DirectionalLight>())
+		{
+			dirLight->Use(m_Camera->Position);
+		}
+		if (auto pointLight = entity->GetComponent<PointLight>())
+		{
+			pointLight->SetIndex(pointLightIndex);
+			pointLight->Use(m_Camera->Position);
+
+			pointLightIndex++;
+		}
+		if (auto spotLight = entity->GetComponent<SpotLight>())
+		{
+			spotLight->SetIndex(spotLightIndex);
+			spotLight->Use(m_Camera->Position);
+
+			spotLightIndex++;
 		}
 
 		auto model = entity->GetComponent<Model>();

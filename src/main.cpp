@@ -195,18 +195,6 @@ int main(int, char**)
         glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Ref<Transform> sphereTransform = scene->FindEntity("default_sphere")->GetTransform();
-        //if (sphereTransform->Position.y > 5.0f)
-        //{
-        //    direction = -1;
-        //}
-        //else if (sphereTransform->Position.y < 1.0f)
-        //{
-        //    direction = 1;
-        //}
-
-        //sphereTransform->Position.y += direction * deltaTime;
-
         scene->GetCamera()->Update();
         scene->Update();
         scene->Draw();

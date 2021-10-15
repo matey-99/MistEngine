@@ -35,6 +35,18 @@ public:
 		return Ref<T>();
 	}
 
+	template<typename T>
+	void RemoveComponent()
+	{
+		for (auto component : m_Components)
+		{
+			if (std::dynamic_pointer_cast<T>(component))
+			{
+				m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), component), m_Components.end());
+			}
+		}
+	}
+
 	inline std::string GetName() const { return m_Name; }
 	inline Ref<Transform> GetTransform() const { return m_Transform; }
 };
