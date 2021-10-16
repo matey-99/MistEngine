@@ -13,9 +13,9 @@ class Transform : public Component, public std::enable_shared_from_this<Transfor
 public:
 	uint64_t ID;
 
-	glm::vec3 Position;
-	glm::vec3 Rotation;
-	glm::vec3 Scale;
+	glm::vec3 LocalPosition;
+	glm::vec3 LocalRotation;
+	glm::vec3 LocalScale;
 
 	glm::mat4 ModelMatrix = glm::mat4(1.0f);
 
@@ -31,6 +31,10 @@ public:
 
 	virtual void Begin() override;
 	virtual void Update() override;
+
+	glm::vec3 GetWorldPosition();
+	glm::vec3 GetWorldRotation();
+	glm::vec3 GetWorldScale();
 
 	void SetParent(Ref<Transform> parent);
 

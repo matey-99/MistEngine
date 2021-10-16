@@ -1,7 +1,7 @@
 #include "Transform.h"
 
 Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
-	: Position(position), Rotation(rotation), Scale(scale), Parent(parent)
+	: LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -11,7 +11,7 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Re
 }
 
 Transform::Transform(uint64_t id, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
-	: ID(id), Position(position), Rotation(rotation), Scale(scale), Parent(parent)
+	: ID(id), LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
 {
 }
 
@@ -25,6 +25,22 @@ void Transform::Update()
 		CalculateModelMatrix(Parent->ModelMatrix);
 	else
 		CalculateModelMatrix();
+}
+
+glm::vec3 Transform::GetWorldPosition()
+{
+	return LocalPosition + (Parent ? Parent->GetWorldPosition() : glm::vec3(0.0f));
+}
+
+glm::vec3 Transform::GetWorldRotation()
+{
+	return LocalRotation + (Parent ? Parent->GetWorldRotation() : glm::vec3(0.0f));
+}
+
+glm::vec3 Transform::GetWorldScale()
+{
+	return LocalScale + (Parent ? Parent->GetWorldScale() : glm::vec3(0.0f));
+
 }
 
 void Transform::SetParent(Ref<Transform> parent)
@@ -70,11 +86,11 @@ Ref<Transform> Transform::GetReference()
 
 glm::mat4 Transform::GetLocalModelMatrix()
 {
-	const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(LocalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(LocalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(LocalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
 
-	return glm::translate(glm::mat4(1.0f), Position) * rotationMatrix * glm::scale(glm::mat4(1.0f), Scale);
+	return glm::translate(glm::mat4(1.0f), LocalPosition) * rotationMatrix * glm::scale(glm::mat4(1.0f), LocalScale);
 }

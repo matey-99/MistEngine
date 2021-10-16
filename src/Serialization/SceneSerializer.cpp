@@ -76,9 +76,9 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				parentsIDs.push_back(-1);
 			}
 
-			e->GetTransform()->Position = transform["Position"].as<glm::vec3>();
-			e->GetTransform()->Rotation = transform["Rotation"].as<glm::vec3>();
-			e->GetTransform()->Scale = transform["Scale"].as<glm::vec3>();
+			e->GetTransform()->LocalPosition = transform["Position"].as<glm::vec3>();
+			e->GetTransform()->LocalRotation = transform["Rotation"].as<glm::vec3>();
+			e->GetTransform()->LocalScale = transform["Scale"].as<glm::vec3>();
 
 			if (auto model = entity["Model"])
 			{
@@ -172,9 +172,9 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	{
 		out << YAML::Key << "Parent" << YAML::Value << transform->Parent->ID;
 	}
-	out << YAML::Key << "Position" << YAML::Value << transform->Position;
-	out << YAML::Key << "Rotation" << YAML::Value << transform->Rotation;
-	out << YAML::Key << "Scale" << YAML::Value << transform->Scale;
+	out << YAML::Key << "Position" << YAML::Value << transform->LocalPosition;
+	out << YAML::Key << "Rotation" << YAML::Value << transform->LocalRotation;
+	out << YAML::Key << "Scale" << YAML::Value << transform->LocalScale;
 	out << YAML::EndMap;
 
 	if (auto model = entity->GetComponent<Model>())

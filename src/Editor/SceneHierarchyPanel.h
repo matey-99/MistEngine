@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "imgui.h"
 
 class Editor;
 
@@ -18,5 +19,6 @@ public:
 	void Render();
 
 private:
+	void TreeChildren(Ref<Entity> entity);
 	void AddEntityChildren(Ref<Entity> parent);
 };

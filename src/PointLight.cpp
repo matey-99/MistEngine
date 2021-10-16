@@ -40,7 +40,7 @@ void PointLight::Use(glm::vec3 cameraPosition)
 		shader->Use();
 
 		shader->SetVec3("u_ViewPosition", cameraPosition);
-		shader->SetVec3("u_PointLights[" + std::to_string(m_Index) + "].position", m_Entity->GetTransform()->Position);
+		shader->SetVec3("u_PointLights[" + std::to_string(m_Index) + "].position", m_Entity->GetTransform()->GetWorldPosition());
 
 		shader->SetVec3("u_PointLights[" + std::to_string(m_Index) + "].ambient", m_Ambient);
 		shader->SetVec3("u_PointLights[" + std::to_string(m_Index) + "].diffuse", m_Diffuse);

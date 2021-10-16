@@ -1,6 +1,5 @@
 #include "SceneHierarchyPanel.h"
 
-#include "imgui.h"
 #include "Editor.h"
 
 SceneHierarchyPanel::SceneHierarchyPanel(Ref<Editor> editor, Ref<Scene> scene) : m_Editor(editor), m_Scene(scene)
@@ -9,47 +8,59 @@ SceneHierarchyPanel::SceneHierarchyPanel(Ref<Editor> editor, Ref<Scene> scene) :
 	m_OrderedEntities = std::vector<Ref<Entity>>();
 }
 
-void SceneHierarchyPanel::Render()
+void SceneHierarchyPanel::TreeChildren(Ref<Entity> entity)
 {
-	m_OrderedEntities = std::vector<Ref<Entity>>();
-	for (auto entity : m_Scene->GetEntities())
+	auto children = entity->GetTransform()->Children;
+	for (int i = 0; i < children.size(); i++)
 	{
-		if (!entity->GetTransform()->Parent)
-		{
-			m_OrderedEntities.push_back(entity);
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
+		if (children[i]->Children.empty())
+			flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet;
+		else
+			flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-			AddEntityChildren(entity);
-		}
-	}
+		bool open = false;
+		auto e = m_Scene->FindEntity(children[i]->ID);
+		open = ImGui::TreeNodeEx(e->GetName().c_str(), flags);
 
-	ImGui::Begin("Scene Hierarchy");
-	for (auto entity : m_OrderedEntities)
-	{
-		for (unsigned int i = 0; i < entity->GetTransform()->FindDepth(entity->GetTransform()); i++)
-		{
-			ImGui::Text("|_");
-			ImGui::SameLine();
-		}
+		if (ImGui::IsItemClicked())
+			m_Editor->ShowDetails(e);
 
-		if (ImGui::Button(entity->GetName().c_str()))
+		if (ImGui::BeginDragDropTarget())
 		{
-			m_Editor->ShowDetails(entity);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("entity"))
+			{
+				Ref<Entity>* childEntity = static_cast<Ref<Entity>*>(payload->Data);
+				childEntity->get()->GetTransform()->SetParent(children[i]);
+			}
+			ImGui::EndDragDropTarget();
 		}
 
 		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::SetDragDropPayload("ENTITY", &entity, sizeof(Entity));
-			ImGui::Text(entity->GetName().c_str());
+			ImGui::SetDragDropPayload("entity", &e, sizeof(Entity));
+			ImGui::Text(e->GetName().c_str());
 			ImGui::EndDragDropSource();
 		}
-		if (ImGui::BeginDragDropTarget())
+
+		if (!(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen) && open)
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
-			{
-				Ref<Entity>* childEntity = static_cast<Ref<Entity>*>(payload->Data);
-				childEntity->get()->GetTransform()->SetParent(entity->GetTransform());
-			}
+			TreeChildren(e);
+			ImGui::TreePop();
 		}
+	}
+}
+
+void SceneHierarchyPanel::Render()
+{
+	ImGui::Begin("Scene Hierarchy");
+	if (ImGui::TreeNodeEx("Root", ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		if (ImGui::IsItemClicked())
+			m_Editor->ShowDetails(m_Scene->GetRoot());
+
+		TreeChildren(m_Scene->GetRoot());
+		ImGui::TreePop();
 	}
 
 	bool addEntity = false;
