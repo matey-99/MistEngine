@@ -64,8 +64,8 @@ set(GLM_INCLUDE_DIR "${GLM_DIR}")
 
 # imgui
 set(IMGUI_DIR "${THIRDPARTY_DIR}/imgui")
-execute_process(COMMAND git submodule update --init ${IMGUI_DIR}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#execute_process(COMMAND git submodule update --init ${IMGUI_DIR}
+                    #WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 					
 add_library("imgui" STATIC "${IMGUI_DIR}/imgui.cpp"
 					"${IMGUI_DIR}/imgui_demo.cpp"

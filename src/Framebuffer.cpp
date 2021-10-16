@@ -5,6 +5,39 @@
 Framebuffer::Framebuffer(unsigned int width, unsigned int height)
 	: m_Width(width), m_Height(height)
 {
+	Resize(width, height);
+}
+
+Framebuffer::~Framebuffer()
+{
+	glDeleteFramebuffers(1, &m_ID);
+	glDeleteTextures(1, &m_ColorAttachment);
+	glDeleteRenderbuffers(1, &m_DepthAttachment);
+}
+
+void Framebuffer::Bind()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+	glViewport(0, 0, m_Width, m_Height);
+}
+
+void Framebuffer::Unbind()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::Resize(unsigned int width, unsigned int height)
+{
+	m_Width = width;
+	m_Height = height;
+
+	if (m_ID)
+	{
+		glDeleteFramebuffers(1, &m_ID);
+		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteRenderbuffers(1, &m_DepthAttachment);
+	}
+
 	glGenFramebuffers(1, &m_ID);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 
@@ -23,20 +56,5 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height)
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer is incomplete!" << std::endl;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-Framebuffer::~Framebuffer()
-{
-	glDeleteFramebuffers(1, &m_ID);
-}
-
-void Framebuffer::Bind()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-}
-
-void Framebuffer::Unbind()
-{
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

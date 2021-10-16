@@ -11,6 +11,9 @@ private:
 	Ref<Camera> m_Camera;
 	Ref<Entity> m_Root;
 	std::vector<Ref<Entity>> m_Entities;
+
+	glm::vec4 m_BackgroundColor;
+
 public:
 	Scene();
 	Scene(Ref<Camera> camera);
@@ -30,6 +33,7 @@ public:
 	Ref<Transform> FindTransform(uint64_t id);
 
 	inline Ref<Camera> GetCamera() const { return m_Camera; }
-	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }
 	inline Ref<Entity> GetRoot() const { return m_Root; }
+	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }
+	inline glm::vec4* GetBackgroundColor() { return &m_BackgroundColor; }
 };

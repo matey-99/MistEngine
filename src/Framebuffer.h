@@ -5,9 +5,9 @@
 class Framebuffer
 {
 private:
-	uint32_t m_ID;
-	unsigned int m_ColorAttachment;
-	unsigned int m_DepthAttachment;
+	uint32_t m_ID = 0;
+	unsigned int m_ColorAttachment = 0;
+	unsigned int m_DepthAttachment = 0;
 	unsigned int m_Width;
 	unsigned int m_Height;
 
@@ -18,5 +18,8 @@ public:
 	void Bind();
 	void Unbind();
 
+	void Resize(unsigned int width, unsigned int height);
+
 	inline unsigned int GetColorAttachment() const { return m_ColorAttachment; }
+	inline unsigned int GetDepthAttachment() const { return m_DepthAttachment; }
 };

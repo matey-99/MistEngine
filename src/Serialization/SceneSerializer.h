@@ -7,9 +7,9 @@
 class SceneSerializer
 {
 public:
-	void Serialize(Ref<Scene> scene);
-	Ref<Scene> Deserialize(std::string path);
+	static void Serialize(Ref<Scene> scene);
+	static Ref<Scene> Deserialize(std::string path);
 
 private:
-	void SerializeEntity(YAML::Emitter& out, Ref<Entity> entity);
+	static void SerializeEntity(YAML::Emitter& out, Ref<Entity> entity);
 };

@@ -2,8 +2,10 @@
 #include <iostream>
 
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+#include "Editor/ImGuiRenderer.h"
 
 #include <glad/glad.h>  // Initialize with gladLoadGL()
 
@@ -114,16 +116,21 @@ int main(int, char**)
         return 1;
 
     // GL 4.3 + GLSL 430
-    const char* glsl_version = "#version 430";
+    const char* glsl_version = "#version 450";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Graphics Programming Project by Mateusz Michalak", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Graphics Programming Project by Mateusz Michalak", NULL, NULL);
     if (window == NULL)
         return 1;
+
+    glfwMaximizeWindow(window);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
@@ -135,55 +142,20 @@ int main(int, char**)
         return 1;
     }
 
-    // Setup Dear ImGui binding
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    if (!(scene = SceneSerializer::Deserialize("../../res/scenes/untitled.scene")))
+        scene = CreateRef<Scene>();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGuiRenderer imGuiRenderer = ImGuiRenderer();
+    imGuiRenderer.Setup(window, glsl_version, scene);
 
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    // Setup style
-    ImGui::StyleColorsDark();
-
-    ImVec4 backgroundColor = ImVec4(0.4f, 0.4f, 0.4f, 1.00f);
-
-    SceneSerializer serializer = SceneSerializer();
-    if (!(scene = serializer.Deserialize("../../res/scenes/untitled.scene")))
-        scene = CreateRef<Scene>();
+    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
     Ref<Framebuffer> framebuffer = CreateRef<Framebuffer>(1280, 720);
-
-    editor->Initialize(scene);
-
-    float quadVertices[] =
-    {
-        -1.0f,  1.0f,  1.0f, 0.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  0.0f, 1.0f,
-
-        -1.0f,  1.0f,  1.0f, 0.0f,
-         1.0f, -1.0f,  0.0f, 1.0f,
-         1.0f,  1.0f,  0.0f, 0.0f 
-    };
-
-    unsigned int vao, vbo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -196,46 +168,15 @@ int main(int, char**)
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Debug");
-        ImGui::Text("%.1f FPS (%.3f ms/frame)", ImGui::GetIO().Framerate, 1000 / ImGui::GetIO().Framerate);
-        ImGui::End();
-
-        ImGui::Begin("Scene");
-        ImGui::ColorEdit3("Background color", (float*)&backgroundColor);
-
-        if (ImGui::Button("Save scene"))
-            serializer.Serialize(scene);
-
-        ImGui::End();
-
-        ImGui::Begin("Camera");
-        ImGui::Text("Position: x = %f, y = %f, z = %f", scene->GetCamera()->Position.x, scene->GetCamera()->Position.y, scene->GetCamera()->Position.z);
-        ImGui::Text("Rotation: yaw = %f, pitch = %f", scene->GetCamera()->Yaw, scene->GetCamera()->Pitch);
-        ImGui::DragFloat("Movement speed", &scene->GetCamera()->MovementSpeed);
-        ImGui::End();
-
-        ImGui::Begin("Framebuffer Debug");
-        ImGui::Image((void*)(intptr_t)framebuffer->GetColorAttachment(), ImVec2(320.0f, 180.0f), ImVec2(0, 1), ImVec2(1, 0));
-        ImGui::End();
-
-        editor->Update();
-
-        // Rendering
-        ImGui::Render();
-
-        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        imGuiRenderer.Render(framebuffer);
 
         framebuffer->Bind();
 
         glEnable(GL_DEPTH_TEST);
-        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         scene->GetCamera()->Update();
@@ -244,15 +185,13 @@ int main(int, char**)
 
         framebuffer->Unbind();
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwMakeContextCurrent(window);
+
+        imGuiRenderer.EndFrame();
+
         glfwSwapBuffers(window);
     }
 
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    imGuiRenderer.CleanUp();
 
     glfwDestroyWindow(window);
     glfwTerminate();

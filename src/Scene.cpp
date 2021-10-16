@@ -11,6 +11,8 @@ Scene::Scene()
 
 	m_Root = Ref<Entity>();
 	m_Entities = std::vector<Ref<Entity>>();
+
+	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 }
 
 Scene::Scene(Ref<Camera> camera) : m_Camera(camera)
