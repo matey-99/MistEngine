@@ -165,13 +165,13 @@ int main(int, char**)
 
     float quadVertices[] =
     {
-        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f,  1.0f,  1.0f, 0.0f,
         -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f,  0.0f, 1.0f,
 
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f 
+        -1.0f,  1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f,  0.0f, 1.0f,
+         1.0f,  1.0f,  0.0f, 0.0f 
     };
 
     unsigned int vao, vbo;
@@ -188,19 +188,14 @@ int main(int, char**)
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
+        glfwPollEvents();
+
+        ProcessInput(window);
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        ProcessInput(window);
-
-        glfwPollEvents();
-
-        framebuffer->Bind();
-        glEnable(GL_DEPTH_TEST);
-
-        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -226,7 +221,7 @@ int main(int, char**)
         ImGui::End();
 
         ImGui::Begin("Framebuffer Debug");
-        ImGui::Image((void*)framebuffer->GetColorAttachment(), ImVec2(320.0f, 180.0f));
+        ImGui::Image((void*)(intptr_t)framebuffer->GetColorAttachment(), ImVec2(320.0f, 180.0f), ImVec2(0, 1), ImVec2(1, 0));
         ImGui::End();
 
         editor->Update();
@@ -234,21 +229,20 @@ int main(int, char**)
         // Rendering
         ImGui::Render();
 
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        framebuffer->Bind();
+
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         scene->GetCamera()->Update();
         scene->Update();
         scene->Draw();
 
         framebuffer->Unbind();
-        glDisable(GL_DEPTH_TEST);
-
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        auto viewport = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader("Viewport");
-        viewport->Use();
-        glBindVertexArray(vao);
-        glBindTexture(GL_TEXTURE_2D, framebuffer->GetColorAttachment());
-        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwMakeContextCurrent(window);
