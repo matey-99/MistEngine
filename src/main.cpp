@@ -25,7 +25,6 @@
 #include "Framebuffer.h"
 
 Ref<Scene> scene = Ref<Scene>();
-Ref<Editor> editor = CreateRef<Editor>();
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -42,14 +41,20 @@ void ProcessInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)// || glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         scene->GetCamera()->Move(CameraMovement::Forward, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)// || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         scene->GetCamera()->Move(CameraMovement::Backward, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)// || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         scene->GetCamera()->Move(CameraMovement::Left, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)// || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         scene->GetCamera()->Move(CameraMovement::Right, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        Editor::GetInstance()->SetGizmoOperation(ImGuizmo::OPERATION::TRANSLATE);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        Editor::GetInstance()->SetGizmoOperation(ImGuizmo::OPERATION::ROTATE);
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        Editor::GetInstance()->SetGizmoOperation(ImGuizmo::OPERATION::SCALE);
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
     {
@@ -126,11 +131,11 @@ int main(int, char**)
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Graphics Programming Project by Mateusz Michalak", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1440, 900, "Graphics Programming Project by Mateusz Michalak", NULL, NULL);
     if (window == NULL)
         return 1;
 
-    glfwMaximizeWindow(window);
+    //glfwMaximizeWindow(window);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 

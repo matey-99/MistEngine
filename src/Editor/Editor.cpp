@@ -1,5 +1,8 @@
 #include "Editor.h"
 
+Ref<Editor> Editor::s_Instance{};
+std::mutex Editor::s_Mutex;
+
 Editor::Editor()
 {
 	m_SceneHierarchyPanel = Ref<SceneHierarchyPanel>();
@@ -9,6 +12,20 @@ Editor::Editor()
 
 	m_DetailsPanel = false;
 	m_MaterialEditor = false;
+}
+
+
+Editor::~Editor()
+{
+}
+
+Ref<Editor> Editor::GetInstance()
+{
+	std::lock_guard<std::mutex> lock(s_Mutex);
+	if (s_Instance == nullptr)
+		s_Instance = CreateRef<Editor>();
+
+	return s_Instance;
 }
 
 void Editor::Initialize(Ref<Scene> scene)

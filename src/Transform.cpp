@@ -1,5 +1,8 @@
 #include "Transform.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+
 Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
 	: LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
 {
@@ -86,11 +89,7 @@ Ref<Transform> Transform::GetReference()
 
 glm::mat4 Transform::GetLocalModelMatrix()
 {
-	const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(LocalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(LocalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(LocalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 rotation = glm::toMat4(glm::quat(glm::radians(LocalRotation)));
 
-	const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-	return glm::translate(glm::mat4(1.0f), LocalPosition) * rotationMatrix * glm::scale(glm::mat4(1.0f), LocalScale);
+	return glm::translate(glm::mat4(1.0f), LocalPosition) * rotation * glm::scale(glm::mat4(1.0f), LocalScale);
 }

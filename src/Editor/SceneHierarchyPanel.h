@@ -12,13 +12,14 @@ private:
 	Ref<Scene> m_Scene;
 	Ref<Entity> m_SelectedEntity;
 
-	std::vector<Ref<Entity>> m_OrderedEntities;
-
 public:
 	SceneHierarchyPanel(Ref<Editor> editor, Ref<Scene> scene);
 	void Render();
 
+	void UnselectEntity();
+
+	inline Ref<Entity> GetSelectedEntity() const { return m_SelectedEntity; }
+
 private:
 	void TreeChildren(Ref<Entity> entity);
-	void AddEntityChildren(Ref<Entity> parent);
 };

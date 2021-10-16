@@ -29,7 +29,7 @@ void EntityDetailsPanel::Render()
     arr[0] = &m_Entity->GetTransform()->LocalRotation.x;
     arr[1] = &m_Entity->GetTransform()->LocalRotation.y;
     arr[2] = &m_Entity->GetTransform()->LocalRotation.z;
-    ImGui::DragFloat3("Rotation", *arr, 1.0f, -180.0f, 180.0f);
+    ImGui::DragFloat3("Rotation", *arr, 1.0f);
 
     arr[0] = &m_Entity->GetTransform()->LocalScale.x;
     arr[1] = &m_Entity->GetTransform()->LocalScale.y;
@@ -197,7 +197,10 @@ void EntityDetailsPanel::Render()
         m_Entity->AddComponent<SpotLight>(m_Entity);
 
     if (ImGui::Button("Close"))
+    {
         m_Editor->HideDetails();
+        m_Editor->GetSceneHierarchyPanel()->UnselectEntity();
+    }
 
 	ImGui::End();
 }
