@@ -65,7 +65,7 @@ void SceneHierarchyPanel::TreeChildren(Ref<Entity> entity)
 	{
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 		if (children[i]->Children.empty())
-			flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet;
+			flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 		else
 			flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 

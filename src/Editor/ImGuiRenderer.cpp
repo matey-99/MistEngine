@@ -103,7 +103,7 @@ void ImGuiRenderer::Render(Ref<Framebuffer> framebuffer)
         
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
         glm::mat4 view = glm::lookAt(camera->Position, camera->Position + camera->Front, camera->Up);
-        glm::mat4 model = transform->ModelMatrix;
+        glm::mat4 model = transform->GetLocalModelMatrix();
 
         ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
             m_Editor->GetGizmoOperation(), ImGuizmo::LOCAL, glm::value_ptr(model));

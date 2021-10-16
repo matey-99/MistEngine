@@ -22,7 +22,7 @@ private:
 
 	bool m_DetailsPanel;
 	bool m_MaterialEditor;
-	ImGuizmo::OPERATION m_Operation;
+	ImGuizmo::OPERATION m_Operation = ImGuizmo::OPERATION::TRANSLATE;
 
 public:
 	Editor();
