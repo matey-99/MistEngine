@@ -20,6 +20,7 @@
 #include "Model.h"
 #include "Light.h"
 #include "MaterialManager.h"
+#include "Framebuffer.h"
 
 Ref<Scene> scene = Ref<Scene>();
 Ref<Editor> editor = CreateRef<Editor>();
@@ -95,6 +96,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -139,6 +145,7 @@ int main(int, char**)
 
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // Setup style
     ImGui::StyleColorsDark();
@@ -152,14 +159,48 @@ int main(int, char**)
     scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
     scene->GetCamera()->Pitch = -30.0f;
 
-    glEnable(GL_DEPTH_TEST);
+    Ref<Framebuffer> framebuffer = CreateRef<Framebuffer>(1280, 720);
 
     editor->Initialize(scene);
+
+    float quadVertices[] =
+    {
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f 
+    };
+
+    unsigned int vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        ProcessInput(window);
+
         glfwPollEvents();
+
+        framebuffer->Bind();
+        glEnable(GL_DEPTH_TEST);
+
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -184,26 +225,30 @@ int main(int, char**)
         ImGui::DragFloat("Movement speed", &scene->GetCamera()->MovementSpeed);
         ImGui::End();
 
+        ImGui::Begin("Framebuffer Debug");
+        ImGui::Image((void*)framebuffer->GetColorAttachment(), ImVec2(320.0f, 180.0f));
+        ImGui::End();
+
         editor->Update();
 
         // Rendering
         ImGui::Render();
-        int display_w, display_h;
-        glfwMakeContextCurrent(window);
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         scene->GetCamera()->Update();
         scene->Update();
         scene->Draw();
 
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        framebuffer->Unbind();
+        glDisable(GL_DEPTH_TEST);
 
-        ProcessInput(window);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        auto viewport = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader("Viewport");
+        viewport->Use();
+        glBindVertexArray(vao);
+        glBindTexture(GL_TEXTURE_2D, framebuffer->GetColorAttachment());
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwMakeContextCurrent(window);

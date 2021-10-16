@@ -97,9 +97,6 @@ void Scene::Draw()
 			sh->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
 			model->Draw(sh);
 		}
-
-
-		
 	}
 }
 

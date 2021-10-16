@@ -12,6 +12,7 @@ private:
 
 public:
 	Shader(std::string name, const char* vertexPath, const char* fragmentPath);
+	~Shader();
 	void Use() const;
 
 	inline std::string GetName() const { return m_Name; }
