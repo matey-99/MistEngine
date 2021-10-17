@@ -13,7 +13,7 @@ PointLight::PointLight(Ref<Entity> entity) : Light(entity)
 PointLight::~PointLight()
 {
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 
@@ -35,7 +35,7 @@ void PointLight::Update()
 void PointLight::Use(glm::vec3 cameraPosition)
 {
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 

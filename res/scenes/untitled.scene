@@ -32,9 +32,9 @@ Entities:
     Transform:
       ID: 59267713
       Parent: 0
-      Position: [-3.95611358, 1.52949524, 0]
+      Position: [-4.36324787, 1.52949524, -0.13028726]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:
-      Mesh: ../../res/models/defaults/default_cube.obj
+      Mesh: ../../res/models/backpack/backpack.obj
       Material: ../../res/materials/Default_Texture.mat

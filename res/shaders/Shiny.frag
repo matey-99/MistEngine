@@ -5,8 +5,12 @@ layout (location = 0) out vec4 f_Color;
 layout (location = 0) in vec3 v_Position;
 layout (location = 1) in vec3 v_Normal;
 
-layout (location = 3) uniform vec3 u_CameraPosition;
-layout (location = 4) uniform samplerCube u_Skybox;
+layout (std140, binding = 1) uniform u_FragmentCamera
+{
+    vec3 u_CameraPosition;
+};
+
+layout (location = 1) uniform samplerCube u_Skybox;
 
 void main()
 {

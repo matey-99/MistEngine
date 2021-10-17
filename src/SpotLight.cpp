@@ -18,7 +18,7 @@ SpotLight::SpotLight(Ref<Entity> entity) : Light(entity)
 SpotLight::~SpotLight()
 {
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 
@@ -40,7 +40,7 @@ void SpotLight::Update()
 void SpotLight::Use(glm::vec3 cameraPosition)
 {
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 

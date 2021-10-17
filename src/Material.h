@@ -24,6 +24,8 @@ private:
 	glm::vec3 m_Specular;
 	float m_Shininess;
 
+	bool depthTest;
+
 public:
 	Material(std::string name = "Default", Ref<Shader> shader = Ref<Shader>(), MaterialType type = MaterialType::Default);
 	Material(uint64_t id, std::string name = "Default", Ref<Shader> shader = Ref<Shader>(), MaterialType type = MaterialType::Default);

@@ -52,16 +52,6 @@ void ImGuiRenderer::Render(Ref<Framebuffer> framebuffer)
     ImGui::Text("%.1f FPS (%.3f ms/frame)", ImGui::GetIO().Framerate, 1000 / ImGui::GetIO().Framerate);
     ImGui::End();
 
-    ImGui::Begin("Scene");
-
-    auto bg = m_Scene->GetBackgroundColor();
-    ImGui::ColorEdit3("Background color", (float*)&ImVec4((*bg).x, (*bg).y, (*bg).z, (*bg).w));
-
-    if (ImGui::Button("Save scene"))
-        SceneSerializer::Serialize(m_Scene);
-
-    ImGui::End();
-
     ImGui::Begin("Camera");
     ImGui::Text("Position: x = %f, y = %f, z = %f", m_Scene->GetCamera()->Position.x, m_Scene->GetCamera()->Position.y, m_Scene->GetCamera()->Position.z);
     ImGui::Text("Rotation: yaw = %f, pitch = %f", m_Scene->GetCamera()->Yaw, m_Scene->GetCamera()->Pitch);
@@ -101,9 +91,9 @@ void ImGuiRenderer::Render(Ref<Framebuffer> framebuffer)
 
         Ref<Transform> transform = selectedEntity->GetTransform();
         
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-        glm::mat4 view = glm::lookAt(camera->Position, camera->Position + camera->Front, camera->Up);
-        glm::mat4 model = transform->GetLocalModelMatrix();
+        glm::mat4 view = camera->GetViewMatrix();
+        glm::mat4 projection = camera->GetProjectionMatrix();
+        glm::mat4 model = transform->ModelMatrix;
 
         ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
             m_Editor->GetGizmoOperation(), ImGuizmo::LOCAL, glm::value_ptr(model));
@@ -113,10 +103,18 @@ void ImGuiRenderer::Render(Ref<Framebuffer> framebuffer)
             glm::vec3 position, rotation, scale;
             Math::DecomposeMatrix(model, position, rotation, scale);
 
-            glm::vec3 deltaRotation = rotation - glm::radians(transform->LocalRotation);
-            transform->LocalPosition = position;
-            transform->LocalRotation += glm::degrees(deltaRotation);
-            transform->LocalScale = scale;
+            switch (m_Editor->GetGizmoOperation())
+            {
+            case ImGuizmo::OPERATION::TRANSLATE:
+                transform->SetWorldPosition(position);
+                break;
+            case ImGuizmo::OPERATION::ROTATE:
+                transform->LocalRotation = glm::degrees(rotation);
+                break;
+            case ImGuizmo::OPERATION::SCALE:
+                transform->LocalScale = scale;
+                break;
+            }
         }
     }
 

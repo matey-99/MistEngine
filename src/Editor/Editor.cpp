@@ -9,6 +9,7 @@ Editor::Editor()
 	m_EntityDetailsPanel = Ref<EntityDetailsPanel>();
 	m_ContentBrowserPanel = Ref<ContentBrowserPanel>();
 	m_MaterialEditorPanel = Ref<MaterialEditorPanel>();
+	m_WorldSettingsPanel = Ref<WorldSettingsPanel>();
 
 	m_DetailsPanel = false;
 	m_MaterialEditor = false;
@@ -34,11 +35,13 @@ void Editor::Initialize(Ref<Scene> scene)
 	m_EntityDetailsPanel = CreateRef<EntityDetailsPanel>(GetReference());
 	m_ContentBrowserPanel = CreateRef<ContentBrowserPanel>(GetReference(), scene);
 	m_MaterialEditorPanel = CreateRef<MaterialEditorPanel>(GetReference());
+	m_WorldSettingsPanel = CreateRef<WorldSettingsPanel>(GetReference(), scene);
 }
 
 void Editor::Update()
 {
 	m_SceneHierarchyPanel->Render();
+	m_WorldSettingsPanel->Render();
 
 	if (m_DetailsPanel)
 	{

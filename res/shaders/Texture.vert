@@ -8,9 +8,12 @@ layout (location = 0) out vec3 v_Position;
 layout (location = 1) out vec3 v_Normal;
 layout (location = 2) out vec2 v_TexCoord;
 
-layout (location = 0) uniform mat4 u_Projection;
-layout (location = 1) uniform mat4 u_View;
-layout (location = 2) uniform mat4 u_Model;
+layout (std140, binding = 0) uniform u_Camera
+{
+    mat4 u_ViewProjection;
+};
+
+layout (location = 0) uniform mat4 u_Model;
 
 void main()
 {
@@ -18,5 +21,5 @@ void main()
     v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
     v_TexCoord = a_TexCoord;
 
-    gl_Position = u_Projection * u_View * vec4(v_Position, 1.0);
+    gl_Position = u_ViewProjection * vec4(v_Position, 1.0);
 }

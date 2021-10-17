@@ -10,7 +10,7 @@ DirectionalLight::DirectionalLight(Ref<Entity> entity) : Light(entity)
 DirectionalLight::~DirectionalLight()
 {
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 
@@ -31,7 +31,7 @@ void DirectionalLight::Update()
 void DirectionalLight::Use(glm::vec3 cameraPosition)
 {
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 

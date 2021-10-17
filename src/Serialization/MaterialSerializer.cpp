@@ -42,7 +42,7 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path, Ref<ShaderLibrar
 	glm::vec3 specular = data["Specular"].as<glm::vec3>();
 	float shininess = data["Shininess"].as<float>();
 
-	Ref<Material> material = CreateRef<Material>(id, name, shaderLibrary->GetShader(shader));
+	Ref<Material> material = CreateRef<Material>(id, name, shaderLibrary->GetMaterialShader(shader));
 	material->SetAmbient(ambient);
 	material->SetDiffuse(diffuse);
 	material->SetSpecular(specular);

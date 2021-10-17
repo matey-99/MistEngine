@@ -5,6 +5,7 @@
 #include "EntityDetailsPanel.h"
 #include "ContentBrowserPanel.h"
 #include "MaterialEditorPanel.h"
+#include "WorldSettingsPanel.h"
 
 #include <ImGuizmo.h>
 #include <mutex>
@@ -19,6 +20,7 @@ private:
 	Ref<EntityDetailsPanel> m_EntityDetailsPanel;
 	Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 	Ref<MaterialEditorPanel> m_MaterialEditorPanel;
+	Ref<WorldSettingsPanel> m_WorldSettingsPanel;
 
 	bool m_DetailsPanel;
 	bool m_MaterialEditor;

@@ -5,20 +5,33 @@
 #include "SpotLight.h"
 #include "MaterialManager.h"
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 Scene::Scene()
 {
+	m_Framebuffer = CreateRef<Framebuffer>(1280, 720);
+
 	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
 
 	m_Root = Ref<Entity>();
 	m_Entities = std::vector<Ref<Entity>>();
 
 	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
-}
 
-Scene::Scene(Ref<Camera> camera) : m_Camera(camera)
-{
-	m_Root = Ref<Entity>();
-	m_Entities = std::vector<Ref<Entity>>();
+	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 0);
+	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::vec3), 1);
+
+	std::vector<std::string> faces
+	{
+		"res/textures/skybox/right.jpg",
+		"res/textures/skybox/left.jpg",
+		"res/textures/skybox/top.jpg",
+		"res/textures/skybox/bottom.jpg",
+		"res/textures/skybox/front.jpg",
+		"res/textures/skybox/back.jpg"
+	};
+	m_Skybox = CreateRef<Skybox>(faces);
 }
 
 void Scene::Begin()
@@ -31,6 +44,8 @@ void Scene::Begin()
 
 void Scene::Update()
 {
+	m_Camera->Update();
+
 	for (auto entity : m_Entities)
 	{
 		entity->Update();
@@ -39,6 +54,9 @@ void Scene::Update()
 
 void Scene::Draw()
 {
+	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
+	m_CameraFragmentUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Camera->Position));
+
 	int pointLightsCount = 0;
 	int spotLightsCount = 0;
 	for (auto entity : m_Entities)
@@ -53,7 +71,7 @@ void Scene::Draw()
 		}
 	}
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllShaders())
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
 		shader->SetInt("u_PointLightsCount", pointLightsCount);
@@ -86,22 +104,20 @@ void Scene::Draw()
 		auto model = entity->GetComponent<Model>();
 		if (model)
 		{
-			model->GetMaterial()->Use();
-
-			Ref<Shader> sh = model->GetMaterial()->GetShader();
-
-			if (sh->GetName() == "Shiny")
-				sh->SetVec3("u_CameraPosition", m_Camera->Position);
-
-			glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-			sh->SetMat4("u_Projection", projection);
-
-			glm::mat4 view = glm::lookAt(m_Camera->Position, m_Camera->Position + m_Camera->Front, m_Camera->Up);
-			sh->SetMat4("u_View", view);
-
-			sh->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
-			model->Draw(sh);
+			auto material = model->GetMaterial();
+			material->Use();
+			material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
+			model->Draw();
 		}
+	}
+
+	if (m_IsSkybox)
+	{
+		glm::mat4 skyboxProjection = m_Camera->GetProjectionMatrix();
+		glm::mat4 skyboxView = glm::mat4(glm::mat3(m_Camera->GetViewMatrix()));
+		glm::mat4 skyboxViewProjection = skyboxProjection * skyboxView;
+
+		m_Skybox->Render(skyboxViewProjection);
 	}
 }
 

@@ -33,11 +33,11 @@ Model::Model(const char* path, std::string materialPath) : m_Path(path), m_Mater
 	m_Material = MaterialManager::GetInstance()->LoadMaterial(materialPath);
 }
 
-void Model::Draw(Ref<Shader> shader)
+void Model::Draw()
 {
 	for (auto mesh : m_Meshes)
 	{
-		mesh.Draw(shader);
+		mesh.Draw(m_Material->GetShader());
 	}
 }
 
@@ -64,7 +64,7 @@ void Model::LoadModel(std::string path)
 		std::cout << "Loading model failed: " << importer.GetErrorString() << std::endl;
 		return;
 	}
-
+	m_Path = path;
 	m_Directory = path.substr(0, path.find_last_of('/'));
 
 	ProcessNode(scene->mRootNode, scene);

@@ -53,15 +53,15 @@ layout (location = 0) in vec3 v_Position;
 layout (location = 1) in vec3 v_Normal;
 layout (location = 2) in vec2 v_TexCoord;
 
-layout (location = 3) uniform vec3 u_ViewPosition;
-layout (location = 4) uniform Material u_Material;
+layout (location = 1) uniform vec3 u_ViewPosition;
+layout (location = 2) uniform Material u_Material;
 
-layout (location = 8) uniform int u_PointLightsCount;
-layout (location = 9) uniform int u_SpotLightsCount;
+layout (location = 6) uniform int u_PointLightsCount;
+layout (location = 7) uniform int u_SpotLightsCount;
 
-layout (location = 10) uniform DirectionalLight u_DirectionalLight;
-layout (location = 14) uniform PointLight[MAX_POINT_LIGHTS] u_PointLights;
-layout (location = 14 + MAX_POINT_LIGHTS * 6) uniform SpotLight[MAX_SPOT_LIGHTS] u_SpotLights;
+layout (location = 8) uniform DirectionalLight u_DirectionalLight;
+layout (location = 12) uniform PointLight[MAX_POINT_LIGHTS] u_PointLights;
+layout (location = 12 + MAX_POINT_LIGHTS * 6) uniform SpotLight[MAX_SPOT_LIGHTS] u_SpotLights;
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection)
 {

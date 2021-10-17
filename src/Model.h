@@ -23,7 +23,7 @@ public:
 	Model();
 	Model(const char* path);
 	Model(const char* path, std::string materialPath);
-	void Draw(Ref<Shader> shader);
+	void Draw();
 
 	void LoadModel(std::string path);
 	void LoadMaterial(std::string path);

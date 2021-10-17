@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 enum class CameraMovement
 {
@@ -15,6 +15,11 @@ public:
 	glm::vec3 Front;
 	glm::vec3 Up;
 	glm::vec3 Right;
+
+	float FieldOfView;
+	glm::vec2 AspectRactio;
+	float Near;
+	float Far;
 
 	float Yaw;
 	float Pitch;
@@ -31,6 +36,10 @@ public:
 	void Move(float yoffset, float deltaTime);
 
 	void Rotate(float yaw, float pitch);
+
+	glm::mat4 GetViewMatrix();
+	glm::mat4 GetProjectionMatrix();
+	glm::mat4 GetViewProjectionMatrix();
 
 private:
 	glm::vec3 CalculateFrontVector();

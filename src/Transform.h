@@ -36,6 +36,10 @@ public:
 	glm::vec3 GetWorldRotation();
 	glm::vec3 GetWorldScale();
 
+	void SetWorldPosition(glm::vec3 position);
+	void SetWorldRotation(glm::vec3 rotation);
+	void SetWorldScale(glm::vec3 scale);
+
 	void SetParent(Ref<Transform> parent);
 
 	glm::mat4 GetLocalModelMatrix();

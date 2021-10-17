@@ -46,6 +46,21 @@ glm::vec3 Transform::GetWorldScale()
 
 }
 
+void Transform::SetWorldPosition(glm::vec3 position)
+{
+	LocalPosition = position - (Parent ? Parent->GetWorldPosition() : glm::vec3(0.0f));
+}
+
+void Transform::SetWorldRotation(glm::vec3 rotation)
+{
+	LocalRotation = rotation - (Parent ? Parent->GetWorldRotation() : glm::vec3(0.0f));
+}
+
+void Transform::SetWorldScale(glm::vec3 scale)
+{
+	LocalScale = (Parent ? scale / Parent->GetWorldScale() : scale);
+}
+
 void Transform::SetParent(Ref<Transform> parent)
 {
 	if (Parent)
@@ -90,6 +105,5 @@ Ref<Transform> Transform::GetReference()
 glm::mat4 Transform::GetLocalModelMatrix()
 {
 	glm::mat4 rotation = glm::toMat4(glm::quat(glm::radians(LocalRotation)));
-
 	return glm::translate(glm::mat4(1.0f), LocalPosition) * rotation * glm::scale(glm::mat4(1.0f), LocalScale);
 }
