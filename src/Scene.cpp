@@ -90,6 +90,9 @@ void Scene::Draw()
 
 			Ref<Shader> sh = model->GetMaterial()->GetShader();
 
+			if (sh->GetName() == "Shiny")
+				sh->SetVec3("u_CameraPosition", m_Camera->Position);
+
 			glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 			sh->SetMat4("u_Projection", projection);
 

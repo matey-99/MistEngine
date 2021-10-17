@@ -22,4 +22,6 @@ public:
 
 	inline unsigned int GetColorAttachment() const { return m_ColorAttachment; }
 	inline unsigned int GetDepthAttachment() const { return m_DepthAttachment; }
+	inline unsigned int GetWidth() const { return m_Width; }
+	inline unsigned int GetHeight() const { return m_Height; }
 };

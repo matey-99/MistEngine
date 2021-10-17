@@ -9,58 +9,18 @@ Entities:
   - Entity: default_cube
     Transform:
       ID: 543673375
-      Parent: 40901528
-      Position: [0, 1, 0]
+      Parent: 0
+      Position: [0, 0.791303575, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/Default.mat
-  - Entity: default_plane
-    Transform:
-      ID: 40901528
-      Parent: 0
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/defaults/default_plane.obj
-      Material: ../../res/materials/Default.mat
-  - Entity: backpack
-    Transform:
-      ID: 89110833
-      Parent: 0
-      Position: [-5.5, 2, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/backpack/backpack.obj
-      Material: ../../res/materials/Default_Texture.mat
-  - Entity: default_sphere
-    Transform:
-      ID: 150066843
-      Parent: 0
-      Position: [-5.26812935, 0.111271441, 4.9439435]
-      Rotation: [0, 0, 0]
-      Scale: [3.74897194, 0.00100000005, 4.32391834]
-    Model:
-      Mesh: ../../res/models/defaults/default_sphere.obj
-      Material: ../../res/materials/New material 0.mat
-  - Entity: default_cone
-    Transform:
-      ID: 670760048
-      Parent: 0
-      Position: [4, 1, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/defaults/default_cone.obj
-      Material: ../../res/materials/New material 0.mat
+      Material: ../../res/materials/Shiny.mat
   - Entity: New Entity
     Transform:
-      ID: 190932702
+      ID: 247577806
       Parent: 0
-      Position: [0, 1, 6.5]
+      Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Directional Light:
@@ -68,3 +28,13 @@ Entities:
       Ambient: [0.200000003, 0.200000003, 0.200000003]
       Diffuse: [0.5, 0.5, 0.5]
       Specular: [1, 1, 1]
+  - Entity: New Entity (1)
+    Transform:
+      ID: 59267713
+      Parent: 0
+      Position: [-3.95611358, 1.52949524, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Material: ../../res/materials/Default_Texture.mat
