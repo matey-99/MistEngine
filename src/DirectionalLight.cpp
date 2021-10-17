@@ -43,3 +43,19 @@ void DirectionalLight::Use(glm::vec3 cameraPosition)
 		shader->SetVec3("u_DirectionalLight.specular", m_Specular);
 	}
 }
+
+void DirectionalLight::SwitchOff()
+{
+	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
+	for (auto shader : shaderLibrary->GetAllMaterialShaders())
+	{
+		shader->Use();
+
+		shader->SetVec3("u_ViewPosition", glm::vec3(0.0f));
+		shader->SetVec3("u_DirectionalLight.direction", glm::vec3(0.0f));
+
+		shader->SetVec3("u_DirectionalLight.ambient", glm::vec3(0.0f));
+		shader->SetVec3("u_DirectionalLight.diffuse", glm::vec3(0.0f));
+		shader->SetVec3("u_DirectionalLight.specular", glm::vec3(0.0f));
+	}
+}

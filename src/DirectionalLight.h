@@ -15,6 +15,7 @@ public:
 	virtual void Update() override;
 
 	virtual void Use(glm::vec3 cameraPosition) override;
+	virtual void SwitchOff() override;
 
 	inline glm::vec3 GetDirection() const { return m_Direction; }
 

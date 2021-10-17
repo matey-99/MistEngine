@@ -24,6 +24,7 @@ public:
 	virtual void Update() override;
 
 	virtual void Use(glm::vec3 cameraPosition) = 0;
+	virtual void SwitchOff() = 0;
 
 	inline glm::vec3 GetAmbient() const { return m_Ambient; }
 	inline glm::vec3 GetDiffuse() const { return m_Diffuse; }

@@ -71,6 +71,15 @@ void SceneHierarchyPanel::TreeChildren(Ref<Entity> entity)
 
 		bool open = false;
 		auto e = m_Scene->FindEntity(children[i]->ID);
+
+		ImGui::PushID(i);
+		bool enable = e->IsEnable();
+		if (ImGui::Checkbox("", &enable))
+			e->SetEnable(enable);
+
+		ImGui::PopID();
+
+		ImGui::SameLine();
 		open = ImGui::TreeNodeEx(e->GetName().c_str(), flags);
 
 		if (ImGui::IsItemClicked())

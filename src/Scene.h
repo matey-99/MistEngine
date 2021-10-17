@@ -31,6 +31,8 @@ public:
 	void Update();
 	void Draw();
 
+	void RenderEntity(Ref<Entity> entity);
+
 	Ref<Entity> AddRoot();
 	Ref<Entity> AddEntity(std::string name);
 	Ref<Entity> AddEntity(std::string path, std::string name);
@@ -40,6 +42,19 @@ public:
 	Ref<Entity> FindEntity(std::string name);
 	Ref<Entity> FindEntity(uint64_t transformID);
 	Ref<Transform> FindTransform(uint64_t id);
+
+	template<typename T>
+	int GetComponentsCount()
+	{
+		int count = 0;
+		for (auto entity : m_Entities)
+		{
+			if (entity->GetComponent<T>())
+				count++;
+		}
+
+		return count;
+	}
 
 	inline Ref<Framebuffer> GetFramebuffer() const { return m_Framebuffer; }
 	inline Ref<Camera> GetCamera() const { return m_Camera; }

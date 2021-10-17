@@ -57,59 +57,15 @@ void Scene::Draw()
 	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
 	m_CameraFragmentUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Camera->Position));
 
-	int pointLightsCount = 0;
-	int spotLightsCount = 0;
-	for (auto entity : m_Entities)
-	{
-		if (entity->GetComponent<PointLight>())
-		{
-			pointLightsCount++;
-		}
-		if (entity->GetComponent<SpotLight>())
-		{
-			spotLightsCount++;
-		}
-	}
 	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
 	for (auto shader : shaderLibrary->GetAllMaterialShaders())
 	{
 		shader->Use();
-		shader->SetInt("u_PointLightsCount", pointLightsCount);
-		shader->SetInt("u_SpotLightsCount", spotLightsCount);
+		shader->SetInt("u_PointLightsCount", GetComponentsCount<PointLight>());
+		shader->SetInt("u_SpotLightsCount", GetComponentsCount<SpotLight>());
 	}
 
-	int pointLightIndex = 0;
-	int spotLightIndex = 0;
-	for (auto entity : m_Entities)
-	{
-		if (auto dirLight = entity->GetComponent<DirectionalLight>())
-		{
-			dirLight->Use(m_Camera->Position);
-		}
-		if (auto pointLight = entity->GetComponent<PointLight>())
-		{
-			pointLight->SetIndex(pointLightIndex);
-			pointLight->Use(m_Camera->Position);
-
-			pointLightIndex++;
-		}
-		if (auto spotLight = entity->GetComponent<SpotLight>())
-		{
-			spotLight->SetIndex(spotLightIndex);
-			spotLight->Use(m_Camera->Position);
-
-			spotLightIndex++;
-		}
-
-		auto model = entity->GetComponent<Model>();
-		if (model)
-		{
-			auto material = model->GetMaterial();
-			material->Use();
-			material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
-			model->Draw();
-		}
-	}
+	RenderEntity(GetRoot());
 
 	if (m_IsSkybox)
 	{
@@ -121,9 +77,50 @@ void Scene::Draw()
 	}
 }
 
+void Scene::RenderEntity(Ref<Entity> entity)
+{
+	if (!entity->IsEnable())
+	{
+		if (auto light = entity->GetComponent<Light>())
+			light->SwitchOff();
+
+		return;
+	}
+
+	if (auto dirLight = entity->GetComponent<DirectionalLight>())
+	{
+		dirLight->Use(m_Camera->Position);
+	}
+	if (auto pointLight = entity->GetComponent<PointLight>())
+	{
+		pointLight->Use(m_Camera->Position);
+	}
+	if (auto spotLight = entity->GetComponent<SpotLight>())
+	{
+		spotLight->Use(m_Camera->Position);
+	}
+
+	if (auto model = entity->GetComponent<Model>())
+	{
+		auto material = model->GetMaterial();
+		material->Use();
+		material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
+		model->Draw();
+	}
+
+	if (!entity->GetTransform()->Children.empty())
+	{
+		for (auto child : entity->GetTransform()->Children)
+		{
+			int pointIndex, spotIndex;
+			RenderEntity(child->GetEntity());
+		}
+	}
+}
+
 Ref<Entity> Scene::AddRoot()
 {
-	Ref<Entity> root = CreateRef<Entity>("Root");
+	Ref<Entity> root = Entity::Create(this, "Root");
 	m_Root = root;
 	m_Entities.push_back(root);
 
@@ -132,7 +129,7 @@ Ref<Entity> Scene::AddRoot()
 
 Ref<Entity> Scene::AddEntity(std::string name)
 {
-	Ref<Entity> entity = CreateRef<Entity>(name);
+	Ref<Entity> entity = Entity::Create(this, name);
 	entity->GetTransform()->SetParent(m_Root->GetTransform());
 	m_Entities.push_back(entity);
 
@@ -141,7 +138,7 @@ Ref<Entity> Scene::AddEntity(std::string name)
 
 Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 {
-	Ref<Entity> entity = CreateRef<Entity>(name);
+	Ref<Entity> entity = Entity::Create(this, name);
 	entity->GetTransform()->SetParent(m_Root->GetTransform());
 	entity->AddComponent<Model>(path.c_str());
 	m_Entities.push_back(entity);
@@ -151,7 +148,7 @@ Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 
 Ref<Entity> Scene::AddEntity(std::string path, std::string name, Ref<Transform> parent)
 {
-	Ref<Entity> entity = CreateRef<Entity>(name);
+	Ref<Entity> entity = Entity::Create(this, name);
 	entity->GetTransform()->SetParent(parent);
 	entity->AddComponent<Model>(path.c_str());
 	m_Entities.push_back(entity);

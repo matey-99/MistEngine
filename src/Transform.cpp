@@ -3,8 +3,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
-	: LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
+#include "Entity.h"
+
+Transform::Transform(Ref<Entity> entity, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
+	: m_Entity(entity), LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -13,8 +15,8 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Re
 	ID = distribution(gen);
 }
 
-Transform::Transform(uint64_t id, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
-	: ID(id), LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
+Transform::Transform(Ref<Entity> entity, uint64_t id, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
+	: m_Entity(entity), ID(id), LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)
 {
 }
 

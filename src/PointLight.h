@@ -18,6 +18,7 @@ public:
 	virtual void Update() override;
 
 	virtual void Use(glm::vec3 cameraPosition) override;
+	virtual void SwitchOff() override;
 
 	inline void SetIndex(int index) { m_Index = index; }
 
