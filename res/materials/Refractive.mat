@@ -1,0 +1,7 @@
+Material: Refractive
+ID: 663320520
+Shader: Refraction
+Ambient: [0.109999999, 0.649999976, 0.839999974]
+Diffuse: [0.560000002, 0.75999999, 0.680000007]
+Specular: [0.839999974, 0.819999993, 0.610000014]
+Shininess: 32

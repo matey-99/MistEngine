@@ -6,6 +6,7 @@ ShaderLibrary::ShaderLibrary()
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Texture", CreateRef<Shader>("Texture", "res/shaders/Texture.vert", "res/shaders/Texture.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Viewport", CreateRef<Shader>("Viewport", "res/shaders/Viewport.vert", "res/shaders/Viewport.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Shiny", CreateRef<Shader>("Shiny", "res/shaders/Shiny.vert", "res/shaders/Shiny.frag")));
+	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Refraction", CreateRef<Shader>("Refraction", "res/shaders/Refraction.vert", "res/shaders/Refraction.frag")));
 
 	m_SkyboxShaders.insert(std::make_pair<std::string, Ref<Shader>>("Skybox", CreateRef<Shader>("Skybox", "res/shaders/Skybox.vert", "res/shaders/Skybox.frag")));
 }
