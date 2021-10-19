@@ -36,6 +36,7 @@ void Editor::Initialize(Ref<Scene> scene)
 	m_EntityDetailsPanel = CreateRef<EntityDetailsPanel>(GetReference());
 	m_ContentBrowserPanel = CreateRef<ContentBrowserPanel>(GetReference(), scene);
 	m_MaterialEditorPanel = CreateRef<MaterialEditorPanel>(GetReference());
+	m_RendererSettingsPanel = CreateRef<RendererSettingsPanel>(GetReference(), Renderer::GetInstance());
 	m_WorldSettingsPanel = CreateRef<WorldSettingsPanel>(GetReference(), scene);
 	m_Viewport = CreateRef<Viewport>(GetReference(), scene);
 }
@@ -43,6 +44,7 @@ void Editor::Initialize(Ref<Scene> scene)
 void Editor::Render()
 {
 	m_SceneHierarchyPanel->Render();
+	m_RendererSettingsPanel->Render();
 	m_WorldSettingsPanel->Render();
 
 	if (m_DetailsPanel)
@@ -55,7 +57,11 @@ void Editor::Render()
 	}
 
 	m_ContentBrowserPanel->Render();
-	m_Viewport->Render(Renderer::GetInstance()->GetMainSceneFramebuffer());
+
+	if (Renderer::GetInstance()->IsPostProcessing())
+		m_Viewport->Render(Renderer::GetInstance()->GetPostProcessingFramebuffer());
+	else
+		m_Viewport->Render(Renderer::GetInstance()->GetMainSceneFramebuffer());
 }
 
 void Editor::ShowDetails(Ref<Entity> entity)

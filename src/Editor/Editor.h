@@ -6,6 +6,7 @@
 #include "EntityDetailsPanel.h"
 #include "ContentBrowserPanel.h"
 #include "MaterialEditorPanel.h"
+#include "RendererSettingsPanel.h"
 #include "WorldSettingsPanel.h"
 #include "Viewport.h"
 
@@ -22,6 +23,7 @@ private:
 	Ref<EntityDetailsPanel> m_EntityDetailsPanel;
 	Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 	Ref<MaterialEditorPanel> m_MaterialEditorPanel;
+	Ref<RendererSettingsPanel> m_RendererSettingsPanel;
 	Ref<WorldSettingsPanel> m_WorldSettingsPanel;
 	Ref<Viewport> m_Viewport;
 

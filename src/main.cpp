@@ -144,7 +144,10 @@ int main(int, char**)
         return 1;
     }
 
-    Renderer::GetInstance()->CreateMainSceneFramebuffer();
+    Renderer::GetInstance()->CreateFramebuffer(FramebufferType::MAIN_SCENE);
+    Renderer::GetInstance()->CreateFramebuffer(FramebufferType::POST_PROCESSING);
+
+    Renderer::GetInstance()->InitializePostProcessing();
 
     if (!(scene = SceneSerializer::Deserialize("../../res/scenes/untitled.scene")))
         scene = CreateRef<Scene>();
@@ -171,9 +174,13 @@ int main(int, char**)
 
         scene->Update();
 
+        Renderer::GetInstance()->RenderMainScene(scene);
+
+        if (Renderer::GetInstance()->IsPostProcessing())
+            Renderer::GetInstance()->AddPostProcessingEffects();
+
         imGuiRenderer.Render();
 
-        Renderer::GetInstance()->RenderMainScene(scene);
 
         imGuiRenderer.EndFrame();
         glfwSwapBuffers(window);
