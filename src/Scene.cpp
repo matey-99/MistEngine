@@ -10,8 +10,6 @@
 
 Scene::Scene()
 {
-	m_Framebuffer = CreateRef<Framebuffer>(1280, 720);
-
 	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
 
 	m_Root = Ref<Entity>();

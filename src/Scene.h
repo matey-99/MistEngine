@@ -11,8 +11,6 @@
 class Scene
 {
 private:
-	Ref<Framebuffer> m_Framebuffer;
-
 	Ref<Camera> m_Camera;
 	Ref<Entity> m_Root;
 	std::vector<Ref<Entity>> m_Entities;
@@ -56,7 +54,6 @@ public:
 		return count;
 	}
 
-	inline Ref<Framebuffer> GetFramebuffer() const { return m_Framebuffer; }
 	inline Ref<Camera> GetCamera() const { return m_Camera; }
 	inline Ref<Entity> GetRoot() const { return m_Root; }
 	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }

@@ -25,9 +25,11 @@ public:
 	ImGuiRenderer();
 
 	void Setup(GLFWwindow* window, const char* glsl_version, Ref<Scene> scene);
-	void Render(Ref<Framebuffer> framebuffer);
+	void Render();
 	void EndFrame();
 	void CleanUp();
 
 	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
+	friend class Editor;
 };

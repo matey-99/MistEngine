@@ -1,11 +1,13 @@
 #pragma once
 
 #include "typedefs.h"
+#include "Renderer.h"
 #include "SceneHierarchyPanel.h"
 #include "EntityDetailsPanel.h"
 #include "ContentBrowserPanel.h"
 #include "MaterialEditorPanel.h"
 #include "WorldSettingsPanel.h"
+#include "Viewport.h"
 
 #include <ImGuizmo.h>
 #include <mutex>
@@ -21,6 +23,7 @@ private:
 	Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 	Ref<MaterialEditorPanel> m_MaterialEditorPanel;
 	Ref<WorldSettingsPanel> m_WorldSettingsPanel;
+	Ref<Viewport> m_Viewport;
 
 	bool m_DetailsPanel;
 	bool m_MaterialEditor;
@@ -36,7 +39,7 @@ public:
 	static Ref<Editor> GetInstance();
 
 	void Initialize(Ref<Scene> scene);
-	void Update();
+	void Render();
 
 	void ShowDetails(Ref<Entity> entity);
 	void HideDetails();

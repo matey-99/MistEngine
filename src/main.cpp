@@ -144,6 +144,8 @@ int main(int, char**)
         return 1;
     }
 
+    Renderer::GetInstance()->CreateMainSceneFramebuffer();
+
     if (!(scene = SceneSerializer::Deserialize("../../res/scenes/untitled.scene")))
         scene = CreateRef<Scene>();
 
@@ -167,17 +169,11 @@ int main(int, char**)
         glfwPollEvents();
         ProcessInput(window);
 
-        imGuiRenderer.Render(scene->GetFramebuffer());
-
-        scene->GetFramebuffer()->Bind();
-
-        glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         scene->Update();
-        scene->Draw();
 
-        scene->GetFramebuffer()->Unbind();
+        imGuiRenderer.Render();
+
+        Renderer::GetInstance()->RenderMainScene(scene);
 
         imGuiRenderer.EndFrame();
         glfwSwapBuffers(window);
