@@ -1,4 +1,8 @@
 Scene: Untitled
+Camera:
+  Position: [5.13061047, 4.79756641, 9.41064835]
+  Yaw: 222.400238
+  Pitch: -17.2000027
 Entities:
   - Entity: Root
     Transform:
@@ -6,7 +10,7 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: default_cube
+  - Entity: Default_cube
     Transform:
       ID: 543673375
       Parent: 0
@@ -16,23 +20,20 @@ Entities:
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
       Material: ../../res/materials/Shiny.mat
-  - Entity: New Entity
+  - Entity: Light_source
     Transform:
       ID: 247577806
       Parent: 0
-      Position: [-4.35248423, 1.55551755, 2.16123867]
+      Position: [-2.56073523, 1.34873235, 5.13023949]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Spot Light:
-      Direction: [0, 0, -1]
-      Inner Cut Off: 0.910000026
-      Outer Cut Off: 0.819999993
+    Point Light:
       Linear: 0.0900000036
       Quadratic: 0.0320000015
       Ambient: [0.200000003, 0.200000003, 0.200000003]
       Diffuse: [0.5, 0.5, 0.5]
       Specular: [1, 1, 1]
-  - Entity: New Entity (1)
+  - Entity: Backpack
     Transform:
       ID: 59267713
       Parent: 0
@@ -42,3 +43,13 @@ Entities:
     Model:
       Mesh: ../../res/models/backpack/backpack.obj
       Material: ../../res/materials/Default_Texture.mat
+  - Entity: default_plane
+    Transform:
+      ID: 640400713
+      Parent: 0
+      Position: [0, -0.300612211, -0.0232121944]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_plane.obj
+      Material: ../../res/materials/Default.mat

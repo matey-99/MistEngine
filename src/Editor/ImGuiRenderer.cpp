@@ -106,7 +106,7 @@ void ImGuiRenderer::Render(Ref<Framebuffer> framebuffer)
             switch (m_Editor->GetGizmoOperation())
             {
             case ImGuizmo::OPERATION::TRANSLATE:
-                transform->SetWorldPosition(position);
+                transform->SetWorldPosition(position / scale);
                 break;
             case ImGuizmo::OPERATION::ROTATE:
                 transform->LocalRotation = glm::degrees(rotation);

@@ -16,7 +16,10 @@ void EntityDetailsPanel::Render()
 {
 	ImGui::Begin("Details");
 
-    ImGui::Text(m_Entity->GetName().c_str());
+    size_t maxSize = 128;
+    char* name = (char*)m_Entity->m_Name.c_str();
+    ImGui::InputText("##Name", name, maxSize);
+    m_Entity->m_Name = name;
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
     ImGui::Text("Transform");

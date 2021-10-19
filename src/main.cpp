@@ -153,9 +153,6 @@ int main(int, char**)
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    scene->GetCamera()->Position = glm::vec3(0.0f, 12.0f, 20.0f);
-    scene->GetCamera()->Pitch = -30.0f;
-
     glEnable(GL_DEPTH_TEST);
 
     lastFrame = glfwGetTime();

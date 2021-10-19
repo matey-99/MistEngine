@@ -65,5 +65,6 @@ public:
 
 	inline void RenderSkybox(bool render) { m_IsSkybox = true; }
 
+	friend class SceneSerializer;
 	friend class WorldSettingsPanel;
 };

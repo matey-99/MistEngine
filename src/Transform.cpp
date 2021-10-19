@@ -44,7 +44,7 @@ glm::vec3 Transform::GetWorldRotation()
 
 glm::vec3 Transform::GetWorldScale()
 {
-	return LocalScale + (Parent ? Parent->GetWorldScale() : glm::vec3(0.0f));
+	return LocalScale * (Parent ? Parent->GetWorldScale() : glm::vec3(1.0f));
 
 }
 

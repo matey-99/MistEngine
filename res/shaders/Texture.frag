@@ -81,8 +81,9 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
 {
     vec3 lightDirection = normalize(light.position - v_Position);
     float diff = max(dot(normal, lightDirection), 0.0);
-    vec3 reflectDirection = reflect(-lightDirection, normal);
-    float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Material.shininess);
+    //vec3 reflectDirection = reflect(-lightDirection, normal); 
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection); // CHANGED FROM PHONG LIGHTING MODEL TO BLINN-PHONG
+    float spec = pow(max(dot(viewDirection, halfwayDirection), 0.0), u_Material.shininess);
 
     float dist = length(light.position - v_Position);
     float attenuation = 1.0 / (1.0 + light.linear * dist + light.quadratic * (dist * dist));
@@ -98,8 +99,9 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDirection)
 {
     vec3 lightDirection = normalize(light.position - v_Position);
     float diff = max(dot(normal, lightDirection), 0.0);
-    vec3 reflectDirection = reflect(-lightDirection, normal);
-    float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Material.shininess);
+    //vec3 reflectDirection = reflect(-lightDirection, normal); 
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection); // CHANGED FROM PHONG LIGHTING MODEL TO BLINN-PHONG
+    float spec = pow(max(dot(viewDirection, halfwayDirection), 0.0), u_Material.shininess);
 
     float dist = length(light.position - v_Position);
     float attenuation = 1.0 / (1.0 + light.linear * dist + light.quadratic * (dist * dist));

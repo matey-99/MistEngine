@@ -12,6 +12,12 @@ void SceneSerializer::Serialize(Ref<Scene> scene)
 	YAML::Emitter out;
 	out << YAML::BeginMap;
 	out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+	out << YAML::Key << "Camera";
+	out << YAML::BeginMap;
+	out << YAML::Key << "Position" << YAML::Value << scene->m_Camera->Position;
+	out << YAML::Key << "Yaw" << YAML::Value << scene->m_Camera->Yaw;
+	out << YAML::Key << "Pitch" << YAML::Value << scene->m_Camera->Pitch;
+	out << YAML::EndMap;
 	out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 	for (auto entity : scene->GetEntities())
 	{
@@ -42,6 +48,19 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 	
 	std::string sceneName = data["Scene"].as<std::string>();
 	
+	if (YAML::Node camera = data["Camera"])
+	{
+		glm::vec3 cameraPosition = camera["Position"].as<glm::vec3>();
+		float cameraYaw = camera["Yaw"].as<float>();
+		float cameraPitch = camera["Pitch"].as<float>();
+
+		scene->m_Camera->Position = cameraPosition;
+		scene->m_Camera->Yaw = cameraYaw;
+		scene->m_Camera->Pitch = cameraPitch;
+	}
+
+
+
 	YAML::Node entities = data["Entities"];
 	if (entities)
 	{
