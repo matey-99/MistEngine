@@ -9,6 +9,7 @@ struct Material
 {
     sampler2D diffuse;
     sampler2D specular;
+    sampler2D normal;
     float shininess;
 };
 
@@ -52,16 +53,18 @@ struct SpotLight
 layout (location = 0) in vec3 v_Position;
 layout (location = 1) in vec3 v_Normal;
 layout (location = 2) in vec2 v_TexCoord;
+layout (location = 3) in vec3 v_TangentViewPosition;
+layout (location = 4) in vec3 v_TangentPosition;
+layout (location = 5) in mat3 v_TBN;
 
-layout (location = 1) uniform vec3 u_ViewPosition;
-layout (location = 2) uniform Material u_Material;
+layout (location = 3) uniform Material u_Material;
 
-layout (location = 6) uniform int u_PointLightsCount;
-layout (location = 7) uniform int u_SpotLightsCount;
+layout (location = 7) uniform int u_PointLightsCount;
+layout (location = 8) uniform int u_SpotLightsCount;
 
-layout (location = 8) uniform DirectionalLight u_DirectionalLight;
-layout (location = 12) uniform PointLight[MAX_POINT_LIGHTS] u_PointLights;
-layout (location = 12 + MAX_POINT_LIGHTS * 6) uniform SpotLight[MAX_SPOT_LIGHTS] u_SpotLights;
+layout (location = 9) uniform DirectionalLight u_DirectionalLight;
+layout (location = 13) uniform PointLight[MAX_POINT_LIGHTS] u_PointLights;
+layout (location = 13 + MAX_POINT_LIGHTS * 6) uniform SpotLight[MAX_SPOT_LIGHTS] u_SpotLights;
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection)
 {
@@ -79,13 +82,13 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
 {
-    vec3 lightDirection = normalize(light.position - v_Position);
+    vec3 tangentLightPosition = v_TBN * light.position;
+    vec3 lightDirection = normalize(tangentLightPosition - v_TangentPosition);
     float diff = max(dot(normal, lightDirection), 0.0);
-    //vec3 reflectDirection = reflect(-lightDirection, normal); 
-    vec3 halfwayDirection = normalize(lightDirection + viewDirection); // CHANGED FROM PHONG LIGHTING MODEL TO BLINN-PHONG
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
     float spec = pow(max(dot(viewDirection, halfwayDirection), 0.0), u_Material.shininess);
 
-    float dist = length(light.position - v_Position);
+    float dist = length(tangentLightPosition - v_TangentPosition);
     float attenuation = 1.0 / (1.0 + light.linear * dist + light.quadratic * (dist * dist));
 
     vec3 ambient = light.ambient * attenuation * vec3(texture(u_Material.diffuse, v_TexCoord));
@@ -97,13 +100,13 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDirection)
 
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDirection)
 {
-    vec3 lightDirection = normalize(light.position - v_Position);
+    vec3 tangentLightPosition = v_TBN * light.position;
+    vec3 lightDirection = normalize(tangentLightPosition - v_TangentPosition);
     float diff = max(dot(normal, lightDirection), 0.0);
-    //vec3 reflectDirection = reflect(-lightDirection, normal); 
-    vec3 halfwayDirection = normalize(lightDirection + viewDirection); // CHANGED FROM PHONG LIGHTING MODEL TO BLINN-PHONG
+    vec3 halfwayDirection = normalize(lightDirection + viewDirection);
     float spec = pow(max(dot(viewDirection, halfwayDirection), 0.0), u_Material.shininess);
 
-    float dist = length(light.position - v_Position);
+    float dist = length(tangentLightPosition - v_TangentPosition);
     float attenuation = 1.0 / (1.0 + light.linear * dist + light.quadratic * (dist * dist));
 
     float theta = dot(lightDirection, normalize(-light.direction));
@@ -119,8 +122,9 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDirection)
 
 void main()
 {    
-    vec3 normal = normalize(v_Normal);
-    vec3 viewDirection = normalize(u_ViewPosition - v_Position);
+    vec3 normal = texture(u_Material.normal, v_TexCoord).rgb;
+    normal = normalize(normal * 2.0 - 1.0);
+    vec3 viewDirection = normalize(v_TangentViewPosition - v_TangentPosition);
 
     vec3 result = CalculateDirectionalLight(u_DirectionalLight, normal, viewDirection);
 

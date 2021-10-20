@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [5.13061047, 4.79756641, 9.41064835]
-  Yaw: 222.400238
-  Pitch: -17.2000027
+  Position: [-2.9889009, 2.26979756, 3.49144864]
+  Yaw: 249.100037
+  Pitch: -13.8000031
 Entities:
   - Entity: Root
     Transform:
@@ -24,7 +24,7 @@ Entities:
     Transform:
       ID: 247577806
       Parent: 0
-      Position: [-2.56073523, 1.34873235, 5.13023949]
+      Position: [-4.89405346, 1.36192811, 0.972473741]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
