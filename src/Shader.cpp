@@ -60,6 +60,8 @@ Shader::~Shader()
 void Shader::Use() const
 {
     glUseProgram(id);
+
+
 }
 
 void Shader::SetBool(const std::string& name, bool value) const
@@ -111,4 +113,25 @@ unsigned int Shader::CompileShader(unsigned int type, const char* source)
     }
 
     return shader;
+}
+
+void Shader::PrintUniforms()
+{
+    GLint i, count;
+
+    GLint size;
+    GLenum type;
+
+    const GLsizei bufSize = 32;
+    GLchar name[bufSize];
+    GLsizei length;
+
+    glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &count);
+    printf("Active uniforms: %d\n", count);
+
+    for (int i = 0; i < count; i++)
+    {
+        glGetActiveUniform(id, (GLuint)i, bufSize, &length, &size, &type, name);
+        printf("Uniform #%d Type: %u Name: %s\n", i, type, name);
+    }
 }

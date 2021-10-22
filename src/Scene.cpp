@@ -18,7 +18,11 @@ Scene::Scene()
 	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 0);
-	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::vec3), 1);
+	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_VEC3_SIZE, 1);
+	m_LightsUniformBuffer = CreateRef<UniformBuffer>(GLSL_SCALAR_SIZE * 2
+		+ GLSL_DIRECTIONAL_LIGHT_SIZE
+		+ (GLSL_POINT_LIGHT_SIZE * MAX_POINT_LIGHTS)
+		+ (GLSL_SPOT_LIGHT_SIZE * MAX_SPOT_LIGHTS), 2);
 
 	std::vector<std::string> faces
 	{
@@ -55,13 +59,19 @@ void Scene::Draw()
 	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
 	m_CameraFragmentUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Camera->Position));
 
-	auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	for (auto shader : shaderLibrary->GetAllMaterialShaders())
-	{
-		shader->Use();
-		shader->SetInt("u_PointLightsCount", GetComponentsCount<PointLight>());
-		shader->SetInt("u_SpotLightsCount", GetComponentsCount<SpotLight>());
-	}
+	int pointLightsCount = GetComponentsCount<PointLight>();
+	int spotLightsCount = GetComponentsCount<SpotLight>();
+
+	m_LightsUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
+	m_LightsUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
+
+	//auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
+	//for (auto shader : shaderLibrary->GetAllMaterialShaders())
+	//{
+	//	shader->Use();
+	//	shader->SetInt("u_PointLightsCount", GetComponentsCount<PointLight>());
+	//	shader->SetInt("u_SpotLightsCount", GetComponentsCount<SpotLight>());
+	//}
 
 	RenderEntity(GetRoot());
 
@@ -87,15 +97,15 @@ void Scene::RenderEntity(Ref<Entity> entity)
 
 	if (auto dirLight = entity->GetComponent<DirectionalLight>())
 	{
-		dirLight->Use(m_Camera->Position);
+		dirLight->Use(m_LightsUniformBuffer);
 	}
 	if (auto pointLight = entity->GetComponent<PointLight>())
 	{
-		pointLight->Use(m_Camera->Position);
+		pointLight->Use(m_LightsUniformBuffer);
 	}
 	if (auto spotLight = entity->GetComponent<SpotLight>())
 	{
-		spotLight->Use(m_Camera->Position);
+		spotLight->Use(m_LightsUniformBuffer);
 	}
 
 	if (auto model = entity->GetComponent<Model>())

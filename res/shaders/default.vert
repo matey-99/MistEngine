@@ -6,7 +6,7 @@ layout (location = 1) in vec3 a_Normal;
 layout (location = 0) out vec3 v_Position;
 layout (location = 1) out vec3 v_Normal;
 
-layout (std140, binding = 0) uniform u_Camera
+layout (std140, binding = 0) uniform u_VertexCamera
 {
     mat4 u_ViewProjection;
 };

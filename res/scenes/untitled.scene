@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [4.14081144, 2.87040091, 9.30136204]
-  Yaw: 266.899811
-  Pitch: -7.99996662
+  Position: [11.9429216, 10.8060541, 24.4538231]
+  Yaw: 241.699799
+  Pitch: -21.4999638
 Entities:
   - Entity: Root
     Transform:
@@ -20,19 +20,6 @@ Entities:
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
       Material: ../../res/materials/Shiny.mat
-  - Entity: Light_source
-    Transform:
-      ID: 247577806
-      Parent: 0
-      Position: [-4.35688591, 1.88991892, 1.52078235]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Linear: 0.0900000036
-      Quadratic: 0.0320000015
-      Ambient: [0.200000003, 0.200000003, 0.200000003]
-      Diffuse: [0.5, 0.5, 0.5]
-      Specular: [1, 1, 1]
   - Entity: default_plane
     Transform:
       ID: 640400713
@@ -53,3 +40,44 @@ Entities:
     Model:
       Mesh: ../../res/models/chest/model.dae
       Material: ../../res/materials/Default.mat
+  - Entity: DirectionalLight
+    Transform:
+      ID: 965050546
+      Parent: 0
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Directional Light:
+      Direction: [0, -1, 0]
+      Ambient: [0.200000003, 0.200000003, 0.200000003]
+      Diffuse: [0.25, 0.25, 0.25]
+      Specular: [0.300000012, 0.300000012, 0.300000012]
+  - Entity: PointLight
+    Transform:
+      ID: 773448057
+      Parent: 0
+      Position: [10, 0, 10]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Linear: 0.0900000036
+      Quadratic: 0.0320000015
+      Ambient: [0.200000003, 0.200000003, 0.200000003]
+      Diffuse: [0.5, 0.5, 0.5]
+      Specular: [1, 1, 1]
+  - Entity: SpotLight
+    Transform:
+      ID: 98134052
+      Parent: 0
+      Position: [5, 5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Spot Light:
+      Direction: [0, 0, -1]
+      Inner Cut Off: 0.910000026
+      Outer Cut Off: 0.819999993
+      Linear: 0.0900000036
+      Quadratic: 0.0320000015
+      Ambient: [0.100000001, 0.100000001, 0.100000001]
+      Diffuse: [0.150000006, 0.150000006, 0.150000006]
+      Specular: [0.200000003, 0.200000003, 0.200000003]

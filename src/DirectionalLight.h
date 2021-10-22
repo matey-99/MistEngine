@@ -14,7 +14,7 @@ public:
 	virtual void Begin() override;
 	virtual void Update() override;
 
-	virtual void Use(glm::vec3 cameraPosition) override;
+	virtual void Use(Ref<UniformBuffer> uniformBuffer) override;
 	virtual void SwitchOff() override;
 
 	inline glm::vec3 GetDirection() const { return m_Direction; }

@@ -17,7 +17,7 @@ public:
 	virtual void Begin() override;
 	virtual void Update() override;
 
-	virtual void Use(glm::vec3 cameraPosition) override;
+	virtual void Use(Ref<UniformBuffer> uniformBuffer) override;
 	virtual void SwitchOff() override;
 
 	inline void SetIndex(int index) { m_Index = index; }

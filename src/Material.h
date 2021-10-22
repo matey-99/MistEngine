@@ -19,9 +19,7 @@ private:
 	Ref<Shader> m_Shader;
 	MaterialType m_Type;
 
-	glm::vec3 m_Ambient;
-	glm::vec3 m_Diffuse;
-	glm::vec3 m_Specular;
+	glm::vec3 m_Color;
 	float m_Shininess;
 
 	bool depthTest;
@@ -35,14 +33,10 @@ public:
 	inline uint64_t GetID() const { return m_ID; }
 	inline std::string GetName() const { return m_Name; }
 	inline Ref<Shader> GetShader() const { return m_Shader; }
-	inline glm::vec3 GetAmbient() const { return m_Ambient; }
-	inline glm::vec3 GetDiffuse() const { return m_Diffuse; }
-	inline glm::vec3 GetSpecular() const { return m_Specular; }
+	inline glm::vec3 GetColor() const { return m_Color; }
 	inline float GetShininess() const { return m_Shininess; }
 
-	inline void SetAmbient(glm::vec3 ambient) { m_Ambient = ambient; }
-	inline void SetDiffuse(glm::vec3 diffuse) { m_Diffuse = diffuse; }
-	inline void SetSpecular(glm::vec3 specular) { m_Specular = specular; }
+	inline void SetColor(glm::vec3 color) { m_Color = color; }
 	inline void SetShininess(float shininess) { m_Shininess = shininess; }
 
 	friend class MaterialEditorPanel;

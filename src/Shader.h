@@ -27,4 +27,5 @@ public:
 	
 private:
 	unsigned int CompileShader(unsigned int type, const char* source);
+	void PrintUniforms();
 };

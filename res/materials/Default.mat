@@ -1,7 +1,5 @@
 Material: Default
 ID: 0
 Shader: Default
-Ambient: [1, 1, 1]
-Diffuse: [1, 1, 1]
-Specular: [1, 1, 1]
+Color: [1, 1, 1]
 Shininess: 32
