@@ -4,8 +4,8 @@
 #include <string>
 
 #include "typedefs.h"
-#include "Shader.h"
-#include "Framebuffer.h"
+#include "Renderer/Shader.h"
+#include "Renderer/Framebuffer.h"
 
 class Skybox
 {

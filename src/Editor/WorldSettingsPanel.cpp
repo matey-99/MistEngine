@@ -1,6 +1,6 @@
 #include "WorldSettingsPanel.h"
 
-#include "Serialization/SceneSerializer.h"
+#include "Scene/SceneSerializer.h"
 
 WorldSettingsPanel::WorldSettingsPanel(Ref<Editor> editor, Ref<Scene> scene)
 	: m_Editor(editor), m_Scene(scene)

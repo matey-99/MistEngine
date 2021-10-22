@@ -1,6 +1,6 @@
 #include "ImGuiRenderer.h"
 
-#include "Serialization/SceneSerializer.h"
+#include "Scene/SceneSerializer.h"
 
 ImGuiRenderer::ImGuiRenderer()
 {

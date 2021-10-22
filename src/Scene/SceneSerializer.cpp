@@ -1,11 +1,11 @@
 #include "SceneSerializer.h"
 
-#include "yaml.h"
-#include "Model.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "MaterialManager.h"
+#include "yaml/yaml.h"
+#include "Scene/Component/Model.h"
+#include "Scene/Component/Light/DirectionalLight.h"
+#include "Scene/Component/Light/PointLight.h"
+#include "Scene/Component/Light/SpotLight.h"
+#include "Material/MaterialManager.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
 {

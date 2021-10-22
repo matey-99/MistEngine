@@ -4,7 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "MaterialManager.h"
+#include "Material/MaterialManager.h"
 
 Model::Model() : Model("../../res/models/defaults/default_cube.obj")
 {

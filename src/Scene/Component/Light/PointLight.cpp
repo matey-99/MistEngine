@@ -2,9 +2,9 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Scene.h"
-#include "UniformBuffer.h"
-#include "MaterialManager.h"
+#include "Scene/Scene.h"
+#include "Renderer/UniformBuffer.h"
+#include "Material/MaterialManager.h"
 
 PointLight::PointLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer) 
 	: Light(entity, uniformBuffer)

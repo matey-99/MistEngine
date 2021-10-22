@@ -8,8 +8,8 @@
 #include "ImGuizmo.h"
 
 #include "Editor.h"
-#include "Scene.h"
-#include "Framebuffer.h"
+#include "Scene/Scene.h"
+#include "Renderer/Framebuffer.h"
 
 class ImGuiRenderer
 {

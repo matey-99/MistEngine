@@ -3,11 +3,11 @@
 #include <string>
 #include <glm/glm.hpp>
 
-#include "Component.h"
-#include "Entity.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "UniformBuffer.h"
+#include "Scene/Component/Component.h"
+#include "Scene/Entity.h"
+#include "Renderer/Shader.h"
+#include "Scene/Camera.h"
+#include "Renderer/UniformBuffer.h"
 
 #define MAX_POINT_LIGHTS 32
 #define MAX_SPOT_LIGHTS 32

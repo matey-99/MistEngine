@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entity.h"
+#include "Scene/Entity.h"
 
 class Editor;
 

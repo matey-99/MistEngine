@@ -1,7 +1,7 @@
 #pragma once
 
 #include "typedefs.h"
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
 #include "SceneHierarchyPanel.h"
 #include "EntityDetailsPanel.h"
 #include "ContentBrowserPanel.h"

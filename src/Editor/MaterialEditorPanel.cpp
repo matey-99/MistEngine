@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 #include "Editor.h"
-#include "Serialization/MaterialSerializer.h"
+#include "Material/MaterialSerializer.h"
 
 MaterialEditorPanel::MaterialEditorPanel(Ref<Editor> editor) : m_Editor(editor)
 {

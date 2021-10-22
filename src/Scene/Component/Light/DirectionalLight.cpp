@@ -1,8 +1,8 @@
 #include "DirectionalLight.h"
 
-#include "UniformBuffer.h"
+#include "Renderer/UniformBuffer.h"
 #include "glm/gtc/type_ptr.hpp"
-#include "MaterialManager.h"
+#include "Material/MaterialManager.h"
 
 DirectionalLight::DirectionalLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
 	: Light(entity, uniformBuffer)

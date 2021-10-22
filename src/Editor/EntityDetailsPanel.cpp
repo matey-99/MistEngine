@@ -2,10 +2,10 @@
 
 #include "imgui.h"
 #include "Editor.h"
-#include "Model.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
+#include "Scene/Component/Model.h"
+#include "Scene/Component/Light/DirectionalLight.h"
+#include "Scene/Component/Light/PointLight.h"
+#include "Scene/Component/Light/SpotLight.h"
 
 EntityDetailsPanel::EntityDetailsPanel(Ref<Editor> editor) : m_Editor(editor)
 {

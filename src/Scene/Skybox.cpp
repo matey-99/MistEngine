@@ -4,7 +4,7 @@
 #include <stb_image.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "MaterialManager.h"
+#include "Material/MaterialManager.h"
 
 Skybox::Skybox()
 {

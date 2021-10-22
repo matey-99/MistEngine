@@ -1,9 +1,9 @@
 #include "Scene.h"
-#include "Model.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "MaterialManager.h"
+#include "Component/Model.h"
+#include "Component/Light/DirectionalLight.h"
+#include "Component/Light/PointLight.h"
+#include "Component/Light/SpotLight.h"
+#include "Material/MaterialManager.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>

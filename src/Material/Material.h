@@ -4,11 +4,26 @@
 #include <glm/glm.hpp>
 
 #include "typedefs.h"
-#include "Shader.h"
+#include "Renderer/Shader.h"
 
-enum class MaterialType
+template <typename T>
+struct MaterialParameter
 {
-	Default, Texture
+public:
+	std::string name;
+	T value;
+};
+
+struct MaterialFloatParameter : public MaterialParameter<float>
+{
+};
+
+struct MaterialVectorParameter : public MaterialParameter<glm::vec3>
+{
+};
+
+struct MaterialTextureParameter : public MaterialParameter<glm::vec3>
+{
 };
 
 class Material
@@ -17,16 +32,13 @@ private:
 	uint64_t m_ID;
 	std::string m_Name;
 	Ref<Shader> m_Shader;
-	MaterialType m_Type;
 
 	glm::vec3 m_Color;
 	float m_Shininess;
 
-	bool depthTest;
-
 public:
-	Material(std::string name = "Default", Ref<Shader> shader = Ref<Shader>(), MaterialType type = MaterialType::Default);
-	Material(uint64_t id, std::string name = "Default", Ref<Shader> shader = Ref<Shader>(), MaterialType type = MaterialType::Default);
+	Material(std::string name = "Default", Ref<Shader> shader = Ref<Shader>());
+	Material(uint64_t id, std::string name = "Default", Ref<Shader> shader = Ref<Shader>());
 
 	void Use();
 

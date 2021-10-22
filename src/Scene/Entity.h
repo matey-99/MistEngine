@@ -1,8 +1,8 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include "Component.h"
-#include "Transform.h"
+#include "Scene/Component/Component.h"
+#include "Scene/Component/Transform.h"
 
 class Scene;
 

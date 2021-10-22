@@ -17,14 +17,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "typedefs.h"
-#include "Scene.h"
-#include "Serialization/SceneSerializer.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneSerializer.h"
 #include "Editor/Editor.h"
-#include "Material.h"
-#include "Model.h"
-#include "Light.h"
-#include "MaterialManager.h"
-#include "Framebuffer.h"
+#include "Material/Material.h"
+#include "Scene/Component/Model.h"
+#include "Scene/Component/Light/Light.h"
+#include "Material/MaterialManager.h"
+#include "Renderer/Framebuffer.h"
 
 Ref<Scene> scene = Ref<Scene>();
 

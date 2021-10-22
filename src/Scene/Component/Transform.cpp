@@ -3,7 +3,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#include "Entity.h"
+#include "Scene/Entity.h"
 
 Transform::Transform(Ref<Entity> entity, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Ref<Transform> parent)
 	: m_Entity(entity), LocalPosition(position), LocalRotation(rotation), LocalScale(scale), Parent(parent)

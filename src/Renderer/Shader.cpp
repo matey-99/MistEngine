@@ -60,8 +60,6 @@ Shader::~Shader()
 void Shader::Use() const
 {
     glUseProgram(id);
-
-
 }
 
 void Shader::SetBool(const std::string& name, bool value) const

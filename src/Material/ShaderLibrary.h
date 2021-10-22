@@ -4,7 +4,7 @@
 #include <string>
 
 #include "typedefs.h"
-#include "Shader.h"
+#include "Renderer/Shader.h"
 
 class ShaderLibrary
 {

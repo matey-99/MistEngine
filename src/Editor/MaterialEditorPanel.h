@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Material.h"
+#include "Material/Material.h"
 
 class Editor;
 

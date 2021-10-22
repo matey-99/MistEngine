@@ -4,10 +4,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Mesh.h"
-#include "Material.h"
-#include "ShaderLibrary.h"
-#include "Component.h"
+#include "Renderer/Mesh.h"
+#include "Material/Material.h"
+#include "Material/ShaderLibrary.h"
+#include "Scene/Component/Component.h"
 
 class Model : public Component
 {

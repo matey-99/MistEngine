@@ -1,6 +1,6 @@
 #include "MaterialSerializer.h"
 
-#include "yaml.h"
+#include "yaml/yaml.h"
 
 
 void MaterialSerializer::Serialize(Ref<Material> material)

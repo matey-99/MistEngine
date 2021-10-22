@@ -2,10 +2,10 @@
 
 #include "imgui.h"
 #include "Editor.h"
-#include "Scene.h"
-#include "Material.h"
-#include "Serialization/MaterialSerializer.h"
-#include "MaterialManager.h"
+#include "Scene/Scene.h"
+#include "Material/Material.h"
+#include "Material/MaterialSerializer.h"
+#include "Material/MaterialManager.h"
 
 ContentBrowserPanel::ContentBrowserPanel(Ref<Editor> editor, Ref<Scene> scene) : m_Editor(editor), m_Scene(scene)
 {

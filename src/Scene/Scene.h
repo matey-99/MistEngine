@@ -3,9 +3,9 @@
 #include "typedefs.h"
 #include "Camera.h"
 #include "Entity.h"
-#include "ShaderLibrary.h"
-#include "UniformBuffer.h"
-#include "Framebuffer.h"
+#include "Material/ShaderLibrary.h"
+#include "Renderer/UniformBuffer.h"
+#include "Renderer/Framebuffer.h"
 #include "Skybox.h"
 
 class Scene
