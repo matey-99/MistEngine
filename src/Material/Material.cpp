@@ -9,22 +9,76 @@ Material::Material(std::string name, Ref<Shader> shader)
 	std::uniform_int_distribution distribution(1, 999999999);
 
 	m_ID = distribution(gen);
-
-	m_Color = glm::vec3(1.0f, 1.0f, 1.0f);
-	m_Shininess = 32.0f;
+	LoadParameters();
 }
 
 Material::Material(uint64_t id, std::string name, Ref<Shader> shader)
 	: m_ID(id), m_Name(name), m_Shader(shader)
 {
-
+	LoadParameters();
 }
 
 void Material::Use()
 {
 	m_Shader->Use();
 
-	m_Shader->SetVec3("u_Material.color", m_Color);
-	m_Shader->SetFloat("u_Material.shininess", m_Shininess);
+	for (auto& param : m_BoolParameters)
+	{
+		m_Shader->SetBool(param.first, param.second);
+	}
+	for (auto& param : m_FloatParameters)
+	{
+		m_Shader->SetFloat(param.first, param.second);
+	}
+	for (auto& param : m_Vec3Parameters)
+	{
+		m_Shader->SetVec3(param.first, param.second);
+	}
+
+	int index = 0;
+	for (auto& param : m_Texture2DParameters)
+	{
+		if (param.second)
+		{
+			param.second->Bind(index);
+			m_Shader->SetInt(param.first, index);
+			index++;
+		}
+	}
+}
+
+void Material::LoadParameters()
+{
+	m_BoolParameters.clear();
+	m_FloatParameters.clear();
+	m_Vec3Parameters.clear();
+	m_Texture2DParameters.clear();
+
+	std::vector<ShaderUniform> uniforms = m_Shader->GetUniforms();
+	for (auto uniform : uniforms)
+	{
+		std::string uniformName = uniform.name.substr(0, uniform.name.find_first_of('.'));
+		if (uniformName == "u_Material" || uniformName == "u_MaterialVS")
+		{
+			//std::string name = uniform.name.substr(uniform.name.find_first_of('.') + 1);
+
+			switch (uniform.type)
+			{
+			case ShaderUniformType::BOOL:
+				m_BoolParameters.insert({ uniform.name, false });
+				break;
+			case ShaderUniformType::INT:
+				break;
+			case ShaderUniformType::FLOAT:
+				m_FloatParameters.insert({ uniform.name, 0.0 });
+				break;
+			case ShaderUniformType::VEC3:
+				m_Vec3Parameters.insert({ uniform.name, glm::vec3(0.0f) });
+				break;
+			case ShaderUniformType::SAMPLER_2D:
+				m_Texture2DParameters.insert({ uniform.name, Ref<Texture>() });
+			}
+		}
+	}
 }
 

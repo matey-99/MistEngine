@@ -2,7 +2,8 @@
 
 #include <glad/glad.h>
 
-Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPath) : m_Name(name)
+Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPath) 
+    : m_Name(name), m_Uniforms(std::vector<ShaderUniform>())
 {
     std::string vertexSource, fragmentSource;
     std::ifstream filestream;
@@ -50,6 +51,8 @@ Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPat
     glDeleteShader(fragmentShader);
 
     id = shaderProgram;
+
+    LoadUniforms();
 }
 
 Shader::~Shader()
@@ -113,23 +116,54 @@ unsigned int Shader::CompileShader(unsigned int type, const char* source)
     return shader;
 }
 
-void Shader::PrintUniforms()
+void Shader::LoadUniforms()
 {
-    GLint i, count;
+    m_Uniforms.clear();
 
+    GLint uniformsCount;
+    glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &uniformsCount);
+
+    GLsizei length;
     GLint size;
     GLenum type;
-
-    const GLsizei bufSize = 32;
-    GLchar name[bufSize];
-    GLsizei length;
-
-    glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &count);
-    printf("Active uniforms: %d\n", count);
-
-    for (int i = 0; i < count; i++)
+    GLchar uniformName[32];
+    for (GLuint i = 0; i < uniformsCount; i++)
     {
-        glGetActiveUniform(id, (GLuint)i, bufSize, &length, &size, &type, name);
-        printf("Uniform #%d Type: %u Name: %s\n", i, type, name);
+        glGetActiveUniform(id, i, 32, &length, &size, &type, uniformName);
+
+        ShaderUniform uniform;
+        uniform.name = uniformName;
+        switch (type)
+        {
+        case GL_BOOL:
+            uniform.type = ShaderUniformType::BOOL;
+            break;
+        case GL_INT:
+            uniform.type = ShaderUniformType::INT;
+            break;
+        case GL_FLOAT:
+            uniform.type = ShaderUniformType::FLOAT;
+            break;
+        case GL_FLOAT_VEC3:
+            uniform.type = ShaderUniformType::VEC3;
+            break;
+        case GL_FLOAT_VEC4:
+            uniform.type = ShaderUniformType::VEC4;
+            break;
+        case GL_FLOAT_MAT3:
+            uniform.type = ShaderUniformType::MAT3;
+            break;
+        case GL_FLOAT_MAT4:
+            uniform.type = ShaderUniformType::MAT4;
+            break;
+        case GL_SAMPLER_2D:
+            uniform.type = ShaderUniformType::SAMPLER_2D;
+            break;
+        case GL_SAMPLER_CUBE:
+            uniform.type = ShaderUniformType::SAMPLER_CUBE;
+            break;
+        }
+
+        m_Uniforms.push_back(uniform);
     }
 }

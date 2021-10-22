@@ -228,7 +228,7 @@ void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions)
                     if (ext == "obj" || ext == "fbx" || ext == "3ds")
                     {
                         auto model = m_Entity->GetComponent<Model>();
-                        model->LoadModel(path);
+                        model->LoadMesh(path);
                     }
                     else if (ext == "mat")
                     {

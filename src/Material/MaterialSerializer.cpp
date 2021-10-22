@@ -10,8 +10,46 @@ void MaterialSerializer::Serialize(Ref<Material> material)
 	out << YAML::Key << "Material" << YAML::Value << material->GetName();
 	out << YAML::Key << "ID" << YAML::Value << material->GetID();
 	out << YAML::Key << "Shader" << YAML::Value << material->GetShader()->GetName();
-	out << YAML::Key << "Color" << YAML::Value << material->GetColor();
-	out << YAML::Key << "Shininess" << YAML::Value << material->GetShininess();
+
+	out << YAML::Key << "Bool Parameters" << YAML::Value << YAML::BeginSeq;
+	for (auto param : material->m_BoolParameters)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Name" << YAML::Value << param.first;
+		out << YAML::Key << "Value" << YAML::Value << param.second;
+		out << YAML::EndMap;
+	}
+	out << YAML::EndSeq;
+
+	out << YAML::Key << "Float Parameters" << YAML::Value << YAML::BeginSeq;
+	for (auto param : material->m_FloatParameters)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Name" << YAML::Value << param.first;
+		out << YAML::Key << "Value" << YAML::Value << param.second;
+		out << YAML::EndMap;
+	}
+	out << YAML::EndSeq;
+
+	out << YAML::Key << "Vec3 Parameters" << YAML::Value << YAML::BeginSeq;
+	for (auto param : material->m_Vec3Parameters)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Name" << YAML::Value << param.first;
+		out << YAML::Key << "Value" << YAML::Value << param.second;
+		out << YAML::EndMap;
+	}
+	out << YAML::EndSeq;
+
+	out << YAML::Key << "Texture Parameters" << YAML::Value << YAML::BeginSeq;
+	for (auto param : material->m_Texture2DParameters)
+	{
+		out << YAML::BeginMap;
+		out << YAML::Key << "Name" << YAML::Value << param.first;
+		out << YAML::Key << "Path" << YAML::Value << (param.second ? param.second->m_Path : "null");
+		out << YAML::EndMap;
+	}
+	out << YAML::EndSeq;
 	out << YAML::EndMap;
 
 	std::ofstream file("../../res/materials/" + material->GetName() + ".mat");
@@ -35,12 +73,62 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path, Ref<ShaderLibrar
 	std::string name = data["Material"].as<std::string>();
 	uint64_t id = data["ID"].as<uint64_t>();
 	std::string shader = data["Shader"].as<std::string>();
-	glm::vec3 color = data["Color"].as<glm::vec3>();
-	float shininess = data["Shininess"].as<float>();
 
 	Ref<Material> material = CreateRef<Material>(id, name, shaderLibrary->GetMaterialShader(shader));
-	material->SetColor(color);
-	material->SetShininess(shininess);
+
+	YAML::Node boolParameters = data["Bool Parameters"];
+	if (boolParameters)
+	{
+		for (auto param : boolParameters)
+		{
+			std::string name = param["Name"].as<std::string>();
+			bool value = param["Value"].as<bool>();
+
+			material->m_BoolParameters.find(name)->second = value;
+		}
+	}
+
+	YAML::Node floatParameters = data["Float Parameters"];
+	if (floatParameters)
+	{
+		for (auto param : floatParameters)
+		{
+			std::string name = param["Name"].as<std::string>();
+			float value = param["Value"].as<float>();
+
+			material->m_FloatParameters.find(name)->second = value;
+		}
+	}
+
+	YAML::Node vec3Parameters = data["Vec3 Parameters"];
+	if (vec3Parameters)
+	{
+		for (auto param : vec3Parameters)
+		{
+			std::string name = param["Name"].as<std::string>();
+			glm::vec3 value = param["Value"].as<glm::vec3>();
+
+			material->m_Vec3Parameters.find(name)->second = value;
+
+		}
+	}
+
+	YAML::Node textureParameters = data["Texture Parameters"];
+	if (textureParameters)
+	{
+		for (auto param : textureParameters)
+		{
+			std::string name = param["Name"].as<std::string>();
+			std::string path = param["Path"].as<std::string>();
+
+			if (path != "null")
+			{
+				auto texture = Texture::Create(path, "default");
+				material->m_Texture2DParameters.find(name)->second = texture;
+			}
+
+		}
+	}
 
 	return material;
 }

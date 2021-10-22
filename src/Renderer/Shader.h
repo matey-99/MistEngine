@@ -2,6 +2,18 @@
 
 #include <glm/glm.hpp>
 
+enum class ShaderUniformType
+{
+	BOOL, INT, FLOAT, VEC3, VEC4, MAT3, MAT4, SAMPLER_2D, SAMPLER_CUBE
+};
+
+struct ShaderUniform
+{
+public:
+	std::string name;
+	ShaderUniformType type;
+};
+
 class Shader
 {
 public:
@@ -9,6 +21,7 @@ public:
 
 private:
 	std::string m_Name;
+	std::vector<ShaderUniform> m_Uniforms;
 
 public:
 	Shader(std::string name, const char* vertexPath, const char* fragmentPath);
@@ -16,6 +29,7 @@ public:
 	void Use() const;
 
 	inline std::string GetName() const { return m_Name; }
+	inline std::vector<ShaderUniform> GetUniforms() const { return m_Uniforms; }
 
 	// uniforms
 	void SetBool(const std::string& name, bool value) const;
@@ -27,5 +41,5 @@ public:
 	
 private:
 	unsigned int CompileShader(unsigned int type, const char* source);
-	void PrintUniforms();
+	void LoadUniforms();
 };

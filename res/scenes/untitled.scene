@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [9.42134953, 8.30606842, 12.0840759]
-  Yaw: 231.199753
-  Pitch: -34.9999542
+  Position: [21.1537247, 10.4087, 6.02821159]
+  Yaw: 203.799606
+  Pitch: -27.7999611
 Entities:
   - Entity: Root
     Transform:
@@ -39,7 +39,7 @@ Entities:
       Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/chest/model.dae
-      Material: ../../res/materials/Default.mat
+      Material: ../../res/materials/M_Chest.mat
   - Entity: Light
     Transform:
       ID: 773448057
@@ -82,3 +82,13 @@ Entities:
       Ambient: [0.200000003, 0.200000003, 0.200000003]
       Diffuse: [0.5, 0.5, 0.5]
       Specular: [1, 1, 1]
+  - Entity: New Entity
+    Transform:
+      ID: 338687199
+      Parent: 0
+      Position: [0.426447928, 1.38793063, -6.16354465]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/backpack/backpack.obj
+      Material: ../../res/materials/New material 0.mat

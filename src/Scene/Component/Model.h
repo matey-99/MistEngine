@@ -21,11 +21,11 @@ private:
 
 public:
 	Model();
-	Model(const char* path);
-	Model(const char* path, std::string materialPath);
+	Model(std::string path);
+	Model(std::string path, std::string materialPath);
 	void Draw();
 
-	void LoadModel(std::string path);
+	void LoadMesh(std::string path);
 	void LoadMaterial(std::string path);
 
 	virtual void Begin() override;
@@ -41,6 +41,6 @@ private:
 	
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-	unsigned int TextureFromFile(const char* path, const std::string& directory);
+	//std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+	//unsigned int TextureFromFile(const char* path, const std::string& directory);
 };

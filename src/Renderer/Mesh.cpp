@@ -2,34 +2,34 @@
 
 #include <glad/glad.h>
 
-Mesh::Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices, std::vector<Texture> inTextures) 
-	: vertices(inVertices), indices(inIndices), textures(inTextures)
+Mesh::Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices) 
+	: vertices(inVertices), indices(inIndices)
 {
 	SetupMesh();
 }
 
-void Mesh::Draw(Ref<Shader> shader)
+void Mesh::Draw()
 {
-	unsigned int diffuseNr = 1;
-	unsigned int specularNr = 1;
-	unsigned int normalNr = 1;
-	for (unsigned int i = 0; i < textures.size(); i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
+	//unsigned int diffuseNr = 1;
+	//unsigned int specularNr = 1;
+	//unsigned int normalNr = 1;
+	//for (unsigned int i = 0; i < textures.size(); i++)
+	//{
+	//	glActiveTexture(GL_TEXTURE0 + i);
 
-		std::string number;
-		std::string name = textures[i].type;
-		if (name == "diffuse")
-			number = std::to_string(diffuseNr++);
-		else if (name == "specular")
-			number = std::to_string(specularNr++);
-		else if (name == "normal")
-			number = std::to_string(normalNr++);
+	//	std::string number;
+	//	std::string name = textures[i].type;
+	//	if (name == "diffuse")
+	//		number = std::to_string(diffuseNr++);
+	//	else if (name == "specular")
+	//		number = std::to_string(specularNr++);
+	//	else if (name == "normal")
+	//		number = std::to_string(normalNr++);
 
-		shader->SetInt(("u_Material." + name).c_str(), i);
-		glBindTexture(GL_TEXTURE_2D, textures[i].id);
-	}
-	glActiveTexture(GL_TEXTURE0);
+	//	shader->SetInt(("u_Material." + name).c_str(), i);
+	//	glBindTexture(GL_TEXTURE_2D, textures[i].m_ID);
+	//}
+	//glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
