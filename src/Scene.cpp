@@ -65,14 +65,6 @@ void Scene::Draw()
 	m_LightsUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
 	m_LightsUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
 
-	//auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	//for (auto shader : shaderLibrary->GetAllMaterialShaders())
-	//{
-	//	shader->Use();
-	//	shader->SetInt("u_PointLightsCount", GetComponentsCount<PointLight>());
-	//	shader->SetInt("u_SpotLightsCount", GetComponentsCount<SpotLight>());
-	//}
-
 	RenderEntity(GetRoot());
 
 	if (m_IsSkybox)
@@ -97,15 +89,15 @@ void Scene::RenderEntity(Ref<Entity> entity)
 
 	if (auto dirLight = entity->GetComponent<DirectionalLight>())
 	{
-		dirLight->Use(m_LightsUniformBuffer);
+		dirLight->Use();
 	}
 	if (auto pointLight = entity->GetComponent<PointLight>())
 	{
-		pointLight->Use(m_LightsUniformBuffer);
+		pointLight->Use();
 	}
 	if (auto spotLight = entity->GetComponent<SpotLight>())
 	{
-		spotLight->Use(m_LightsUniformBuffer);
+		spotLight->Use();
 	}
 
 	if (auto model = entity->GetComponent<Model>())

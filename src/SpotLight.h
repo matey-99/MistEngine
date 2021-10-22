@@ -16,13 +16,13 @@ private:
 	float m_OuterCutOff;
 
 public:
-	SpotLight(Ref<Entity> entity);
+	SpotLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
 	~SpotLight();
 
 	virtual void Begin() override;
 	virtual void Update() override;
 
-	virtual void Use(Ref<UniformBuffer> uniformBuffer) override;
+	virtual void Use() override;
 	virtual void SwitchOff() override;
 
 

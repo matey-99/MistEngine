@@ -7,9 +7,10 @@
 #include "Entity.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "UniformBuffer.h"
 
-#define MAX_POINT_LIGHTS 1
-#define MAX_SPOT_LIGHTS 1
+#define MAX_POINT_LIGHTS 32
+#define MAX_SPOT_LIGHTS 32
 
 #define GLSL_SCALAR_SIZE 4
 #define GLSL_VEC3_SIZE 16
@@ -28,18 +29,19 @@ class Light : public Component
 {
 protected:
 	Ref<Entity> m_Entity;
+	Ref<UniformBuffer> m_UniformBuffer;
 
 	glm::vec3 m_Ambient;
 	glm::vec3 m_Diffuse;
 	glm::vec3 m_Specular;
 
 public:
-	Light(Ref<Entity> entity);
+	Light(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
 
 	virtual void Begin() override;
 	virtual void Update() override;
 
-	virtual void Use(Ref<UniformBuffer> uniformBuffer) = 0;
+	virtual void Use() = 0;
 	virtual void SwitchOff() = 0;
 
 	inline glm::vec3 GetAmbient() const { return m_Ambient; }

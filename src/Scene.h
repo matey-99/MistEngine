@@ -65,4 +65,5 @@ public:
 
 	friend class SceneSerializer;
 	friend class WorldSettingsPanel;
+	friend class EntityDetailsPanel;
 };

@@ -11,13 +11,13 @@ private:
 	float m_Quadratic;
 
 public:
-	PointLight(Ref<Entity> entity);
+	PointLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
 	~PointLight();
 
 	virtual void Begin() override;
 	virtual void Update() override;
 
-	virtual void Use(Ref<UniformBuffer> uniformBuffer) override;
+	virtual void Use() override;
 	virtual void SwitchOff() override;
 
 	inline void SetIndex(int index) { m_Index = index; }

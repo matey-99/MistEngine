@@ -1,7 +1,7 @@
 #version 450 core
 
-#define MAX_POINT_LIGHTS 1
-#define MAX_SPOT_LIGHTS 1
+#define MAX_POINT_LIGHTS 32
+#define MAX_SPOT_LIGHTS 32
 
 layout (location = 0) out vec4 f_Color;
 

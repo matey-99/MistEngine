@@ -5,7 +5,8 @@
 #include "Scene.h"
 #include "MaterialManager.h"
 
-SpotLight::SpotLight(Ref<Entity> entity) : Light(entity)
+SpotLight::SpotLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
+	: Light(entity, uniformBuffer)
 {
 	m_Index = entity->GetScene()->GetComponentsCount<SpotLight>();
 
@@ -20,15 +21,7 @@ SpotLight::SpotLight(Ref<Entity> entity) : Light(entity)
 
 SpotLight::~SpotLight()
 {
-	//auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	//for (auto shader : shaderLibrary->GetAllMaterialShaders())
-	//{
-	//	shader->Use();
-
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].ambient", glm::vec3(0.0f));
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].diffuse", glm::vec3(0.0f));
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].specular", glm::vec3(0.0f));
-	//}
+	SwitchOff();
 }
 
 void SpotLight::Begin()
@@ -40,40 +33,30 @@ void SpotLight::Update()
 {
 }
 
-void SpotLight::Use(Ref<UniformBuffer> uniformBuffer)
+void SpotLight::Use()
 {
-	uint32_t offset = GLSL_SPOT_LIGHTS_OFFSET;
-	uniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Entity->GetTransform()->GetWorldPosition()));
-	uniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Direction));
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(m_Ambient));
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(glm::vec3), glm::value_ptr(m_Diffuse));
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 4), sizeof(glm::vec3), glm::value_ptr(m_Specular));
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) - GLSL_SCALAR_SIZE, sizeof(float), &m_Linear);
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5), sizeof(float), &m_Quadratic);
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) + GLSL_SCALAR_SIZE, sizeof(float), &m_InnerCutOff);
-	uniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) + (GLSL_SCALAR_SIZE * 2), sizeof(float), &m_OuterCutOff);
+	uint32_t offset = GLSL_SPOT_LIGHTS_OFFSET + (GLSL_SPOT_LIGHT_SIZE * m_Index);
+	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Entity->GetTransform()->GetWorldPosition()));
+	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Direction));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(m_Ambient));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(glm::vec3), glm::value_ptr(m_Diffuse));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 4), sizeof(glm::vec3), glm::value_ptr(m_Specular));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) - GLSL_SCALAR_SIZE, sizeof(float), &m_Linear);
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5), sizeof(float), &m_Quadratic);
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) + GLSL_SCALAR_SIZE, sizeof(float), &m_InnerCutOff);
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) + (GLSL_SCALAR_SIZE * 2), sizeof(float), &m_OuterCutOff);
 }
 
 void SpotLight::SwitchOff()
 {
-	//auto shaderLibrary = MaterialManager::GetInstance()->GetShaderLibrary();
-	//for (auto shader : shaderLibrary->GetAllMaterialShaders())
-	//{
-	//	shader->Use();
-
-	//	shader->SetVec3("u_ViewPosition", glm::vec3(0.0f));
-
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].position", m_Entity->GetTransform()->GetWorldPosition());
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].direction", glm::vec3(0.0f));
-
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].ambient", glm::vec3(0.0f));
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].diffuse", glm::vec3(0.0f));
-	//	shader->SetVec3("u_SpotLights[" + std::to_string(m_Index) + "].specular", glm::vec3(0.0f));
-
-	//	shader->SetFloat("u_SpotLights[" + std::to_string(m_Index) + "].linear", 0.0f);
-	//	shader->SetFloat("u_SpotLights[" + std::to_string(m_Index) + "].quadratic", 0.0f);
-
-	//	shader->SetFloat("u_SpotLights[" + std::to_string(m_Index) + "].innerCutOff", 0.0f);
-	//	shader->SetFloat("u_SpotLights[" + std::to_string(m_Index) + "].outerCutOff", 0.0f);
-	//}
+	uint32_t offset = GLSL_SPOT_LIGHTS_OFFSET + (GLSL_SPOT_LIGHT_SIZE * m_Index);
+	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 4), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) - GLSL_SCALAR_SIZE, sizeof(float), (void*)0);
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5), sizeof(float), (void*)0);
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) + GLSL_SCALAR_SIZE, sizeof(float), (void*)0);
+	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 5) + (GLSL_SCALAR_SIZE * 2), sizeof(float), (void*)0);
 }

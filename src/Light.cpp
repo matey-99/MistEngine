@@ -1,7 +1,7 @@
 #include "Light.h"
 
-Light::Light(Ref<Entity> entity)
-	: m_Entity(entity)
+Light::Light(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
+	: m_Entity(entity), m_UniformBuffer(uniformBuffer)
 {
 	m_Ambient = glm::vec3(0.2f);
 	m_Diffuse = glm::vec3(0.5f);
