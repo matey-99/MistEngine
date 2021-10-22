@@ -94,7 +94,7 @@ void ContentBrowserPanel::MakeAction(std::string path, std::string extension)
 		Ref<Material> material = MaterialManager::GetInstance()->LoadMaterial(path);
 		m_Editor->ShowMaterialEditor(material);
 	}
-	else if (extension == "obj" || extension == "fbx" || extension == "3ds")
+	else if (extension == "obj" || extension == "fbx" || extension == "3ds" || extension == "dae")
 	{
 		std::string entityName = path.substr(path.find_last_of('/') + 1, path.find_last_of('.') - (path.find_last_of('/') + 1));
 

@@ -51,7 +51,7 @@ void Viewport::Render(Ref<Framebuffer> framebuffer)
             switch (m_Editor->GetGizmoOperation())
             {
             case ImGuizmo::OPERATION::TRANSLATE:
-                transform->SetWorldPosition(position / scale);
+                transform->SetWorldPosition(position);
                 break;
             case ImGuizmo::OPERATION::ROTATE:
                 transform->LocalRotation = glm::degrees(rotation);

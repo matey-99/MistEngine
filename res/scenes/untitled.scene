@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-2.9889009, 2.26979756, 3.49144864]
-  Yaw: 249.100037
-  Pitch: -13.8000031
+  Position: [4.14081144, 2.87040091, 9.30136204]
+  Yaw: 266.899811
+  Pitch: -7.99996662
 Entities:
   - Entity: Root
     Transform:
@@ -24,7 +24,7 @@ Entities:
     Transform:
       ID: 247577806
       Parent: 0
-      Position: [-4.89405346, 1.36192811, 0.972473741]
+      Position: [-4.35688591, 1.88991892, 1.52078235]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
@@ -33,16 +33,6 @@ Entities:
       Ambient: [0.200000003, 0.200000003, 0.200000003]
       Diffuse: [0.5, 0.5, 0.5]
       Specular: [1, 1, 1]
-  - Entity: Backpack
-    Transform:
-      ID: 59267713
-      Parent: 0
-      Position: [-4.36324787, 1.52949524, -0.13028726]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/backpack/backpack.obj
-      Material: ../../res/materials/Default_Texture.mat
   - Entity: default_plane
     Transform:
       ID: 640400713
@@ -52,4 +42,14 @@ Entities:
       Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/defaults/default_plane.obj
+      Material: ../../res/materials/Default.mat
+  - Entity: chest
+    Transform:
+      ID: 161730788
+      Parent: 0
+      Position: [3.88566947, 0.179561734, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/chest/model.dae
       Material: ../../res/materials/Default.mat
