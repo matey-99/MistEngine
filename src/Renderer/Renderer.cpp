@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include "Framebuffer.h"
-#include "Scene.h"
-#include "MaterialManager.h"
+#include "Scene/Scene.h"
+#include "Material/MaterialManager.h"
 
 #include <glad/glad.h>
 
@@ -10,6 +10,8 @@ std::mutex Renderer::s_Mutex;
 
 Renderer::Renderer()
 {
+	m_Gamma = 2.2f;
+	m_Exposure = 1.0f;
 }
 
 Renderer::~Renderer()
@@ -87,6 +89,8 @@ void Renderer::AddPostProcessingEffects()
 	auto viewportShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetMaterialShader("Viewport");
 	viewportShader->Use();
 	viewportShader->SetInt("u_Screen", 0);
+	viewportShader->SetFloat("u_Gamma", m_Gamma);
+	viewportShader->SetFloat("u_Exposure", m_Exposure);
 
 	glBindVertexArray(m_PostProcessingVAO);
 	glDisable(GL_DEPTH_TEST);

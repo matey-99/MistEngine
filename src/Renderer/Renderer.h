@@ -24,6 +24,9 @@ private:
 
 	bool m_PostProcessing;
 
+	float m_Gamma;
+	float m_Exposure;
+
 public:
 	Renderer();
 	~Renderer();

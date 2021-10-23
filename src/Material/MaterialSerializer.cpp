@@ -66,7 +66,7 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path, Ref<ShaderLibrar
 	YAML::Node data = YAML::Load(ss.str());
 	if (!data["Material"])
 	{
-		std::cout << "Cannot load material!" << std::endl;
+		std::cout << "Cannot load material from path: " << path << std::endl;
 		return Ref<Material>();
 	}
 

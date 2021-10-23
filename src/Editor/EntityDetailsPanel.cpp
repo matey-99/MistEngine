@@ -147,21 +147,9 @@ void EntityDetailsPanel::Render()
             ImGui::DragFloat("Quadratic", &spotLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
         }
 
-        float* arr[3];
-        arr[0] = &light->m_Ambient.x;
-        arr[1] = &light->m_Ambient.y;
-        arr[2] = &light->m_Ambient.z;
-        ImGui::DragFloat3("Ambient", *arr, 0.01f, 0.0f, 1.0f);
-
-        arr[0] = &light->m_Diffuse.x;
-        arr[1] = &light->m_Diffuse.y;
-        arr[2] = &light->m_Diffuse.z;
-        ImGui::DragFloat3("Diffuse", *arr, 0.01f, 0.0f, 1.0f);
-
-        arr[0] = &light->m_Specular.x;
-        arr[1] = &light->m_Specular.y;
-        arr[2] = &light->m_Specular.z;
-        ImGui::DragFloat3("Specular", *arr, 0.01f, 0.0f, 1.0f);
+        ImGui::DragFloat3("Ambient", (float*)&light->m_Ambient, 0.1f, 0.0f, 100.0f);
+        ImGui::DragFloat3("Diffuse", (float*)&light->m_Diffuse, 0.01f, 0.0f, 100.0f);
+        ImGui::DragFloat3("Specular", (float*)&light->m_Specular, 0.01f, 0.0f, 100.0f);
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 

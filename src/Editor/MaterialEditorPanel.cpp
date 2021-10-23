@@ -14,10 +14,11 @@ void MaterialEditorPanel::Render()
 {
 	ImGui::Begin("Material Editor");
 
-    size_t maxSize = 128;
-    char* name = (char*)m_Material->m_Name.c_str();
-    ImGui::InputText("##Name", name, maxSize);
-    m_Material->m_Name = name;
+    //size_t maxSize = 128;
+    //char* name = (char*)m_Material->m_Name.c_str();
+    //ImGui::InputText("##Name", name, maxSize);
+    //m_Material->m_Name = name;
+    ImGui::Text(m_Material->m_Name.c_str());
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
     ImGui::Text("Shader");
