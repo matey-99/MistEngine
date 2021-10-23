@@ -23,6 +23,7 @@ Scene::Scene()
 		+ GLSL_DIRECTIONAL_LIGHT_SIZE
 		+ (GLSL_POINT_LIGHT_SIZE * MAX_POINT_LIGHTS)
 		+ (GLSL_SPOT_LIGHT_SIZE * MAX_SPOT_LIGHTS), 2);
+	m_PBRLightsUniformBuffer = CreateRef<UniformBuffer>(GLSL_VEC3_SIZE * 2, 3);
 
 	std::vector<std::string> faces
 	{
@@ -93,6 +94,7 @@ void Scene::RenderEntity(Ref<Entity> entity)
 	}
 	if (auto pointLight = entity->GetComponent<PointLight>())
 	{
+		pointLight->SetPBRUniformBuffer(m_PBRLightsUniformBuffer);
 		pointLight->Use();
 	}
 	if (auto spotLight = entity->GetComponent<SpotLight>())

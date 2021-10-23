@@ -8,6 +8,7 @@
 #include "MaterialEditorPanel.h"
 #include "RendererSettingsPanel.h"
 #include "WorldSettingsPanel.h"
+#include "DebugPanel.h"
 #include "Viewport.h"
 
 #include <ImGuizmo.h>
@@ -25,6 +26,7 @@ private:
 	Ref<MaterialEditorPanel> m_MaterialEditorPanel;
 	Ref<RendererSettingsPanel> m_RendererSettingsPanel;
 	Ref<WorldSettingsPanel> m_WorldSettingsPanel;
+	Ref<DebugPanel> m_DebugPanel;
 	Ref<Viewport> m_Viewport;
 
 	bool m_DetailsPanel;

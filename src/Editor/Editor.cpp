@@ -10,6 +10,7 @@ Editor::Editor()
 	m_ContentBrowserPanel = Ref<ContentBrowserPanel>();
 	m_MaterialEditorPanel = Ref<MaterialEditorPanel>();
 	m_WorldSettingsPanel = Ref<WorldSettingsPanel>();
+	m_DebugPanel = Ref<DebugPanel>();
 	m_Viewport = Ref<Viewport>();
 
 	m_DetailsPanel = false;
@@ -38,6 +39,7 @@ void Editor::Initialize(Ref<Scene> scene)
 	m_MaterialEditorPanel = CreateRef<MaterialEditorPanel>(GetReference());
 	m_RendererSettingsPanel = CreateRef<RendererSettingsPanel>(GetReference(), Renderer::GetInstance());
 	m_WorldSettingsPanel = CreateRef<WorldSettingsPanel>(GetReference(), scene);
+	m_DebugPanel = CreateRef<DebugPanel>(GetReference());
 	m_Viewport = CreateRef<Viewport>(GetReference(), scene);
 }
 
@@ -46,6 +48,7 @@ void Editor::Render()
 	m_SceneHierarchyPanel->Render();
 	m_RendererSettingsPanel->Render();
 	m_WorldSettingsPanel->Render();
+	m_DebugPanel->Render();
 
 	if (m_DetailsPanel)
 	{

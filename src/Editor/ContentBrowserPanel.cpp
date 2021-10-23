@@ -81,7 +81,7 @@ void ContentBrowserPanel::Render()
 			if (filename.substr(0, 12) == "New material")
 				count++;
 		}
-		MaterialManager::GetInstance()->CreateMaterial("New material " + std::to_string(count), "Default");
+		MaterialManager::GetInstance()->CreateMaterial("New material " + std::to_string(count), "Standard");
 	}
 
 	ImGui::End();

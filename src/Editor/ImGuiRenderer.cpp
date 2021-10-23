@@ -46,10 +46,6 @@ void ImGuiRenderer::Render()
 
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-    ImGui::Begin("Debug");
-    ImGui::Text("%.1f FPS (%.3f ms/frame)", ImGui::GetIO().Framerate, 1000 / ImGui::GetIO().Framerate);
-    ImGui::End();
-
     ImGui::Begin("Camera");
     ImGui::Text("Position: x = %f, y = %f, z = %f", m_Scene->GetCamera()->Position.x, m_Scene->GetCamera()->Position.y, m_Scene->GetCamera()->Position.z);
     ImGui::Text("Rotation: yaw = %f, pitch = %f", m_Scene->GetCamera()->Yaw, m_Scene->GetCamera()->Pitch);

@@ -1,6 +1,6 @@
 Material: Default
 ID: 0
-Shader: Default
+Shader: Standard
 Float Parameters:
   - Name: u_Material.shininess
     Value: 32.0

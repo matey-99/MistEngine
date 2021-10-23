@@ -45,7 +45,14 @@ void MaterialEditorPanel::Render()
     {
         std::string name = param.first.substr(param.first.find_first_of('.') + 1);
 
-        if (ImGui::BeginMenu(name.c_str()))
+        ImGui::Text(name.c_str());
+        ImGui::SameLine();
+        std::string filename = "";
+        if (param.second)
+        {
+            filename = param.second->m_Path.substr(param.second->m_Path.find_last_of('/'));
+        }
+        if (ImGui::BeginMenu(filename.c_str()))
         {
             DisplayTextures(param.first);
 

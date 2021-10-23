@@ -6,8 +6,6 @@
 
 Model::Model() : Model("../../res/models/defaults/default_cube.obj")
 {
-	m_MaterialPath = "../../res/materials/Default.mat";
-	m_Material = MaterialManager::GetInstance()->LoadMaterial(m_MaterialPath);
 }
 
 Model::Model(std::string path) : m_Path(path)
@@ -42,6 +40,17 @@ void Model::Begin()
 void Model::Update()
 {
 
+}
+
+uint32_t Model::GetRenderedVerticesCount()
+{
+	uint32_t vertices = 0;
+	for (auto mesh : m_Meshes)
+	{
+		vertices += mesh.vertices.size();
+	}
+
+	return vertices;
 }
 
 void Model::LoadMesh(std::string path)

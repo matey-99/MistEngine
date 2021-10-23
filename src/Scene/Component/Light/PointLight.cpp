@@ -38,6 +38,9 @@ void PointLight::Use()
 	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(glm::vec3), glm::value_ptr(m_Specular));
 	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 4) - GLSL_SCALAR_SIZE, sizeof(float), &m_Linear);
 	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 4), sizeof(float), &m_Quadratic);
+
+	m_PBRUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Entity->GetTransform()->GetWorldPosition()));
+	m_PBRUniformBuffer->SetUniform(GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Diffuse));
 }
 
 void PointLight::SwitchOff()

@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-9.35547066, 2.63317108, 0.968374848]
-  Yaw: 181.799393
-  Pitch: -4.10000706
+  Position: [36.1484909, 1.51831722, 7.44397783]
+  Yaw: 283.600647
+  Pitch: -12.199976
 Entities:
   - Entity: Root
     Transform:
@@ -34,30 +34,17 @@ Entities:
     Transform:
       ID: 161730788
       Parent: 0
-      Position: [3.88566947, 0.179561734, 0]
-      Rotation: [0, 0, 0]
+      Position: [37.3541832, 0.399359465, 3.61319566]
+      Rotation: [180, 0.152986467, 180]
       Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/chest/model.dae
       Material: ../../res/materials/M_Chest.mat
-  - Entity: Light
-    Transform:
-      ID: 773448057
-      Parent: 274633629
-      Position: [-48.7486115, 2.58751631, 0.31579566]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Linear: 0.0900000036
-      Quadratic: 0.0320000015
-      Ambient: [0.200000003, 0.200000003, 0.200000003]
-      Diffuse: [10, 5, 0.5]
-      Specular: [1, 1, 1]
-  - Entity: Light 2
+  - Entity: PBR_LIGHT
     Transform:
       ID: 143629947
-      Parent: 0
-      Position: [-1.86147463, 1.31950223, 6.61248159]
+      Parent: 398489750
+      Position: [-1.9873085, 1.04318404, 6.12405968]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
@@ -70,7 +57,7 @@ Entities:
     Transform:
       ID: 645239621
       Parent: 0
-      Position: [3.73311114, 0.96541959, 4.71626234]
+      Position: [-6.97646809, 0.96541959, 4.71626234]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Spot Light:
@@ -82,16 +69,6 @@ Entities:
       Ambient: [0.200000003, 0.200000003, 0.200000003]
       Diffuse: [0.5, 0.5, 0.5]
       Specular: [1, 1, 1]
-  - Entity: New Entity
-    Transform:
-      ID: 338687199
-      Parent: 0
-      Position: [0.426447928, 1.38793063, -6.16354465]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/backpack/backpack.obj
-      Material: ../../res/materials/New material 0.mat
   - Entity: Corridor1
     Transform:
       ID: 897670371
@@ -101,7 +78,7 @@ Entities:
       Scale: [28.0640106, 0.116791092, 2.69579053]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/New material 1.mat
+      Material: ../../res/materials/M_Corridor.mat
   - Entity: Corridor2
     Transform:
       ID: 844754304
@@ -111,7 +88,7 @@ Entities:
       Scale: [29.1386127, 2.73001981, 0.198891148]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/New material 1.mat
+      Material: ../../res/materials/M_Corridor.mat
   - Entity: Corridor3
     Transform:
       ID: 15831068
@@ -121,7 +98,7 @@ Entities:
       Scale: [28.2368355, 2.73000002, 0.199000001]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/New material 1.mat
+      Material: ../../res/materials/M_Corridor.mat
   - Entity: Corridor4
     Transform:
       ID: 661092656
@@ -131,7 +108,7 @@ Entities:
       Scale: [28.8625507, 0.116999999, 2.69599986]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/New material 1.mat
+      Material: ../../res/materials/M_Corridor.mat
   - Entity: Corridor5
     Transform:
       ID: 862877949
@@ -141,7 +118,7 @@ Entities:
       Scale: [0.596105456, 2.77451086, 3.67911053]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/New material 1.mat
+      Material: ../../res/materials/M_Corridor.mat
   - Entity: Corridor
     Transform:
       ID: 274633629
@@ -149,3 +126,53 @@ Entities:
       Position: [-12.9283972, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
+  - Entity: PBR_PLANE
+    Transform:
+      ID: 398489750
+      Parent: 0
+      Position: [38.0023003, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_plane.obj
+      Material: ../../res/materials/Default.mat
+  - Entity: Wall1
+    Transform:
+      ID: 313024293
+      Parent: 398489750
+      Position: [-11.0142727, 6.19619608, -0.228549719]
+      Rotation: [0, 0, 0]
+      Scale: [1, 7.18801403, 9.43332577]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Material: ../../res/materials/Default.mat
+  - Entity: Wall2
+    Transform:
+      ID: 670404804
+      Parent: 398489750
+      Position: [10.8066635, 6.51056194, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 7.1240859, 9.34315777]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Material: ../../res/materials/Default.mat
+  - Entity: Wall3
+    Transform:
+      ID: 609192980
+      Parent: 398489750
+      Position: [0, 5.08893776, -10.5966597]
+      Rotation: [0, 0, 0]
+      Scale: [11.5065355, 8.33282566, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Material: ../../res/materials/Default.mat
+  - Entity: Wall4
+    Transform:
+      ID: 295653845
+      Parent: 398489750
+      Position: [0, 13.8789272, 1.9322598]
+      Rotation: [-95.3020096, -0, 0]
+      Scale: [11.4818029, 6.20686245, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Material: ../../res/materials/Default.mat

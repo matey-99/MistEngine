@@ -1,19 +1,19 @@
-Material: New material 0
-ID: 332209274
-Shader: Default
+Material: New material 1
+ID: 595126159
+Shader: Standard
 Bool Parameters:
   - Name: u_MaterialVS.flipVerticallyUV
     Value: false
   - Name: u_Material.textures
-    Value: true
+    Value: false
 Float Parameters:
   - Name: u_Material.shininess
     Value: 32
 Vec3 Parameters:
   - Name: u_Material.color
-    Value: [1, 1, 1]
+    Value: [0.299019635, 0.253623486, 0.18029125]
 Texture Parameters:
   - Name: u_Material.diffuse
-    Path: ../../res/models/backpack/diffuse.jpg
+    Path: "null"
   - Name: u_Material.specular
-    Path: ../../res/models/backpack/specular.jpg
+    Path: "null"

@@ -34,6 +34,7 @@ public:
 	inline std::string GetPath() const { return m_Path; }
 	inline Ref<Material> GetMaterial() const { return m_Material; }
 	inline std::string GetMaterialPath() const { return m_MaterialPath; }
+	uint32_t GetRenderedVerticesCount();
 
 	inline void SetMaterial(Ref<Material> material) { m_Material = material; }
 

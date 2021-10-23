@@ -2,7 +2,8 @@
 
 ShaderLibrary::ShaderLibrary()
 {
-	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Default", CreateRef<Shader>("Default", "res/shaders/Default.vert", "res/shaders/Default.frag")));
+	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Standard", CreateRef<Shader>("Standard", "res/shaders/Standard.vert", "res/shaders/Standard.frag")));
+	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("StandardPBR", CreateRef<Shader>("StandardPBR", "res/shaders/StandardPBR.vert", "res/shaders/StandardPBR.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Texture", CreateRef<Shader>("Texture", "res/shaders/Texture.vert", "res/shaders/Texture.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Viewport", CreateRef<Shader>("Viewport", "res/shaders/Viewport.vert", "res/shaders/Viewport.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Shiny", CreateRef<Shader>("Shiny", "res/shaders/Shiny.vert", "res/shaders/Shiny.frag")));
