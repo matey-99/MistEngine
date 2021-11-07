@@ -21,6 +21,8 @@ void Viewport::Render(Ref<Framebuffer> framebuffer)
     {
         m_Size = glm::vec2(viewportPanelSize.x, viewportPanelSize.y);
         framebuffer->Resize((unsigned int)m_Size.x, (unsigned int)m_Size.y);
+
+        m_Scene->GetCamera()->AspectRactio = { m_Size.x, m_Size.y };
     }
     uint32_t viewportTexture = framebuffer->GetColorAttachment();
     ImGui::Image((void*)viewportTexture, ImVec2(m_Size.x, m_Size.y), ImVec2(0, 1), ImVec2(1, 0));
