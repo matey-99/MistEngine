@@ -3,9 +3,7 @@
 Light::Light(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
 	: m_Entity(entity), m_UniformBuffer(uniformBuffer)
 {
-	m_Ambient = glm::vec3(0.2f);
-	m_Diffuse = glm::vec3(0.5f);
-	m_Specular = glm::vec3(1.0f);
+	m_Color = glm::vec3(1.0f);
 }
 
 void Light::Begin()

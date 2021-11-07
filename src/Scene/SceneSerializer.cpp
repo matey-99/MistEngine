@@ -111,15 +111,11 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				e->AddComponent<DirectionalLight>(e, scene->m_LightsUniformBuffer);
 
 				glm::vec3 direction = dirLight["Direction"].as<glm::vec3>();
-				glm::vec3 ambient = dirLight["Ambient"].as<glm::vec3>();
-				glm::vec3 diffuse = dirLight["Diffuse"].as<glm::vec3>();
-				glm::vec3 specular = dirLight["Specular"].as<glm::vec3>();
+				glm::vec3 color = dirLight["Color"].as<glm::vec3>();
 
 				auto l = e->GetComponent<DirectionalLight>();
 				l->SetDirection(direction);
-				l->SetAmbient(ambient);
-				l->SetDiffuse(diffuse);
-				l->SetSpecular(specular);
+				l->SetColor(color);
 			}
 
 			if (auto pointLight = entity["Point Light"])
@@ -128,16 +124,12 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 				float linear = pointLight["Linear"].as<float>();
 				float quadratic = pointLight["Quadratic"].as<float>();
-				glm::vec3 ambient = pointLight["Ambient"].as<glm::vec3>();
-				glm::vec3 diffuse = pointLight["Diffuse"].as<glm::vec3>();
-				glm::vec3 specular = pointLight["Specular"].as<glm::vec3>();
+				glm::vec3 color = pointLight["Color"].as<glm::vec3>();
 
 				auto l = e->GetComponent<PointLight>();
 				l->SetLinear(linear);
 				l->SetQuadratic(quadratic);
-				l->SetAmbient(ambient);
-				l->SetDiffuse(diffuse);
-				l->SetSpecular(specular);
+				l->SetColor(color);
 			}
 
 			if (auto spotLight = entity["Spot Light"])
@@ -149,9 +141,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				float outerCutOff = spotLight["Outer Cut Off"].as<float>();
 				float linear = spotLight["Linear"].as<float>();
 				float quadratic = spotLight["Quadratic"].as<float>();
-				glm::vec3 ambient = spotLight["Ambient"].as<glm::vec3>();
-				glm::vec3 diffuse = spotLight["Diffuse"].as<glm::vec3>();
-				glm::vec3 specular = spotLight["Specular"].as<glm::vec3>();
+				glm::vec3 color = spotLight["Color"].as<glm::vec3>();
 
 				auto l = e->GetComponent<SpotLight>();
 				l->SetDirection(direction);
@@ -159,9 +149,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				l->SetOuterCutOff(outerCutOff);
 				l->SetLinear(linear);
 				l->SetQuadratic(quadratic);
-				l->SetAmbient(ambient);
-				l->SetDiffuse(diffuse);
-				l->SetSpecular(specular);
+				l->SetColor(color);
 			}
 		}
 
@@ -209,9 +197,7 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Directional Light";
 		out << YAML::BeginMap;
 		out << YAML::Key << "Direction" << YAML::Value << dirLight->GetDirection();
-		out << YAML::Key << "Ambient" << YAML::Value << dirLight->GetAmbient();
-		out << YAML::Key << "Diffuse" << YAML::Value << dirLight->GetDiffuse();
-		out << YAML::Key << "Specular" << YAML::Value << dirLight->GetSpecular();
+		out << YAML::Key << "Color" << YAML::Value << dirLight->GetColor();
 		out << YAML::EndMap;
 	}
 	if (auto pointLight = entity->GetComponent<PointLight>())
@@ -220,9 +206,7 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::BeginMap;
 		out << YAML::Key << "Linear" << YAML::Value << pointLight->GetLinear();
 		out << YAML::Key << "Quadratic" << YAML::Value << pointLight->GetQuadratic();
-		out << YAML::Key << "Ambient" << YAML::Value << pointLight->GetAmbient();
-		out << YAML::Key << "Diffuse" << YAML::Value << pointLight->GetDiffuse();
-		out << YAML::Key << "Specular" << YAML::Value << pointLight->GetSpecular();
+		out << YAML::Key << "Color" << YAML::Value << pointLight->GetColor();
 		out << YAML::EndMap;
 	}
 	if (auto spotLight = entity->GetComponent<SpotLight>())
@@ -234,9 +218,7 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Outer Cut Off" << YAML::Value << spotLight->GetOuterCutOff();
 		out << YAML::Key << "Linear" << YAML::Value << spotLight->GetLinear();
 		out << YAML::Key << "Quadratic" << YAML::Value << spotLight->GetQuadratic();
-		out << YAML::Key << "Ambient" << YAML::Value << spotLight->GetAmbient();
-		out << YAML::Key << "Diffuse" << YAML::Value << spotLight->GetDiffuse();
-		out << YAML::Key << "Specular" << YAML::Value << spotLight->GetSpecular();
+		out << YAML::Key << "Color" << YAML::Value << spotLight->GetColor();
 		out << YAML::EndMap;
 	}
 

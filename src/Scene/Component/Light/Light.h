@@ -14,9 +14,9 @@
 
 #define GLSL_SCALAR_SIZE 4
 #define GLSL_VEC3_SIZE 16
-#define GLSL_DIRECTIONAL_LIGHT_SIZE 64
-#define GLSL_POINT_LIGHT_SIZE 80
-#define GLSL_SPOT_LIGHT_SIZE 96
+#define GLSL_DIRECTIONAL_LIGHT_SIZE 32
+#define GLSL_POINT_LIGHT_SIZE 32
+#define GLSL_SPOT_LIGHT_SIZE 64
 
 #define GLSL_LIGHTS_COUNTS_OFFSET 0
 #define GLSL_DIRECTIONAL_LIGHT_OFFSET 16
@@ -31,9 +31,7 @@ protected:
 	Ref<Entity> m_Entity;
 	Ref<UniformBuffer> m_UniformBuffer;
 
-	glm::vec3 m_Ambient;
-	glm::vec3 m_Diffuse;
-	glm::vec3 m_Specular;
+	glm::vec3 m_Color;
 
 public:
 	Light(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
@@ -44,13 +42,9 @@ public:
 	virtual void Use() = 0;
 	virtual void SwitchOff() = 0;
 
-	inline glm::vec3 GetAmbient() const { return m_Ambient; }
-	inline glm::vec3 GetDiffuse() const { return m_Diffuse; }
-	inline glm::vec3 GetSpecular() const { return m_Specular; }
+	inline glm::vec3 GetColor() const { return m_Color; }
 
-	inline void SetAmbient(glm::vec3 ambient) { m_Ambient = ambient; }
-	inline void SetDiffuse(glm::vec3 diffuse) { m_Diffuse = diffuse; }
-	inline void SetSpecular(glm::vec3 specular) { m_Specular = specular; }
+	inline void SetColor(glm::vec3 color) { m_Color = color; }
 
 	friend class EntityDetailsPanel;
 };

@@ -147,9 +147,7 @@ void EntityDetailsPanel::Render()
             ImGui::DragFloat("Quadratic", &spotLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
         }
 
-        ImGui::DragFloat3("Ambient", (float*)&light->m_Ambient, 0.1f, 0.0f, 100.0f);
-        ImGui::DragFloat3("Diffuse", (float*)&light->m_Diffuse, 0.01f, 0.0f, 100.0f);
-        ImGui::DragFloat3("Specular", (float*)&light->m_Specular, 0.01f, 0.0f, 100.0f);
+        ImGui::DragFloat3("Color", (float*)&light->m_Color, 0.1f, 0.0f, 100.0f);
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 

@@ -29,10 +29,25 @@ struct Material
     float ao;
 };
 
+struct DirectionalLight
+{
+    vec3 direction;
+    vec3 color;
+};
+
 struct PointLight
 {
     vec3 position;
     vec3 color;
+};
+
+struct SpotLight
+{
+    vec3 position;
+    vec3 direction;
+    vec3 color;
+    float innerCutOff;
+    float outerCutOff;
 };
 
 layout (std140, binding = 1) uniform u_FragmentCamera
@@ -40,9 +55,14 @@ layout (std140, binding = 1) uniform u_FragmentCamera
     vec3 u_ViewPosition;
 };
 
-layout (std140, binding = 3) uniform u_Lights
+layout (std140, binding = 2) uniform u_Lights
 {
-    PointLight u_PointLight;
+    int u_PointLightsCount;
+    int u_SpotLightsCount;
+
+    DirectionalLight u_DirectionalLight;
+    PointLight[MAX_POINT_LIGHTS] u_PointLights;
+    SpotLight[MAX_SPOT_LIGHTS] u_SpotLights;
 };
 
 layout (location = 2) uniform Material u_Material;
@@ -106,6 +126,63 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
     return ggx1 * ggx2;
 }
 
+vec3 CalculateLight(vec3 L, vec3 V, vec3 albedo, vec3 N, float metallic, float roughness)
+{
+    vec3 H = normalize(V + L);
+
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+    vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+
+    float NDF = DistributionGGX(N, H, roughness);
+    float G = GeometrySmith(N, V, L, roughness);
+
+    vec3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+    vec3 specular = numerator / max(denominator, 0.001);
+
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+
+    kD *= 1.0 - metallic;
+
+    float NdotL = max(dot(N, L), 0.0);
+    return (kD * albedo / PI + specular) * NdotL;
+}
+
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 V, vec3 albedo, vec3 N, float metallic, float roughness)
+{
+    vec3 L = normalize(-light.direction);
+
+    return CalculateLight(L, V, albedo, N, metallic, roughness) * light.color;
+}
+
+vec3 CalculatePointLight(PointLight light, vec3 V, vec3 albedo, vec3 N, float metallic, float roughness)
+{
+    vec3 L = normalize(light.position - v_Position);
+
+    float dist = length(light.position - v_Position);
+    float attenuation = 1.0 / (dist * dist);
+    vec3 radiance = light.color * attenuation;
+
+    return CalculateLight(L, V, albedo, N, metallic, roughness) * radiance;
+}
+
+vec3 CalculateSpotLight(SpotLight light, vec3 V, vec3 albedo, vec3 N, float metallic, float roughness)
+{
+    vec3 L = normalize(light.position - v_Position);
+
+    float dist = length(light.position - v_Position);
+    float attenuation = 1.0 / (dist * dist);
+    vec3 radiance = light.color * attenuation;
+
+    float theta = dot(L, normalize(-light.direction));
+    float epsilon = light.innerCutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+
+    return CalculateLight(L, V, albedo, N, metallic, roughness) * intensity * radiance;
+}
+
 void main()
 {
     vec3 albedo;
@@ -142,31 +219,16 @@ void main()
 
     vec3 Lo = vec3(0.0);
 
-    vec3 L = normalize(u_PointLight.position - v_Position);
-    vec3 H = normalize(V + L);
+    Lo += CalculateDirectionalLight(u_DirectionalLight, V, albedo, N, metallic, roughness);
 
-    float dist = length(u_PointLight.position - v_Position);
-    float attenuation = 1.0 / (dist * dist);
-    vec3 radiance = u_PointLight.color * attenuation;
-
-    vec3 F0 = vec3(0.04);
-    F0 = mix(F0, albedo, metallic);
-    vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
-
-    float NDF = DistributionGGX(N, H, roughness);
-    float G = GeometrySmith(N, V, L, roughness);
-
-    vec3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
-    vec3 specular = numerator / max(denominator, 0.001);
-
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-
-    kD *= 1.0 - metallic;
-
-    float NdotL = max(dot(N, L), 0.0);
-    Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+    for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        Lo += CalculatePointLight(u_PointLights[i], V, albedo, N, metallic, roughness);
+    }
+    for (int i = 0; i < MAX_SPOT_LIGHTS; i++)
+    {
+        Lo += CalculateSpotLight(u_SpotLights[i], V, albedo, N, metallic, roughness);
+    }
 
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;

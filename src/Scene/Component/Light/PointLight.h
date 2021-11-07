@@ -10,8 +10,6 @@ private:
 	float m_Linear;
 	float m_Quadratic;
 
-	Ref<UniformBuffer> m_PBRUniformBuffer;
-
 public:
 	PointLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
 	~PointLight();
@@ -29,8 +27,6 @@ public:
 
 	inline void SetLinear(float linear) { m_Linear = linear; }
 	inline void SetQuadratic(float quadratic) { m_Quadratic = quadratic; }
-
-	inline void SetPBRUniformBuffer(Ref<UniformBuffer> ubo) { m_PBRUniformBuffer = ubo; }
 
 	friend class EntityDetailsPanel;
 };

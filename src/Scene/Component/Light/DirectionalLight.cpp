@@ -27,9 +27,7 @@ void DirectionalLight::Use()
 {
 	uint32_t offset = GLSL_DIRECTIONAL_LIGHT_OFFSET;
 	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Direction));
-	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Ambient));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(m_Diffuse));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(glm::vec3), glm::value_ptr(m_Specular));
+	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Color));
 }
 
 void DirectionalLight::SwitchOff()
@@ -37,6 +35,4 @@ void DirectionalLight::SwitchOff()
 	uint32_t offset = GLSL_DIRECTIONAL_LIGHT_OFFSET;
 	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
 	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
 }
