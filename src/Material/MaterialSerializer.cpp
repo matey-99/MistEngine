@@ -123,7 +123,13 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path, Ref<ShaderLibrar
 
 			if (path != "null")
 			{
-				auto texture = Texture::Create(path, "default");
+				Ref<Texture> texture;
+				std::string extension = path.substr(path.find_last_of('.') + 1);
+				if (extension == "hdr")
+					texture = Texture::Create(path, "default", TextureRange::HDR);
+				else
+					texture = Texture::Create(path, "default");
+
 				material->m_Texture2DParameters.find(name)->second = texture;
 			}
 

@@ -73,7 +73,7 @@ void MaterialEditorPanel::Render()
     {
         std::string name = param.first.substr(param.first.find_first_of('.') + 1);
 
-        ImGui::DragFloat(name.c_str(), &param.second, 0.1f, 0.0f, 256.0f);
+        ImGui::DragFloat(name.c_str(), &param.second, 0.01f, 0.0f, 1.0f);
     }
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
@@ -129,7 +129,7 @@ void MaterialEditorPanel::DisplayTextures(std::string name)
         std::string shaderName = filename.substr(0, filename.find_last_of("."));
         std::string ext = filename.substr(filename.find_first_of('.') + 1);
 
-        std::vector<std::string> extensions = { "jpg", "png" };
+        std::vector<std::string> extensions = { "jpg", "png", "hdr" };
 
         for (auto extension : extensions)
         {

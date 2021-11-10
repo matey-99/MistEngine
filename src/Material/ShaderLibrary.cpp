@@ -10,6 +10,11 @@ ShaderLibrary::ShaderLibrary()
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Refraction", CreateRef<Shader>("Refraction", "res/shaders/Refraction.vert", "res/shaders/Refraction.frag")));
 
 	m_SkyboxShaders.insert(std::make_pair<std::string, Ref<Shader>>("Skybox", CreateRef<Shader>("Skybox", "res/shaders/Skybox.vert", "res/shaders/Skybox.frag")));
+	m_SkyboxShaders.insert(std::make_pair<std::string, Ref<Shader>>("NewSkybox", CreateRef<Shader>("NewSkybox", "res/shaders/NewSkybox.vert", "res/shaders/NewSkybox.frag")));
+
+	m_OtherShaders.insert(std::make_pair<std::string, Ref<Shader>>("EquirectangularToCubemap", 
+		CreateRef<Shader>("EquirectangularToCubemap", "res/shaders/EquirectangularToCubemap.vert", "res/shaders/EquirectangularToCubemap.frag")));
+	m_OtherShaders.insert(std::make_pair<std::string, Ref<Shader>>("Irradiance", CreateRef<Shader>("Irradiance", "res/shaders/Irradiance.vert", "res/shaders/Irradiance.frag")));
 }
 
 Ref<Shader> ShaderLibrary::GetMaterialShader(std::string name)
@@ -20,6 +25,11 @@ Ref<Shader> ShaderLibrary::GetMaterialShader(std::string name)
 Ref<Shader> ShaderLibrary::GetSkyboxShader(std::string name)
 {
 	return m_SkyboxShaders.find(name)->second;
+}
+
+Ref<Shader> ShaderLibrary::GetOtherShader(std::string name)
+{
+	return m_OtherShaders.find(name)->second;
 }
 
 std::vector<Ref<Shader>> ShaderLibrary::GetAllMaterialShaders()

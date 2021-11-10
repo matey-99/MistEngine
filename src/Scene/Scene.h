@@ -20,7 +20,8 @@ private:
 	Ref<UniformBuffer> m_CameraVertexUniformBuffer;
 	Ref<UniformBuffer> m_CameraFragmentUniformBuffer;
 	Ref<UniformBuffer> m_LightsUniformBuffer;
-	Ref<UniformBuffer> m_PBRLightsUniformBuffer;
+
+	unsigned int m_IrradianceMap;
 
 	bool m_IsSkybox = true;
 

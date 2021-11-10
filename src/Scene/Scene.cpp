@@ -33,7 +33,8 @@ Scene::Scene()
 		"res/textures/skybox/front.jpg",
 		"res/textures/skybox/back.jpg"
 	};
-	m_Skybox = CreateRef<Skybox>(faces);
+	m_Skybox = Skybox::CreateFromEquirectangularMap("res/textures/equirectangularMap/equirectangularMap2.hdr");
+	m_IrradianceMap = m_Skybox->GetIrradianceMap();
 }
 
 void Scene::Begin()
@@ -73,7 +74,7 @@ void Scene::Draw()
 		glm::mat4 skyboxView = glm::mat4(glm::mat3(m_Camera->GetViewMatrix()));
 		glm::mat4 skyboxViewProjection = skyboxProjection * skyboxView;
 
-		m_Skybox->Render(skyboxViewProjection);
+		m_Skybox->Render(skyboxView, skyboxProjection);
 	}
 }
 
@@ -104,6 +105,7 @@ void Scene::RenderEntity(Ref<Entity> entity)
 	{
 		auto material = model->GetMaterial();
 		material->Use();
+		material->GetShader()->SetInt("u_IrradianceMap", m_IrradianceMap);
 		material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
 		model->Draw();
 	}

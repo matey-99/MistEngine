@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [43.3920097, 5.97940063, 8.38536358]
-  Yaw: 220.200104
-  Pitch: -21.3999729
+  Position: [5.47758245, 2.14605761, 6.47922087]
+  Yaw: 211.000168
+  Pitch: -11.8999557
 Entities:
   - Entity: Root
     Transform:
@@ -19,7 +19,7 @@ Entities:
       Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
-      Material: ../../res/materials/Shiny.mat
+      Material: ../../res/materials/Default.mat
   - Entity: default_plane
     Transform:
       ID: 640400713
@@ -166,6 +166,17 @@ Entities:
       ID: 51948235
       Parent: 398489750
       Position: [-0.065738678, 0.691596031, 4.11034393]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Linear: 0.0900000036
+      Quadratic: 0.0320000015
+      Color: [1, 1, 1]
+  - Entity: New Entity
+    Transform:
+      ID: 633179584
+      Parent: 0
+      Position: [-0.401152521, 0.977009773, 2.15651274]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:

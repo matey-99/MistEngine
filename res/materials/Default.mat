@@ -18,12 +18,12 @@ Float Parameters:
   - Name: u_Material.ao
     Value: 0
   - Name: u_Material.metallic
-    Value: 0.5
+    Value: 0.74000001
   - Name: u_Material.roughness
-    Value: 0.699999988
+    Value: 0.460000008
 Vec3 Parameters:
   - Name: u_Material.albedo
-    Value: [1, 1, 1]
+    Value: [1, 0, 0]
 Texture Parameters:
   - Name: u_Material.metallicMap
     Path: ../../res/models/chest/DefaultMaterial_metallic.jpg

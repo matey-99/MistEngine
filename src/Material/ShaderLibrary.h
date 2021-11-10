@@ -11,12 +11,14 @@ class ShaderLibrary
 private:
 	std::unordered_map<std::string, Ref<Shader>> m_MaterialShaders;
 	std::unordered_map<std::string, Ref<Shader>> m_SkyboxShaders;
+	std::unordered_map<std::string, Ref<Shader>> m_OtherShaders;
 
 public:
 	ShaderLibrary();
 
 	Ref<Shader> GetMaterialShader(std::string name);
 	Ref<Shader> GetSkyboxShader(std::string name);
+	Ref<Shader> GetOtherShader(std::string name);
 
 
 	std::vector<Ref<Shader>> GetAllMaterialShaders();

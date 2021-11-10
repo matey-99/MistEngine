@@ -4,15 +4,23 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Texture::Texture(std::string path, std::string type) 
+Texture::Texture(std::string path, std::string type, TextureRange range) 
 	: m_Path(path), m_Type(type)
 {
-	Load(path);
+	switch (range)
+	{
+	case TextureRange::LDR:
+		Load(path);
+		break;
+	case TextureRange::HDR:
+		LoadHDR(path);
+		break;
+	}
 }
 
-Ref<Texture> Texture::Create(std::string path, std::string type)
+Ref<Texture> Texture::Create(std::string path, std::string type, TextureRange range)
 {
-	return CreateRef<Texture>(path, type);
+	return CreateRef<Texture>(path, type, range);
 }
 
 void Texture::Load(std::string path)
@@ -45,13 +53,41 @@ void Texture::Load(std::string path)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
 	}
 	else
 	{
 		std::cout << "Failed to load texture from: " << path << std::endl;
-		stbi_image_free(data);
+	}
+
+	stbi_image_free(data);
+}
+
+void Texture::LoadHDR(std::string path)
+{
+	m_Path = path;
+
+	if (m_ID)
+	{
+		glDeleteTextures(1, &m_ID);
+	}
+
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float* data = stbi_loadf(path.c_str(), &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		glGenTextures(1, &m_ID);
+		glBindTexture(GL_TEXTURE_2D, m_ID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else
+	{
+		std::cout << "Failed to load HDR texture from: " << path << std::endl;
 	}
 }
 

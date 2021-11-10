@@ -66,6 +66,7 @@ layout (std140, binding = 2) uniform u_Lights
 };
 
 layout (location = 2) uniform Material u_Material;
+layout (location = 16) uniform samplerCube u_IrradianceMap;
 
 const float PI = 3.14159265359;
 
@@ -218,9 +219,7 @@ void main()
     vec3 V = normalize(u_ViewPosition - v_Position);
 
     vec3 Lo = vec3(0.0);
-
     Lo += CalculateDirectionalLight(u_DirectionalLight, V, albedo, N, metallic, roughness);
-
     for (int i = 0; i < MAX_POINT_LIGHTS; i++)
     {
         Lo += CalculatePointLight(u_PointLights[i], V, albedo, N, metallic, roughness);
@@ -230,7 +229,15 @@ void main()
         Lo += CalculateSpotLight(u_SpotLights[i], V, albedo, N, metallic, roughness);
     }
 
-    vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+
+    vec3 kS = FresnelSchlick(max(dot(N, V), 0.0), F0);
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;
+    vec3 irradiance = texture(u_IrradianceMap, N).rgb;
+    vec3 diffuse = irradiance * albedo;
+    vec3 ambient = (kD * diffuse) * ao;
     vec3 color = ambient + Lo;
 
     f_Color = vec4(color, 1.0);
