@@ -15,6 +15,7 @@ ShaderLibrary::ShaderLibrary()
 	m_OtherShaders.insert(std::make_pair<std::string, Ref<Shader>>("EquirectangularToCubemap", 
 		CreateRef<Shader>("EquirectangularToCubemap", "res/shaders/EquirectangularToCubemap.vert", "res/shaders/EquirectangularToCubemap.frag")));
 	m_OtherShaders.insert(std::make_pair<std::string, Ref<Shader>>("Irradiance", CreateRef<Shader>("Irradiance", "res/shaders/Irradiance.vert", "res/shaders/Irradiance.frag")));
+	m_OtherShaders.insert(std::make_pair<std::string, Ref<Shader>>("Prefilter", CreateRef<Shader>("Prefilter", "res/shaders/Prefilter.vert", "res/shaders/Prefilter.frag")));
 }
 
 Ref<Shader> ShaderLibrary::GetMaterialShader(std::string name)

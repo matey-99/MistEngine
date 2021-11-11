@@ -19,6 +19,7 @@ private:
 	uint32_t m_VAO;
 	uint32_t m_VBO;
 	uint32_t m_IrradianceMap;
+	uint32_t m_PrefilterMap;
 
 	Ref<Shader> m_Shader;
 
