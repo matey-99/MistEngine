@@ -36,7 +36,7 @@ Ref<Material> MaterialManager::LoadMaterial(std::string path)
 
 Ref<Material> MaterialManager::CreateMaterial(std::string name, std::string shaderName)
 {
-	Ref<Material> material = CreateRef<Material>(name, m_ShaderLibrary->GetMaterialShader(shaderName));
+	Ref<Material> material = CreateRef<Material>(name, m_ShaderLibrary->GetShader(ShaderType::MATERIAL, shaderName));
 	m_Materials.push_back(material);
 	MaterialSerializer::Serialize(material);
 

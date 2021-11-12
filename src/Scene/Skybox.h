@@ -20,6 +20,7 @@ private:
 	uint32_t m_VBO;
 	uint32_t m_IrradianceMap;
 	uint32_t m_PrefilterMap;
+	uint32_t m_BRDFLUT;
 
 	Ref<Shader> m_Shader;
 
@@ -37,6 +38,8 @@ public:
 
 	inline uint32_t GetID() const { return m_ID; }
 	inline unsigned int GetIrradianceMap() const { return m_IrradianceMap; }
+	inline unsigned int GetPrefilterMap() const { return m_PrefilterMap; }
+	inline unsigned int GetBRDFLUT() const { return m_BRDFLUT; }
 
 private:
 	void SetupMesh();

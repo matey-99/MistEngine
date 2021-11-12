@@ -27,7 +27,16 @@ void MaterialEditorPanel::Render()
     {
         std::vector<std::string> extensions = std::vector<std::string>();
         extensions.push_back("frag");
-        DisplayResources(extensions);
+        
+        auto sl = MaterialManager::GetInstance()->GetShaderLibrary();
+        for (auto sh : sl->GetMaterialShaders())
+        {
+            if (ImGui::MenuItem(sh.first.c_str()))
+            {
+                m_Material->m_Shader = sh.second;
+                m_Material->LoadParameters();
+            }
+        }
 
         ImGui::EndMenu();
     }
@@ -41,13 +50,15 @@ void MaterialEditorPanel::Render()
     }
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
+    int index = 0;
     for (auto& param : m_Material->m_Texture2DParameters)
     {
         std::string name = param.first.substr(param.first.find_first_of('.') + 1);
 
         ImGui::Text(name.c_str());
         ImGui::SameLine();
-        std::string filename = "";
+        std::string filename = "NULL" + std::to_string(index);
+        index++;
         if (param.second)
         {
             filename = param.second->m_Path.substr(param.second->m_Path.find_last_of('/'));
@@ -86,37 +97,6 @@ void MaterialEditorPanel::Render()
 	ImGui::End();
 }
 
-void MaterialEditorPanel::DisplayResources(std::vector<std::string> extensions)
-{
-    for (auto& p : std::filesystem::recursive_directory_iterator("../../res"))
-    {
-        std::stringstream ss;
-        ss << p.path();
-        std::string path = ss.str();
-        CorrectPath(path);
-        std::string filename = path.substr(path.find_last_of("/") + 1);
-        std::string shaderName = filename.substr(0, filename.find_last_of("."));
-        std::string ext = filename.substr(filename.find_first_of('.') + 1);
-
-        for (auto extension : extensions)
-        {
-            if (extension == ext)
-            {
-                if (ImGui::MenuItem(shaderName.c_str()))
-                {
-                    auto shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetMaterialShader(shaderName);
-                    if (shader)
-                    {
-                        m_Material->m_Shader = shader;
-                        m_Material->LoadParameters();
-                    }
-                }
-            }
-        }
-    }
-
-}
-
 void MaterialEditorPanel::DisplayTextures(std::string name)
 {
     for (auto& p : std::filesystem::recursive_directory_iterator("../../res"))
@@ -129,7 +109,7 @@ void MaterialEditorPanel::DisplayTextures(std::string name)
         std::string shaderName = filename.substr(0, filename.find_last_of("."));
         std::string ext = filename.substr(filename.find_first_of('.') + 1);
 
-        std::vector<std::string> extensions = { "jpg", "png", "hdr" };
+        std::vector<std::string> extensions = { "jpg", "png", "exr" };
 
         for (auto extension : extensions)
         {

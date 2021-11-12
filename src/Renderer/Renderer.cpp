@@ -86,7 +86,7 @@ void Renderer::AddPostProcessingEffects()
 {
 	m_PostProcessingFramebuffer->Bind();
 
-	auto viewportShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetMaterialShader("Viewport");
+	auto viewportShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::POST_PROCESSING, "Viewport");
 	viewportShader->Use();
 	viewportShader->SetInt("u_Screen", 0);
 	viewportShader->SetFloat("u_Gamma", m_Gamma);
@@ -101,4 +101,38 @@ void Renderer::AddPostProcessingEffects()
 	glBindVertexArray(0);
 
 	m_PostProcessingFramebuffer->Unbind();
+}
+
+void Renderer::RenderQuad()
+{
+	float vertices[] =
+	{
+		 1.0f,  1.0f, 0.0f,		1.0f, 1.0f,
+		 1.0f, -1.0f, 0.0f,		1.0f, 0.0f,
+		-1.0f,  1.0f, 0.0f,		0.0f, 1.0f,
+
+		 1.0f, -1.0f, 0.0f,		1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f,		0.0f, 0.0f,
+		-1.0f,  1.0f, 0.0f,		0.0f, 1.0f,
+	};
+
+	unsigned int vao, vbo;
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
 }

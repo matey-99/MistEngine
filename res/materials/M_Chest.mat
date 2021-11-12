@@ -1,6 +1,6 @@
 Material: M_Chest
 ID: 1
-Shader: StandardPBR
+Shader: Standard
 Bool Parameters:
   - Name: u_Material.isAOMap
     Value: true

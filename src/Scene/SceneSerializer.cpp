@@ -1,7 +1,7 @@
 #include "SceneSerializer.h"
 
 #include "yaml/yaml.h"
-#include "Scene/Component/Model.h"
+#include "Scene/Component/StaticMeshComponent.h"
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
@@ -99,11 +99,17 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 			e->GetTransform()->LocalRotation = transform["Rotation"].as<glm::vec3>();
 			e->GetTransform()->LocalScale = transform["Scale"].as<glm::vec3>();
 
-			if (auto model = entity["Model"])
+			if (auto mesh = entity["Model"])
 			{
-				std::string path = model["Mesh"].as<std::string>();
-				std::string materialPath = model["Material"].as<std::string>();
-				e->AddComponent<Model>(path.c_str(), materialPath);
+				std::string path = mesh["Mesh"].as<std::string>();
+				std::vector<std::string> materialsPaths;
+				YAML::Node materials = mesh["Materials"];
+				for (auto material : materials)
+				{
+					materialsPaths.push_back(material["Path"].as<std::string>());
+
+				}
+				e->AddComponent<StaticMeshComponent>(path.c_str(), materialsPaths);
 			}
 
 			if (auto dirLight = entity["Directional Light"])
@@ -184,12 +190,20 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	out << YAML::Key << "Scale" << YAML::Value << transform->LocalScale;
 	out << YAML::EndMap;
 
-	if (auto model = entity->GetComponent<Model>())
+	if (auto mesh = entity->GetComponent<StaticMeshComponent>())
 	{
 		out << YAML::Key << "Model";
 		out << YAML::BeginMap;
-		out << YAML::Key << "Mesh" << YAML::Value << model->GetPath();
-		out << YAML::Key << "Material" << YAML::Value << model->GetMaterialPath();
+		out << YAML::Key << "Mesh" << YAML::Value << mesh->GetPath();
+		out << YAML::Key << "Materials" << YAML::Value << YAML::BeginSeq;
+		out << YAML::BeginMap;
+		for (int i = 0; i < mesh->GetMaterialsPaths().size(); i++)
+		{
+			out << YAML::Key << "Material" << YAML::Value << i;
+			out << YAML::Key << "Path" << YAML::Value << mesh->GetMaterialsPaths().at(i);
+		}
+		out << YAML::EndMap;
+		out << YAML::EndSeq;
 		out << YAML::EndMap;
 	}
 	if (auto dirLight = entity->GetComponent<DirectionalLight>())

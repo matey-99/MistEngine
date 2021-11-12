@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 #include "Editor.h"
-#include "Scene/Component/Model.h"
+#include "Scene/Component/StaticMeshComponent.h"
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
@@ -40,14 +40,14 @@ void EntityDetailsPanel::Render()
     ImGui::DragFloat3("Scale", *arr, 0.1f);
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
-    if (auto model = m_Entity->GetComponent<Model>())
+    if (auto mesh = m_Entity->GetComponent<StaticMeshComponent>())
     {
-        ImGui::Text("Mesh Renderer");
+        ImGui::Text("Static Mesh");
 
-        ImGui::Text("Mesh: ");
+        ImGui::Text("Static Mesh: ");
         ImGui::SameLine();
 
-        std::string path = model->GetPath();
+        std::string path = mesh->GetPath();
         std::string name = path.substr(path.find_last_of("/") + 1);
         if (ImGui::BeginMenu(name.c_str()))
         {
@@ -55,25 +55,31 @@ void EntityDetailsPanel::Render()
             extensions.push_back("obj");
             extensions.push_back("fbx");
             extensions.push_back("3ds");
+            extensions.push_back("dae");
             DisplayResources(extensions);
 
             ImGui::EndMenu();
         }
 
-        ImGui::Text("Material: ");
-        ImGui::SameLine();
-
-        path = model->GetMaterialPath();
-        name = path.substr(path.find_last_of("/") + 1);
-        if (ImGui::BeginMenu(name.c_str()))
+        ImGui::Text("Materials");
+        for (int i = 0; i < mesh->GetMaterials().size(); i++)
         {
-            std::vector<std::string> extensions = std::vector<std::string>();
-            extensions.push_back("mat");
-            DisplayResources(extensions);
+            path = mesh->GetMaterialsPaths().at(i);
+            name = path.substr(path.find_last_of("/") + 1);
 
-            ImGui::EndMenu();
+            ImGui::Text(("Material[" + std::to_string(i) + "]: ").c_str());
+            ImGui::SameLine();
+            ImGui::PushID(i);
+            if (ImGui::BeginMenu(name.c_str()))
+            {
+                std::vector<std::string> extensions = std::vector<std::string>();
+                extensions.push_back("mat");
+                DisplayResources(extensions, i);
+
+                ImGui::EndMenu();
+            }
+            ImGui::PopID();
         }
-
     }
     if (auto light = m_Entity->GetComponent<Light>())
     {
@@ -152,7 +158,7 @@ void EntityDetailsPanel::Render()
     }
 
     bool addComponent = false;
-    bool meshRenderer = false;
+    bool staticMesh = false;
     bool dirLight = false;
     bool pointLight = false;
     bool spotLight = false;
@@ -160,7 +166,7 @@ void EntityDetailsPanel::Render()
     {
         if (ImGui::BeginMenu("Add Component"))
         {
-            ImGui::MenuItem("Mesh Renderer", "", &meshRenderer);
+            ImGui::MenuItem("Static Mesh", "", &staticMesh);
             if (ImGui::BeginMenu("Light"))
             {
                 ImGui::MenuItem("Directional Light", "", &dirLight);
@@ -176,8 +182,8 @@ void EntityDetailsPanel::Render()
         ImGui::EndPopup();
     }
 
-    if (meshRenderer)
-        m_Entity->AddComponent<Model>();
+    if (staticMesh)
+        m_Entity->AddComponent<StaticMeshComponent>();
     if (dirLight)
         m_Entity->AddComponent<DirectionalLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
     if (pointLight)
@@ -194,7 +200,7 @@ void EntityDetailsPanel::Render()
 	ImGui::End();
 }
 
-void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions)
+void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions, int index)
 {
     for (auto& p : std::filesystem::recursive_directory_iterator("../../res"))
     {
@@ -211,15 +217,15 @@ void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions)
             {
                 if (ImGui::MenuItem(name.c_str()))
                 {
-                    if (ext == "obj" || ext == "fbx" || ext == "3ds")
+                    if (ext == "obj" || ext == "fbx" || ext == "3ds" || ext == "dae")
                     {
-                        auto model = m_Entity->GetComponent<Model>();
-                        model->LoadMesh(path);
+                        auto mesh = m_Entity->GetComponent<StaticMeshComponent>();
+                        mesh->ChangeMesh(path);
                     }
                     else if (ext == "mat")
                     {
-                        auto model = m_Entity->GetComponent<Model>();
-                        model->LoadMaterial(path);
+                        auto mesh = m_Entity->GetComponent<StaticMeshComponent>();
+                        mesh->ChangeMaterial(index, path);
                     }
                 }
             }

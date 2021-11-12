@@ -43,6 +43,8 @@ public:
 	void RenderMainScene(Ref<Scene> scene);
 	void AddPostProcessingEffects();
 
+	void RenderQuad();
+
 	inline Ref<Framebuffer> GetMainSceneFramebuffer() const { return m_MainSceneFramebuffer; }
 	inline Ref<Framebuffer> GetPostProcessingFramebuffer() const { return m_PostProcessingFramebuffer; }
 	inline bool IsPostProcessing() const { return m_PostProcessing; }

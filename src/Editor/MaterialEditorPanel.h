@@ -17,7 +17,6 @@ public:
 	inline void SetMaterial(Ref<Material> material) { m_Material = material; }
 
 private:
-	void DisplayResources(std::vector<std::string> extensions);
 	void DisplayTextures(std::string name);
 	void CorrectPath(std::string& path);
 };

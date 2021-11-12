@@ -22,6 +22,8 @@ private:
 	Ref<UniformBuffer> m_LightsUniformBuffer;
 
 	unsigned int m_IrradianceMap;
+	unsigned int m_PrefilterMap;
+	unsigned int m_BRDFLUT;
 
 	bool m_IsSkybox = true;
 

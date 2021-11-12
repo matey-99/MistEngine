@@ -18,6 +18,6 @@ public:
 	inline void SetEntity(Ref<Entity> entity) { m_Entity = entity; }
 
 private:
-	void DisplayResources(std::vector<std::string> extensions);
+	void DisplayResources(std::vector<std::string> extensions, int index = -1);
 	void CorrectPath(std::string& path);
 };

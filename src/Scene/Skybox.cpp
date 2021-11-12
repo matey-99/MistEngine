@@ -5,17 +5,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Material/MaterialManager.h"
+#include "Renderer/Renderer.h"
 
 Skybox::Skybox()
 {
-	m_Shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetSkyboxShader("NewSkybox");
+	m_Shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::SKYBOX, "Skybox");
     SetupMesh();
 }
 
 Skybox::Skybox(std::vector<std::string> faces)
 {
     LoadCubemap(faces);
-	m_Shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetSkyboxShader("Skybox");
+    m_Shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::SKYBOX, "Skybox");
     SetupMesh();
 }
 
@@ -34,13 +35,13 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 256, 256);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     glGenTextures(1, &skybox->m_ID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->m_ID);
     for (unsigned int i = 0; i < 6; ++i)
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 256, 256, 0, GL_RGB, GL_FLOAT, nullptr);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -59,7 +60,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
     };
 
-    auto shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetOtherShader("EquirectangularToCubemap");
+    auto shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "EquirectangularToCubemap");
     shader->Use();
     shader->SetInt("u_EquirenctangularMap", 0);
     shader->SetMat4("u_Projection", captureProjection);
@@ -67,7 +68,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
     auto hdrTexture = Texture::Create(path, "default", TextureRange::HDR);
     hdrTexture->Bind(0);
 
-    glViewport(0, 0, 512, 512);
+    glViewport(0, 0, 256, 256);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {
@@ -101,7 +102,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
     glBindFramebuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
-    auto irradianceShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetOtherShader("Irradiance");
+    auto irradianceShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "Irradiance");
     irradianceShader->Use();
     irradianceShader->SetInt("u_EnvironmentMap", 0);
     irradianceShader->SetMat4("u_Projection", captureProjection);
@@ -137,7 +138,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
 
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    auto prefilterShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetOtherShader("Prefilter");
+    auto prefilterShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "Prefilter");
     prefilterShader->Use();
     prefilterShader->SetInt("u_EnvironmentMap", 0);
     prefilterShader->SetMat4("u_Projection", captureProjection);
@@ -169,10 +170,33 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     skybox->m_PrefilterMap = prefilterMap;
 
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    unsigned int brdfLUTTexture;
+    glGenTextures(1, &brdfLUTTexture);
+
+    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindFramebuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+
+    glViewport(0, 0, 512, 512);
+    auto brdfShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "BRDF");
+    brdfShader->Use();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Renderer::GetInstance()->RenderQuad();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    skybox->m_BRDFLUT = brdfLUTTexture;
 
     return skybox;
 }
@@ -293,7 +317,7 @@ void Skybox::Render(glm::mat4 view, glm::mat4 projection)
 
     glBindVertexArray(m_VAO);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);

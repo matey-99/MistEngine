@@ -74,7 +74,7 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path, Ref<ShaderLibrar
 	uint64_t id = data["ID"].as<uint64_t>();
 	std::string shader = data["Shader"].as<std::string>();
 
-	Ref<Material> material = CreateRef<Material>(id, name, shaderLibrary->GetMaterialShader(shader));
+	Ref<Material> material = CreateRef<Material>(id, name, shaderLibrary->GetShader(ShaderType::MATERIAL, shader));
 
 	YAML::Node boolParameters = data["Bool Parameters"];
 	if (boolParameters)

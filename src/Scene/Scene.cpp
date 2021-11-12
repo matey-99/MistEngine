@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Component/Model.h"
+#include "Component/StaticMeshComponent.h"
 #include "Component/Light/DirectionalLight.h"
 #include "Component/Light/PointLight.h"
 #include "Component/Light/SpotLight.h"
@@ -7,6 +7,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glad/glad.h>
+#include "Renderer/Renderer.h"
 
 Scene::Scene()
 {
@@ -35,6 +37,8 @@ Scene::Scene()
 	};
 	m_Skybox = Skybox::CreateFromEquirectangularMap("res/textures/equirectangularMap/equirectangularMap2.hdr");
 	m_IrradianceMap = m_Skybox->GetIrradianceMap();
+	m_PrefilterMap = m_Skybox->GetPrefilterMap();
+	m_BRDFLUT = m_Skybox->GetBRDFLUT();
 }
 
 void Scene::Begin()
@@ -101,13 +105,23 @@ void Scene::RenderEntity(Ref<Entity> entity)
 		spotLight->Use();
 	}
 
-	if (auto model = entity->GetComponent<Model>())
+	if (auto mesh = entity->GetComponent<StaticMeshComponent>())
 	{
-		auto material = model->GetMaterial();
-		material->Use();
-		material->GetShader()->SetInt("u_IrradianceMap", m_IrradianceMap);
-		material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
-		model->Draw();
+		for (auto material : mesh->GetMaterials())
+		{
+			material->Use();
+			glActiveTexture(GL_TEXTURE0 + 20);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceMap);
+			material->GetShader()->SetInt("u_IrradianceMap", 20);
+			glActiveTexture(GL_TEXTURE0 + 21);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
+			material->GetShader()->SetInt("u_PrefilterMap", 21);
+			glActiveTexture(GL_TEXTURE0 + 22);
+			glBindTexture(GL_TEXTURE_2D, m_BRDFLUT);
+			material->GetShader()->SetInt("u_BRDFLUT", 22);
+			material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
+		}
+		mesh->Draw();
 	}
 
 	if (!entity->GetTransform()->Children.empty())
@@ -142,7 +156,7 @@ Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 {
 	Ref<Entity> entity = Entity::Create(this, name);
 	entity->GetTransform()->SetParent(m_Root->GetTransform());
-	entity->AddComponent<Model>(path.c_str());
+	entity->AddComponent<StaticMeshComponent>(path.c_str());
 	m_Entities.push_back(entity);
 
 	return entity;
@@ -152,7 +166,7 @@ Ref<Entity> Scene::AddEntity(std::string path, std::string name, Ref<Transform> 
 {
 	Ref<Entity> entity = Entity::Create(this, name);
 	entity->GetTransform()->SetParent(parent);
-	entity->AddComponent<Model>(path.c_str());
+	entity->AddComponent<StaticMeshComponent>(path.c_str());
 	m_Entities.push_back(entity);
 
 	return entity;

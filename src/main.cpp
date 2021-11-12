@@ -21,7 +21,7 @@
 #include "Scene/SceneSerializer.h"
 #include "Editor/Editor.h"
 #include "Material/Material.h"
-#include "Scene/Component/Model.h"
+#include "Scene/Component/StaticMeshComponent.h"
 #include "Scene/Component/Light/Light.h"
 #include "Material/MaterialManager.h"
 #include "Renderer/Framebuffer.h"
