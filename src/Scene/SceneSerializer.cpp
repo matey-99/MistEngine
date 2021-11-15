@@ -196,13 +196,13 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::BeginMap;
 		out << YAML::Key << "Mesh" << YAML::Value << mesh->GetPath();
 		out << YAML::Key << "Materials" << YAML::Value << YAML::BeginSeq;
-		out << YAML::BeginMap;
 		for (int i = 0; i < mesh->GetMaterialsPaths().size(); i++)
 		{
+			out << YAML::BeginMap;
 			out << YAML::Key << "Material" << YAML::Value << i;
 			out << YAML::Key << "Path" << YAML::Value << mesh->GetMaterialsPaths().at(i);
+			out << YAML::EndMap;
 		}
-		out << YAML::EndMap;
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 	}
