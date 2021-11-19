@@ -32,7 +32,7 @@ void PointLight::Update()
 void PointLight::Use()
 {
 	uint32_t offset = GLSL_POINT_LIGHTS_OFFSET + (GLSL_POINT_LIGHT_SIZE * m_Index);
-	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Entity->GetTransform()->GetWorldPosition()));
+	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Entity->GetWorldPosition()));
 	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Color));
 }
 

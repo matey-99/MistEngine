@@ -60,17 +60,17 @@ void SceneHierarchyPanel::UnselectEntity()
 
 void SceneHierarchyPanel::TreeChildren(Ref<Entity> entity)
 {
-	auto children = entity->GetTransform()->Children;
+	auto children = entity->m_Children;
 	for (int i = 0; i < children.size(); i++)
 	{
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
-		if (children[i]->Children.empty())
+		if (children[i]->m_Children.empty())
 			flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 		else
 			flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
 		bool open = false;
-		auto e = m_Scene->FindEntity(children[i]->ID);
+		auto e = m_Scene->FindEntity(children[i]->m_ID);
 
 		ImGui::PushID(i);
 		bool enable = e->IsEnable();
@@ -93,7 +93,7 @@ void SceneHierarchyPanel::TreeChildren(Ref<Entity> entity)
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("entity"))
 			{
 				Ref<Entity>* childEntity = static_cast<Ref<Entity>*>(payload->Data);
-				childEntity->get()->GetTransform()->SetParent(children[i]);
+				childEntity->get()->SetParent(children[i]);
 			}
 			ImGui::EndDragDropTarget();
 		}

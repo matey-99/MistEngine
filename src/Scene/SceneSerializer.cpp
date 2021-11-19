@@ -69,7 +69,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 		for (auto entity : entities)
 		{
 			Ref<Entity> e = Ref<Entity>();
-			if (entity["Transform"]["ID"].as<uint64_t>() == 0)
+			if (entity["ID"].as<uint64_t>() == 0)
 			{
 				e = scene->AddRoot();
 			}
@@ -80,13 +80,12 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 					std::cout << "Loaded scene doesn't contain root entity!" << std::endl;
 				}
 
-				e = scene->AddEntity(entity["Entity"].as<std::string>());
+				e = scene->AddEntity(entity["ID"].as<uint64_t>(), entity["Entity"].as<std::string>());
 			}
 			
-			auto transform = entity["Transform"];
-			e->GetTransform()->ID = transform["ID"].as<uint64_t>();
+			e->SetID(entity["ID"].as<uint64_t>());
 			
-			if (auto parent = transform["Parent"])
+			if (auto parent = entity["Parent"])
 			{
 				parentsIDs.push_back(parent.as<uint64_t>());
 			}
@@ -95,9 +94,10 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				parentsIDs.push_back(-1);
 			}
 
-			e->GetTransform()->LocalPosition = transform["Position"].as<glm::vec3>();
-			e->GetTransform()->LocalRotation = transform["Rotation"].as<glm::vec3>();
-			e->GetTransform()->LocalScale = transform["Scale"].as<glm::vec3>();
+			auto transform = entity["Transform"];
+			e->SetLocalPosition(transform["Position"].as<glm::vec3>());
+			e->SetLocalRotation(transform["Rotation"].as<glm::vec3>());
+			e->SetLocalScale(transform["Scale"].as<glm::vec3>());
 
 			if (auto mesh = entity["Model"])
 			{
@@ -164,7 +164,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 			if (parentsIDs[i] == -1)
 				continue;
 
-			scene->GetEntities()[i]->GetTransform()->SetParent(scene->FindTransform(parentsIDs[i]));
+			scene->GetEntities()[i]->SetParent(scene->FindEntity(parentsIDs[i]).get());
 		}
 	}
 
@@ -176,18 +176,16 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 {
 	out << YAML::BeginMap;
 	out << YAML::Key << "Entity" << YAML::Value << entity->GetName();
+	out << YAML::Key << "ID" << YAML::Value << entity->GetID();
+	if (entity->GetParent())
+		out << YAML::Key << "Parent" << YAML::Value << entity->GetParent()->GetID();
 
-	Ref<Transform> transform = entity->GetTransform();
+	Transform transform = entity->GetTransform();
 	out << YAML::Key << "Transform";
 	out << YAML::BeginMap;
-	out << YAML::Key << "ID" << YAML::Value << transform->ID;
-	if (transform->Parent)
-	{
-		out << YAML::Key << "Parent" << YAML::Value << transform->Parent->ID;
-	}
-	out << YAML::Key << "Position" << YAML::Value << transform->LocalPosition;
-	out << YAML::Key << "Rotation" << YAML::Value << transform->LocalRotation;
-	out << YAML::Key << "Scale" << YAML::Value << transform->LocalScale;
+	out << YAML::Key << "Position" << YAML::Value << transform.LocalPosition;
+	out << YAML::Key << "Rotation" << YAML::Value << transform.LocalRotation;
+	out << YAML::Key << "Scale" << YAML::Value << transform.LocalScale;
 	out << YAML::EndMap;
 
 	if (auto mesh = entity->GetComponent<StaticMeshComponent>())

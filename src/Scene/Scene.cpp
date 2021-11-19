@@ -43,6 +43,8 @@ Scene::Scene()
 
 void Scene::Begin()
 {
+	m_Root->CalculateModelMatrix();
+
 	for (auto entity : m_Entities)
 	{
 		entity->Begin();
@@ -119,17 +121,17 @@ void Scene::RenderEntity(Ref<Entity> entity)
 			glActiveTexture(GL_TEXTURE0 + 22);
 			glBindTexture(GL_TEXTURE_2D, m_BRDFLUT);
 			material->GetShader()->SetInt("u_BRDFLUT", 22);
-			material->GetShader()->SetMat4("u_Model", entity->GetTransform()->ModelMatrix);
+			material->GetShader()->SetMat4("u_Model", entity->GetTransform().ModelMatrix);
 		}
 		mesh->Draw();
 	}
 
-	if (!entity->GetTransform()->Children.empty())
+	if (!entity->GetChildren().empty())
 	{
-		for (auto child : entity->GetTransform()->Children)
+		for (auto child : entity->GetChildren())
 		{
 			int pointIndex, spotIndex;
-			RenderEntity(child->GetEntity());
+			RenderEntity(CreateRef<Entity>(*child));
 		}
 	}
 }
@@ -146,7 +148,17 @@ Ref<Entity> Scene::AddRoot()
 Ref<Entity> Scene::AddEntity(std::string name)
 {
 	Ref<Entity> entity = Entity::Create(this, name);
-	entity->GetTransform()->SetParent(m_Root->GetTransform());
+	entity->SetParent(m_Root.get());
+	m_Entities.push_back(entity);
+
+	return entity;
+}
+
+Ref<Entity> Scene::AddEntity(uint64_t id, std::string name)
+{
+	Ref<Entity> entity = Entity::Create(this, id, name);
+	Entity* root = m_Root.get();
+	entity->SetParent(root);
 	m_Entities.push_back(entity);
 
 	return entity;
@@ -155,17 +167,17 @@ Ref<Entity> Scene::AddEntity(std::string name)
 Ref<Entity> Scene::AddEntity(std::string path, std::string name)
 {
 	Ref<Entity> entity = Entity::Create(this, name);
-	entity->GetTransform()->SetParent(m_Root->GetTransform());
+	entity->SetParent(m_Root.get());
 	entity->AddComponent<StaticMeshComponent>(path.c_str());
 	m_Entities.push_back(entity);
 
 	return entity;
 }
 
-Ref<Entity> Scene::AddEntity(std::string path, std::string name, Ref<Transform> parent)
+Ref<Entity> Scene::AddEntity(std::string path, std::string name, Ref<Entity> parent)
 {
 	Ref<Entity> entity = Entity::Create(this, name);
-	entity->GetTransform()->SetParent(parent);
+	entity->SetParent(parent.get());
 	entity->AddComponent<StaticMeshComponent>(path.c_str());
 	m_Entities.push_back(entity);
 
@@ -187,24 +199,13 @@ Ref<Entity> Scene::FindEntity(std::string name)
 	return Ref<Entity>();
 }
 
-Ref<Entity> Scene::FindEntity(uint64_t transformID)
+Ref<Entity> Scene::FindEntity(uint64_t id)
 {
 	for (auto entity : m_Entities)
 	{
-		if (entity->GetTransform()->ID == transformID)
+		if (entity->GetID() == id)
 			return entity;
 	}
 
 	return Ref<Entity>();
-}
-
-Ref<Transform> Scene::FindTransform(uint64_t id)
-{
-	for (auto entity : m_Entities)
-	{
-		if (entity->GetTransform()->ID == id)
-			return entity->GetTransform();
-	}
-
-	return Ref<Transform>();
 }

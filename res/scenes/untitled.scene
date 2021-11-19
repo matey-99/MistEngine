@@ -5,15 +5,15 @@ Camera:
   Pitch: -17.199976
 Entities:
   - Entity: Root
+    ID: 0
     Transform:
-      ID: 0
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
   - Entity: Knight
+    ID: 362112506
+    Parent: 0
     Transform:
-      ID: 362112506
-      Parent: 0
       Position: [0, 0.899683952, 0]
       Rotation: [0, 0, 0]
       Scale: [2, 2, 2]
@@ -23,9 +23,9 @@ Entities:
         - Material: 0
           Path: ../../res/materials/Knight/M_KnightMetal.mat
   - Entity: Chest
+    ID: 218770885
+    Parent: 0
     Transform:
-      ID: 218770885
-      Parent: 0
       Position: [-1.84545553, -0.574629843, 4.99078183e-08]
       Rotation: [180, -6.55013895, 180]
       Scale: [1, 1, 1]
@@ -35,9 +35,9 @@ Entities:
         - Material: 0
           Path: ../../res/materials/M_Chest.mat
   - Entity: Sphere1
+    ID: 449628831
+    Parent: 385882558 
     Transform:
-      ID: 449628831
-      Parent: 385882558
       Position: [-4.78897429, 1.62502658, -0.392062664]
       Rotation: [0, 0, 0]
       Scale: [0.550000012, 0.550000012, 0.550000012]
@@ -47,16 +47,16 @@ Entities:
         - Material: 0
           Path: ../../res/materials/New material 0.mat
   - Entity: Spheres
+    ID: 385882558
+    Parent: 0
     Transform:
-      ID: 385882558
-      Parent: 0
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
   - Entity: Sphere2
+    ID: 853186531
+    Parent: 385882558
     Transform:
-      ID: 853186531
-      Parent: 385882558
       Position: [-3.49270916, 1.62197042, -0.445267349]
       Rotation: [0, 0, 0]
       Scale: [0.550000012, 0.550000012, 0.550000012]
@@ -66,9 +66,9 @@ Entities:
         - Material: 0
           Path: ../../res/materials/New material 1.mat
   - Entity: Sphere3
+    ID: 365521167
+    Parent: 385882558
     Transform:
-      ID: 365521167
-      Parent: 385882558
       Position: [-2.17467308, 1.61757123, -0.489803493]
       Rotation: [0, 0, 0]
       Scale: [0.550000012, 0.550000012, 0.550000012]
@@ -78,9 +78,9 @@ Entities:
         - Material: 0
           Path: ../../res/materials/New material 2.mat
   - Entity: Point Light
+    ID: 390156904
+    Parent: 0
     Transform:
-      ID: 390156904
-      Parent: 0
       Position: [-0.921927273, 3.75022793, 3.24346399]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]

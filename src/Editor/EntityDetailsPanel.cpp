@@ -23,21 +23,25 @@ void EntityDetailsPanel::Render()
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
     ImGui::Text("Transform");
-    float* arr[3];
-    arr[0] = &m_Entity->GetTransform()->LocalPosition.x;
-    arr[1] = &m_Entity->GetTransform()->LocalPosition.y;
-    arr[2] = &m_Entity->GetTransform()->LocalPosition.z;
-    ImGui::DragFloat3("Position", *arr, 0.5f);
+    float arr[3];
+    arr[0] = m_Entity->GetTransform().LocalPosition.x;
+    arr[1] = m_Entity->GetTransform().LocalPosition.y;
+    arr[2] = m_Entity->GetTransform().LocalPosition.z;
+    ImGui::DragFloat3("Position", arr, 0.5f);
+    m_Entity->SetLocalPosition({ arr[0], arr[1], arr[2] });
 
-    arr[0] = &m_Entity->GetTransform()->LocalRotation.x;
-    arr[1] = &m_Entity->GetTransform()->LocalRotation.y;
-    arr[2] = &m_Entity->GetTransform()->LocalRotation.z;
-    ImGui::DragFloat3("Rotation", *arr, 1.0f);
+    arr[0] = m_Entity->GetTransform().LocalRotation.x;
+    arr[1] = m_Entity->GetTransform().LocalRotation.y;
+    arr[2] = m_Entity->GetTransform().LocalRotation.z;
+    ImGui::DragFloat3("Rotation", arr, 1.0f);
+    m_Entity->SetLocalRotation({ arr[0], arr[1], arr[2] });
 
-    arr[0] = &m_Entity->GetTransform()->LocalScale.x;
-    arr[1] = &m_Entity->GetTransform()->LocalScale.y;
-    arr[2] = &m_Entity->GetTransform()->LocalScale.z;
-    ImGui::DragFloat3("Scale", *arr, 0.1f);
+    arr[0] = m_Entity->GetTransform().LocalScale.x;
+    arr[1] = m_Entity->GetTransform().LocalScale.y;
+    arr[2] = m_Entity->GetTransform().LocalScale.z;
+    ImGui::DragFloat3("Scale", arr, 0.1f);
+    m_Entity->SetLocalScale({ arr[0], arr[1], arr[2] });
+
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
     if (auto mesh = m_Entity->GetComponent<StaticMeshComponent>())

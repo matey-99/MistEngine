@@ -38,13 +38,13 @@ public:
 
 	Ref<Entity> AddRoot();
 	Ref<Entity> AddEntity(std::string name);
+	Ref<Entity> AddEntity(uint64_t id, std::string name);
 	Ref<Entity> AddEntity(std::string path, std::string name);
-	Ref<Entity> AddEntity(std::string path, std::string name, Ref<Transform> parent);
+	Ref<Entity> AddEntity(std::string path, std::string name, Ref<Entity> parent);
 
 	void RemoveEntity(Ref<Entity> entity);
 	Ref<Entity> FindEntity(std::string name);
-	Ref<Entity> FindEntity(uint64_t transformID);
-	Ref<Transform> FindTransform(uint64_t id);
+	Ref<Entity> FindEntity(uint64_t id);
 
 	template<typename T>
 	int GetComponentsCount()
