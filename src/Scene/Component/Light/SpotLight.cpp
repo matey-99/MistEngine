@@ -3,7 +3,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Scene/Scene.h"
-#include "Material/MaterialManager.h"
 
 SpotLight::SpotLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
 	: Light(entity, uniformBuffer)

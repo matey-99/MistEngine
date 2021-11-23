@@ -5,7 +5,6 @@
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
-#include "Material/MaterialManager.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
 {

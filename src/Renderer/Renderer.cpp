@@ -1,7 +1,6 @@
 #include "Renderer.h"
 #include "Framebuffer.h"
 #include "Scene/Scene.h"
-#include "Material/MaterialManager.h"
 
 #include <glad/glad.h>
 
@@ -86,7 +85,7 @@ void Renderer::AddPostProcessingEffects()
 {
 	m_PostProcessingFramebuffer->Bind();
 
-	auto viewportShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::POST_PROCESSING, "Viewport");
+	auto viewportShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Viewport");
 	viewportShader->Use();
 	viewportShader->SetInt("u_Screen", 0);
 	viewportShader->SetFloat("u_Gamma", m_Gamma);

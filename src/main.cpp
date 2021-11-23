@@ -23,7 +23,6 @@
 #include "Material/Material.h"
 #include "Scene/Component/StaticMeshComponent.h"
 #include "Scene/Component/Light/Light.h"
-#include "Material/MaterialManager.h"
 #include "Renderer/Framebuffer.h"
 
 Ref<Scene> scene = Ref<Scene>();

@@ -5,7 +5,7 @@
 #include "Scene/Scene.h"
 #include "Material/Material.h"
 #include "Material/MaterialSerializer.h"
-#include "Material/MaterialManager.h"
+#include "Importer/MaterialImporter.h"
 
 ContentBrowserPanel::ContentBrowserPanel(Ref<Editor> editor, Ref<Scene> scene) : m_Editor(editor), m_Scene(scene)
 {
@@ -81,7 +81,7 @@ void ContentBrowserPanel::Render()
 			if (filename.substr(0, 12) == "New material")
 				count++;
 		}
-		MaterialManager::GetInstance()->CreateMaterial("New material " + std::to_string(count), "Standard");
+		Material::Create("New material " + std::to_string(count), "Standard");
 	}
 
 	ImGui::End();
@@ -91,7 +91,7 @@ void ContentBrowserPanel::MakeAction(std::string path, std::string extension)
 {
 	if (extension == "mat")
 	{
-		Ref<Material> material = MaterialManager::GetInstance()->LoadMaterial(path);
+		Ref<Material> material = MaterialImporter::GetInstance()->ImportMaterial(path);
 		m_Editor->ShowMaterialEditor(material);
 	}
 	else if (extension == "obj" || extension == "fbx" || extension == "3ds" || extension == "dae")

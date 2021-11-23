@@ -1,5 +1,8 @@
 #include "ShaderLibrary.h"
 
+Ref<ShaderLibrary> ShaderLibrary::s_Instance{};
+std::mutex ShaderLibrary::s_Mutex;
+
 ShaderLibrary::ShaderLibrary()
 {
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Standard", CreateRef<Shader>("Standard", "res/shaders/Material/Standard.vert", "res/shaders/Material/Standard.frag")));
@@ -15,6 +18,15 @@ ShaderLibrary::ShaderLibrary()
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("Irradiance", CreateRef<Shader>("Irradiance", "res/shaders/Calculation/Irradiance.vert", "res/shaders/Calculation/Irradiance.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("Prefilter", CreateRef<Shader>("Prefilter", "res/shaders/Calculation/Prefilter.vert", "res/shaders/Calculation/Prefilter.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("BRDF", CreateRef<Shader>("BRDF", "res/shaders/Calculation/BRDF.vert", "res/shaders/Calculation/BRDF.frag")));
+}
+
+Ref<ShaderLibrary> ShaderLibrary::GetInstance()
+{
+	std::lock_guard<std::mutex> lock(s_Mutex);
+	if (s_Instance == nullptr)
+		s_Instance = CreateRef<ShaderLibrary>();
+
+	return s_Instance;
 }
 
 Ref<Shader> ShaderLibrary::GetShader(ShaderType type, std::string name)

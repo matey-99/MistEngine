@@ -48,12 +48,9 @@ void EntityDetailsPanel::Render()
     {
         ImGui::Text("Static Mesh");
 
-        ImGui::Text("Static Mesh: ");
-        ImGui::SameLine();
-
         std::string path = mesh->GetPath();
         std::string name = path.substr(path.find_last_of("/") + 1);
-        if (ImGui::BeginMenu(name.c_str()))
+        if (ImGui::BeginCombo("Static Mesh", name.c_str()))
         {
             std::vector<std::string> extensions = std::vector<std::string>();
             extensions.push_back("obj");
@@ -62,7 +59,7 @@ void EntityDetailsPanel::Render()
             extensions.push_back("dae");
             DisplayResources(extensions);
 
-            ImGui::EndMenu();
+            ImGui::EndCombo();
         }
 
         ImGui::Text("Materials");
@@ -71,16 +68,14 @@ void EntityDetailsPanel::Render()
             path = mesh->GetMaterialsPaths().at(i);
             name = path.substr(path.find_last_of("/") + 1);
 
-            ImGui::Text(("Material[" + std::to_string(i) + "]: ").c_str());
-            ImGui::SameLine();
             ImGui::PushID(i);
-            if (ImGui::BeginMenu(name.c_str()))
+            if (ImGui::BeginCombo(("[" + std::to_string(i) + "]").c_str(), name.c_str()))
             {
                 std::vector<std::string> extensions = std::vector<std::string>();
                 extensions.push_back("mat");
                 DisplayResources(extensions, i);
 
-                ImGui::EndMenu();
+                ImGui::EndCombo();
             }
             ImGui::PopID();
         }
@@ -219,7 +214,8 @@ void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions, i
         {
             if (extension == ext)
             {
-                if (ImGui::MenuItem(name.c_str()))
+                const bool isSelected = false;
+                if (ImGui::Selectable(name.c_str(), &isSelected))
                 {
                     if (ext == "obj" || ext == "fbx" || ext == "3ds" || ext == "dae")
                     {

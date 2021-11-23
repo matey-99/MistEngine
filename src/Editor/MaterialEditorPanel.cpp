@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "Editor.h"
 #include "Material/MaterialSerializer.h"
-#include "Material/MaterialManager.h"
 
 MaterialEditorPanel::MaterialEditorPanel(Ref<Editor> editor) : m_Editor(editor)
 {
@@ -28,7 +27,7 @@ void MaterialEditorPanel::Render()
         std::vector<std::string> extensions = std::vector<std::string>();
         extensions.push_back("frag");
         
-        auto sl = MaterialManager::GetInstance()->GetShaderLibrary();
+        auto sl = ShaderLibrary::GetInstance();
         for (auto sh : sl->GetMaterialShaders())
         {
             if (ImGui::MenuItem(sh.first.c_str()))

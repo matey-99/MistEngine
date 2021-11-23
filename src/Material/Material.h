@@ -37,6 +37,9 @@ public:
 	Material(std::string name = "Default", Ref<Shader> shader = Ref<Shader>());
 	Material(uint64_t id, std::string name = "Default", Ref<Shader> shader = Ref<Shader>());
 
+	static Ref<Material> Create(std::string name, Ref<Shader> shader);
+	static Ref<Material> Create(std::string name, std::string shaderName);
+
 	void LoadParameters();
 	void Use();
 

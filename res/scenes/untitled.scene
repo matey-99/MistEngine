@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [1.17598367, 2.61684346, 5.17648172]
-  Yaw: 242.800644
-  Pitch: -17.199976
+  Position: [-0.680087686, 3.5711937, 7.30263758]
+  Yaw: 259.00058
+  Pitch: -15.2999601
 Entities:
   - Entity: Root
     ID: 0
@@ -10,33 +10,9 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: Knight
-    ID: 362112506
-    Parent: 0
-    Transform:
-      Position: [0, 0.899683952, 0]
-      Rotation: [0, 0, 0]
-      Scale: [2, 2, 2]
-    Model:
-      Mesh: ../../res/models/knight/knight.dae
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-  - Entity: Chest
-    ID: 218770885
-    Parent: 0
-    Transform:
-      Position: [-1.84545553, -0.574629843, 4.99078183e-08]
-      Rotation: [180, -6.55013895, 180]
-      Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/chest/chest.dae
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/M_Chest.mat
   - Entity: Sphere1
     ID: 449628831
-    Parent: 385882558 
+    Parent: 385882558
     Transform:
       Position: [-4.78897429, 1.62502658, -0.392062664]
       Rotation: [0, 0, 0]
@@ -88,3 +64,47 @@ Entities:
       Linear: 0.137999997
       Quadratic: 0.0329999998
       Color: [25, 25, 25]
+  - Entity: Knight
+    ID: 584249852
+    Parent: 0
+    Transform:
+      Position: [0, 2.24179506, 0.194790065]
+      Rotation: [0, 0, 0]
+      Scale: [2, 2, 2]
+    Model:
+      Mesh: ../../res/models/knight/knight.dae
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Knight/M_KnightMetal.mat
+        - Material: 1
+          Path: ../../res/materials/Knight/M_KnightMetal.mat
+        - Material: 2
+          Path: ../../res/materials/Knight/M_KnightMetal.mat
+        - Material: 3
+          Path: ../../res/materials/Knight/M_KnightMetal.mat
+        - Material: 4
+          Path: ../../res/materials/Knight/M_KnightMetal.mat
+        - Material: 5
+          Path: ../../res/materials/Knight/M_KnightMetal.mat
+        - Material: 6
+          Path: ../../res/materials/Knight/M_KnightEye.mat
+        - Material: 7
+          Path: ../../res/materials/Knight/M_KnightLeather.mat
+        - Material: 8
+          Path: ../../res/materials/Knight/M_KnightChainMail.mat
+        - Material: 9
+          Path: ../../res/materials/Knight/M_KnightSkinFace.mat
+  - Entity: Chest
+    ID: 530364290
+    Parent: 0
+    Transform:
+      Position: [-2.57571387, 0.576182365, -0.0237042289]
+      Rotation: [0, 180, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/chest/chest.dae
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/M_Chest.mat
+        - Material: 1
+          Path: ../../res/materials/M_Chest.mat

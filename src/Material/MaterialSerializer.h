@@ -7,5 +7,5 @@ class MaterialSerializer
 {
 public:
 	static void Serialize(Ref<Material> material);
-	static Ref<Material> Deserialize(std::string path, Ref<ShaderLibrary> shaderLibrary);
+	static Ref<Material> Deserialize(std::string path);
 };

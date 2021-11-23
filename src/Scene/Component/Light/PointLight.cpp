@@ -4,7 +4,6 @@
 
 #include "Scene/Scene.h"
 #include "Renderer/UniformBuffer.h"
-#include "Material/MaterialManager.h"
 
 PointLight::PointLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer) 
 	: Light(entity, uniformBuffer)

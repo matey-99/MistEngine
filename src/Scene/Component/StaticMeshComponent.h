@@ -13,9 +13,7 @@ class StaticMeshComponent : public Component
 {
 private:
 	std::string m_Path;
-	std::vector<Texture> m_LoadedTextures;
 	std::vector<Mesh> m_Meshes;
-	std::string m_Directory;
 	std::vector<Ref<Material>> m_Materials;
 	std::vector<std::string> m_MaterialsPaths;
 

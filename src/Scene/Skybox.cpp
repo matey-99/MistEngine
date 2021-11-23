@@ -4,19 +4,20 @@
 #include <stb_image.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Material/MaterialManager.h"
+#include "Material/ShaderLibrary.h"
+#include "Renderer/Texture.h"
 #include "Renderer/Renderer.h"
 
 Skybox::Skybox()
 {
-	m_Shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::SKYBOX, "Skybox");
+	m_Shader = ShaderLibrary::GetInstance()->GetShader(ShaderType::SKYBOX, "Skybox");
     SetupMesh();
 }
 
 Skybox::Skybox(std::vector<std::string> faces)
 {
     LoadCubemap(faces);
-    m_Shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::SKYBOX, "Skybox");
+    m_Shader = ShaderLibrary::GetInstance()->GetShader(ShaderType::SKYBOX, "Skybox");
     SetupMesh();
 }
 
@@ -60,7 +61,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
     };
 
-    auto shader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "EquirectangularToCubemap");
+    auto shader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "EquirectangularToCubemap");
     shader->Use();
     shader->SetInt("u_EquirenctangularMap", 0);
     shader->SetMat4("u_Projection", captureProjection);
@@ -102,7 +103,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
     glBindFramebuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
-    auto irradianceShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "Irradiance");
+    auto irradianceShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "Irradiance");
     irradianceShader->Use();
     irradianceShader->SetInt("u_EnvironmentMap", 0);
     irradianceShader->SetMat4("u_Projection", captureProjection);
@@ -138,7 +139,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
 
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    auto prefilterShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "Prefilter");
+    auto prefilterShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "Prefilter");
     prefilterShader->Use();
     prefilterShader->SetInt("u_EnvironmentMap", 0);
     prefilterShader->SetMat4("u_Projection", captureProjection);
@@ -190,7 +191,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
 
     glViewport(0, 0, 512, 512);
-    auto brdfShader = MaterialManager::GetInstance()->GetShaderLibrary()->GetShader(ShaderType::CALCULATION, "BRDF");
+    auto brdfShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "BRDF");
     brdfShader->Use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Renderer::GetInstance()->RenderQuad();
