@@ -55,6 +55,7 @@ public:
 	inline void SetGizmoOperation(ImGuizmo::OPERATION operation) { m_Operation = operation; }
 
 	inline Ref<SceneHierarchyPanel> GetSceneHierarchyPanel() const { return m_SceneHierarchyPanel; }
+	inline Ref<Viewport> GetViewport() const { return m_Viewport; }
 
 private:
 	Ref<Editor> GetReference();

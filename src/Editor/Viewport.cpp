@@ -16,6 +16,9 @@ void Viewport::Render(Ref<Framebuffer> framebuffer)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::Begin("Viewport");
+
+    m_Hovered = ImGui::IsWindowHovered();
+
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     if (m_Size != *((glm::vec2*)&viewportPanelSize))
     {

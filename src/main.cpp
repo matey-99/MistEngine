@@ -37,11 +37,13 @@ float lag = 0.0f;
 bool rotateCamera = false;
 bool moveCamera = false;
 
+bool isViewportHovered = false;
+
 const float mouseSensitivity = 0.1f;
 const float scrollSensitivity = 0.1f;
 float lastMouseX = 400, lastMouseY = 300;
 
-void ProcessInput(GLFWwindow* window)
+void ProcessKeyboardInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -60,23 +62,41 @@ void ProcessInput(GLFWwindow* window)
         Editor::GetInstance()->SetGizmoOperation(ImGuizmo::OPERATION::ROTATE);
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
         Editor::GetInstance()->SetGizmoOperation(ImGuizmo::OPERATION::SCALE);
+}
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
+void ProcessMouseInput(GLFWwindow* window)
+{
+    if (isViewportHovered)
     {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        moveCamera = true;
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_PRESS)
+        {
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetCursorPos(window, xpos, ypos);
+            moveCamera = true;
+        }
+        else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+        {
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetCursorPos(window, xpos, ypos);
+
+            rotateCamera = true;
+            moveCamera = false;
+        }
     }
-    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+
+    if (moveCamera && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_3) == GLFW_RELEASE)
     {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        rotateCamera = true;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         moveCamera = false;
     }
-    else
+    else if (rotateCamera && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE)
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         rotateCamera = false;
-        moveCamera = false;
     }
 }
 
@@ -103,7 +123,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    scene->GetCamera()->Move(yoffset, deltaTime);
+    if (isViewportHovered)
+        scene->GetCamera()->Move(yoffset, deltaTime);
 
     ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
@@ -138,6 +159,9 @@ int main(int, char**)
     //glfwMaximizeWindow(window);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
+
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
     // Initialize OpenGL loader
     bool err = !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -174,8 +198,14 @@ int main(int, char**)
         lastFrame = currentFrame;
         lag += deltaTime;
 
-        ProcessInput(window);
+        isViewportHovered = imGuiRenderer.GetEditor()->GetViewport()->IsHovered();
+        
+        if (isViewportHovered)
+            ProcessKeyboardInput(window);
+
+        ProcessMouseInput(window);
         glfwPollEvents();
+
 
         while (lag >= MS_PER_UPDATE)
         {

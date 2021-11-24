@@ -51,8 +51,8 @@ void Camera::Move(float yoffset, float deltaTime)
 
 void Camera::Rotate(float yaw, float pitch, float deltaTime)
 {
-	Yaw += yaw * m_RotateSpeed * deltaTime;
-	Pitch += pitch * m_RotateSpeed * deltaTime;
+	Yaw += yaw * 3 * m_RotateSpeed * deltaTime;
+	Pitch += pitch * 3 * m_RotateSpeed * deltaTime;
 
 	Yaw = glm::mod(Yaw, 360.0f);
 	Pitch = glm::clamp(Pitch, -89.0f, 89.0f);

@@ -31,5 +31,7 @@ public:
 
 	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
+	inline Ref<Editor> GetEditor() const { return m_Editor; }
+
 	friend class Editor;
 };
