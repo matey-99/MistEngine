@@ -27,7 +27,7 @@ public:
 	float MovementSpeed;
 
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f),
-		   glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f, float pitch = 0.0f, float movementSpeed = 15.0f);
+		   glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.0f, float pitch = 0.0f, float movementSpeed = 10.0f);
 
 	void Update();
 
@@ -35,7 +35,7 @@ public:
 	void Move(float xoffset, float yoffset, float deltaTime);
 	void Move(float yoffset, float deltaTime);
 
-	void Rotate(float yaw, float pitch);
+	void Rotate(float yaw, float pitch, float deltaTime);
 
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix();
@@ -44,5 +44,8 @@ public:
 private:
 	glm::vec3 CalculateFrontVector();
 	glm::vec3 CalculateRightVector();
+
+private:
+	float m_RotateSpeed = 10.0f;
 };
 

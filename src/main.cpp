@@ -25,10 +25,14 @@
 #include "Scene/Component/Light/Light.h"
 #include "Renderer/Framebuffer.h"
 
+#define FPS 60.0f
+#define MS_PER_UPDATE 1 / FPS
+
 Ref<Scene> scene = Ref<Scene>();
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+float lag = 0.0f;
 
 bool rotateCamera = false;
 bool moveCamera = false;
@@ -88,7 +92,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
     if (rotateCamera)
     {
-        scene->GetCamera()->Rotate(xoffset, yoffset);
+        scene->GetCamera()->Rotate(xoffset, yoffset, deltaTime);
     }
 
     if (moveCamera)
@@ -159,6 +163,7 @@ int main(int, char**)
 
     glEnable(GL_DEPTH_TEST);
 
+    bool shouldRender = false;
     lastFrame = glfwGetTime();
 
     // Main loop
@@ -167,22 +172,33 @@ int main(int, char**)
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        lag += deltaTime;
 
-        glfwPollEvents();
         ProcessInput(window);
+        glfwPollEvents();
 
-        scene->Update();
+        while (lag >= MS_PER_UPDATE)
+        {
+            scene->Update();
 
-        Renderer::GetInstance()->RenderMainScene(scene);
+            shouldRender = true;
+            lag -= MS_PER_UPDATE;
+        }
 
-        if (Renderer::GetInstance()->IsPostProcessing())
-            Renderer::GetInstance()->AddPostProcessingEffects();
+        if (shouldRender)
+        {
+            Renderer::GetInstance()->RenderMainScene(scene);
 
-        imGuiRenderer.Render();
+            if (Renderer::GetInstance()->IsPostProcessing())
+                Renderer::GetInstance()->AddPostProcessingEffects();
 
+            imGuiRenderer.Render();
+            imGuiRenderer.EndFrame();
 
-        imGuiRenderer.EndFrame();
-        glfwSwapBuffers(window);
+            glfwSwapBuffers(window);
+
+            shouldRender = false;
+        }
     }
 
     imGuiRenderer.CleanUp();

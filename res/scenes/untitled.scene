@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-0.680087686, 3.5711937, 7.30263758]
-  Yaw: 259.00058
-  Pitch: -15.2999601
+  Position: [-0.565540075, 3.65995884, 7.83247757]
+  Yaw: 257.800476
+  Pitch: -9.29995918
 Entities:
   - Entity: Root
     ID: 0
