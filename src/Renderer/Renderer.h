@@ -19,6 +19,9 @@ private:
 	Ref<Framebuffer> m_MainSceneFramebuffer;
 	Ref<Framebuffer> m_PostProcessingFramebuffer;
 
+	uint32_t m_DepthMapFBO;
+	uint32_t m_DepthMap;
+
 	uint32_t m_PostProcessingVAO;
 	uint32_t m_PostProcessingVBO;
 

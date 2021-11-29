@@ -108,21 +108,36 @@ void Scene::RenderEntity(Ref<Entity> entity)
 
 	if (auto mesh = entity->GetComponent<StaticMeshComponent>())
 	{
-		for (auto material : mesh->GetMaterials())
+		if (m_Depth)
 		{
-			material->Use();
-			glActiveTexture(GL_TEXTURE0 + 20);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceMap);
-			material->GetShader()->SetInt("u_IrradianceMap", 20);
-			glActiveTexture(GL_TEXTURE0 + 21);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
-			material->GetShader()->SetInt("u_PrefilterMap", 21);
-			glActiveTexture(GL_TEXTURE0 + 22);
-			glBindTexture(GL_TEXTURE_2D, m_BRDFLUT);
-			material->GetShader()->SetInt("u_BRDFLUT", 22);
-			material->GetShader()->SetMat4("u_Model", entity->GetTransform().ModelMatrix);
+			auto sh = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SimpleDepth");
+			sh->Use();
+			//sh->SetMat4("u_LightSpace", m_Camera->GetViewProjectionMatrix());
+			sh->SetMat4("u_Model", entity->GetTransform().ModelMatrix);
+
+			mesh->Draw(true);
 		}
-		mesh->Draw();
+		else
+		{
+			for (auto material : mesh->GetMaterials())
+			{
+				material->Use();
+				glActiveTexture(GL_TEXTURE0 + 20);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceMap);
+				material->GetShader()->SetInt("u_IrradianceMap", 20);
+				glActiveTexture(GL_TEXTURE0 + 21);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
+				material->GetShader()->SetInt("u_PrefilterMap", 21);
+				glActiveTexture(GL_TEXTURE0 + 22);
+				glBindTexture(GL_TEXTURE_2D, m_BRDFLUT);
+				material->GetShader()->SetInt("u_BRDFLUT", 22);
+				material->GetShader()->SetMat4("u_Model", entity->GetTransform().ModelMatrix);
+			}
+			mesh->Draw();
+		}
+
+
+
 	}
 
 	if (!entity->GetChildren().empty())

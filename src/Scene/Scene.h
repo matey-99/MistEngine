@@ -10,6 +10,9 @@
 
 class Scene
 {
+public:
+	bool m_Depth = false;
+
 private:
 	Ref<Camera> m_Camera;
 	Ref<Entity> m_Root;

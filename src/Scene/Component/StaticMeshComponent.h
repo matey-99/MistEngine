@@ -23,7 +23,7 @@ public:
 	StaticMeshComponent();
 	StaticMeshComponent(std::string path);
 	StaticMeshComponent(std::string path, std::vector<std::string> materialsPath);
-	void Draw();
+	void Draw(bool depthOnly = false);
 
 	void LoadMesh(std::string path);
 	void LoadMaterial(std::string path);

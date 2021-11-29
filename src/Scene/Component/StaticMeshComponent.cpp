@@ -27,8 +27,18 @@ StaticMeshComponent::StaticMeshComponent(std::string path, std::vector<std::stri
 
 }
 
-void StaticMeshComponent::Draw()
+void StaticMeshComponent::Draw(bool depthOnly)
 {
+	if (depthOnly)
+	{
+		for (int i = 0; i < m_Meshes.size(); i++)
+		{
+			m_Meshes.at(i).Draw();
+		}
+
+		return;
+	}
+
 	if (!m_MultipleMaterials && m_Materials.at(0))
 	{
 		m_Materials.at(0)->Use();
