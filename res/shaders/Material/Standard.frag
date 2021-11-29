@@ -8,6 +8,7 @@ layout (location = 0) out vec4 f_Color;
 layout (location = 0) in vec3 v_Position;
 layout (location = 1) in vec3 v_Normal;
 layout (location = 2) in vec2 v_TexCoord;
+layout (location = 3) in vec4 v_LightSpacePosition;
 
 struct Material
 {
@@ -65,10 +66,11 @@ layout (std140, binding = 2) uniform u_Lights
     SpotLight[MAX_SPOT_LIGHTS] u_SpotLights;
 };
 
-layout (location = 2) uniform Material u_Material;
-layout (location = 16) uniform samplerCube u_IrradianceMap;
-layout (location = 17) uniform samplerCube u_PrefilterMap;
-layout (location = 18) uniform sampler2D u_BRDFLUT;
+layout (location = 3) uniform Material u_Material;
+layout (location = 17) uniform samplerCube u_IrradianceMap;
+layout (location = 18) uniform samplerCube u_PrefilterMap;
+layout (location = 19) uniform sampler2D u_BRDFLUT;
+layout (location = 20) uniform sampler2D u_ShadowMap;
 
 const float PI = 3.14159265359;
 
@@ -191,6 +193,34 @@ vec3 CalculateSpotLight(SpotLight light, vec3 V, vec3 albedo, vec3 N, float meta
     return CalculateLight(L, V, albedo, N, metallic, roughness) * intensity * radiance;
 }
 
+float CalculateShadow(vec4 lightSpacePosition, vec3 normal)
+{
+    vec3 projectionCoords = lightSpacePosition.xyz / lightSpacePosition.w;
+    projectionCoords = projectionCoords * 0.5 + 0.5;
+    float closestDepth = texture(u_ShadowMap, projectionCoords.xy).r;
+    float currentDepth = projectionCoords.z;
+
+    //float bias = max(0.05 * (1.0 - dot(normal, u_DirectionalLight.direction)), 0.005);
+    float bias = 0.005;
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+    for (int x = -1; x < 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(u_ShadowMap, projectionCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+
+    shadow /= 9.0;
+
+    //if (projectionCoords.z > 1.0)
+        //shadow = 0.0;
+
+    return shadow;
+}
+
 void main()
 {
     vec3 albedo;
@@ -249,7 +279,9 @@ void main()
     vec2 brdf = texture(u_BRDFLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-    vec3 ambient = (kD * diffuse + specular) * ao;
+    float shadow = CalculateShadow(v_LightSpacePosition, N);
+
+    vec3 ambient = (kD * diffuse + specular) * (1.0 - shadow) * ao;
     vec3 color = ambient + Lo;
 
     f_Color = vec4(color, 1.0);

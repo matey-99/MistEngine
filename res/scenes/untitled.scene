@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-0.565540075, 3.65995884, 7.83247757]
-  Yaw: 257.800476
-  Pitch: -9.29995918
+  Position: [14.6092567, 13.4864225, 7.22738266]
+  Yaw: 200.109558
+  Pitch: -39.972168
 Entities:
   - Entity: Root
     ID: 0
@@ -116,5 +116,29 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Directional Light:
-      Direction: [0, -1, 0]
+      Direction: [-0.449999988, -0.50999999, -0.400000006]
       Color: [1, 1, 1]
+  - Entity: Ground
+    ID: 818049914
+    Parent: 0
+    Transform:
+      Position: [-1.84795094, -0.42503345, 0]
+      Rotation: [0, 0, 0]
+      Scale: [10.9326324, 0.589995801, 10.8595104]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity
+    ID: 478491488
+    Parent: 0
+    Transform:
+      Position: [-1.50951052, 1.06141615, 5.58154154]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <glm/glm.hpp>
 
 class Framebuffer;
 class Scene;
@@ -12,6 +13,8 @@ enum class FramebufferType
 
 class Renderer
 {
+public:
+	uint32_t m_DepthMap;
 private:
 	static Ref<Renderer> s_Instance;
 	static std::mutex s_Mutex;
@@ -20,7 +23,6 @@ private:
 	Ref<Framebuffer> m_PostProcessingFramebuffer;
 
 	uint32_t m_DepthMapFBO;
-	uint32_t m_DepthMap;
 
 	uint32_t m_PostProcessingVAO;
 	uint32_t m_PostProcessingVBO;

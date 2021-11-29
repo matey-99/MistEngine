@@ -7,6 +7,7 @@ layout (location = 2) in vec2 a_TexCoord;
 layout (location = 0) out vec3 v_Position;
 layout (location = 1) out vec3 v_Normal;
 layout (location = 2) out vec2 v_TexCoord;
+layout (location = 3) out vec4 v_LightSpacePosition;
 
 struct Material
 {
@@ -20,6 +21,7 @@ layout (std140, binding = 0) uniform u_VertexCamera
 
 layout (location = 0) uniform mat4 u_Model;
 layout (location = 1) uniform Material u_MaterialVS;
+layout (location = 2) uniform mat4 u_LightSpaceMatrix;
 
 void main()
 {
@@ -36,5 +38,6 @@ void main()
         v_TexCoord = a_TexCoord;
     }
 
+    v_LightSpacePosition = u_LightSpaceMatrix * vec4(v_Position, 1.0);
     gl_Position = u_ViewProjection * vec4(v_Position, 1.0);
 }

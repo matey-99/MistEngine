@@ -12,6 +12,7 @@ class Scene
 {
 public:
 	bool m_Depth = false;
+	glm::mat4 m_LightSpace;
 
 private:
 	Ref<Camera> m_Camera;
@@ -48,6 +49,32 @@ public:
 	void RemoveEntity(Ref<Entity> entity);
 	Ref<Entity> FindEntity(std::string name);
 	Ref<Entity> FindEntity(uint64_t id);
+
+	template<typename T>
+	std::vector<Ref<Component>> GetComponents()
+	{
+		std::vector<Ref<Component>> components;
+		for (auto entity : m_Entities)
+		{
+			if (auto c = entity->GetComponent<T>())
+				components.push_back(c);
+		}
+
+		return components;
+	}
+
+	template<typename T>
+	std::vector<Ref<Entity>> GetEntitiesWithComponent()
+	{
+		std::vector<Ref<Entity>> entities;
+		for (auto entity : m_Entities)
+		{
+			if (entity->GetComponent<T>())
+				entities.push_back(entity);
+		}
+
+		return entities;
+	}
 
 	template<typename T>
 	int GetComponentsCount()

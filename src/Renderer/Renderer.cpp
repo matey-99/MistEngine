@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Framebuffer.h"
 #include "Scene/Scene.h"
+#include "Scene/Component/Light/DirectionalLight.h"
 
 #include <glad/glad.h>
 
@@ -47,6 +48,8 @@ void Renderer::CreateFramebuffer(FramebufferType type)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMap, 0);
@@ -88,12 +91,23 @@ void Renderer::InitializePostProcessing()
 
 void Renderer::RenderMainScene(Ref<Scene> scene)
 {
+	glm::vec3 directionalLightDirection;
+	for (auto c : scene->GetComponents<DirectionalLight>())
+	{
+		auto dirLight = Cast<DirectionalLight>(c);
+		directionalLightDirection = dirLight->GetDirection();
+	}
+
+	directionalLightDirection *= -5.0f;
+	directionalLightDirection = glm::clamp(directionalLightDirection, glm::vec3(0.0001f), glm::vec3(10000.0f));
+
 	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
-	glm::mat4 lightView = glm::lookAt(glm::vec3(0.00001f, 4.0f, 0.0f),
+	glm::mat4 lightView = glm::lookAt(directionalLightDirection,
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm::mat4 lightSpace = lightProjection * lightView;
+	scene->m_LightSpace = lightSpace;
 
 	auto sh = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SimpleDepth");
 	sh->Use();
@@ -103,9 +117,13 @@ void Renderer::RenderMainScene(Ref<Scene> scene)
 	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	glCullFace(GL_FRONT);
+
 	scene->m_Depth = true;
 	scene->Draw();
-	//scene->m_Depth = false;
+	scene->m_Depth = false;
+
+	glCullFace(GL_BACK);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	m_MainSceneFramebuffer->Bind();
@@ -122,20 +140,20 @@ void Renderer::AddPostProcessingEffects()
 {
 	m_PostProcessingFramebuffer->Bind();
 
-	//auto viewportShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Viewport");
-	//viewportShader->Use();
-	//viewportShader->SetInt("u_Screen", 0);
-	//viewportShader->SetFloat("u_Gamma", m_Gamma);
-	//viewportShader->SetFloat("u_Exposure", m_Exposure);
+	auto viewportShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Viewport");
+	viewportShader->Use();
+	viewportShader->SetInt("u_Screen", 0);
+	viewportShader->SetFloat("u_Gamma", m_Gamma);
+	viewportShader->SetFloat("u_Exposure", m_Exposure);
 
-	auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "DepthMap");
-	depthShader->Use();
-	depthShader->SetInt("u_DepthMap", 0);
+	//auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "DepthMap");
+	//depthShader->Use();
+	//depthShader->SetInt("u_DepthMap", 0);
 
 	glBindVertexArray(m_PostProcessingVAO);
 	glDisable(GL_DEPTH_TEST);
-	//glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
-	glBindTexture(GL_TEXTURE_2D, m_DepthMap);
+	glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
+	//glBindTexture(GL_TEXTURE_2D, m_DepthMap);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glEnable(GL_DEPTH_TEST);
