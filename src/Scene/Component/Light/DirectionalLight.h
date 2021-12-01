@@ -8,11 +8,8 @@ private:
 	glm::vec3 m_Direction;
 
 public:
-	DirectionalLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
+	DirectionalLight(Entity* owner, Ref<UniformBuffer> uniformBuffer);
 	~DirectionalLight();
-
-	virtual void Begin() override;
-	virtual void Update() override;
 
 	virtual void Use() override;
 	virtual void SwitchOff() override;

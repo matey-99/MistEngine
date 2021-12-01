@@ -87,11 +87,11 @@ void EntityDetailsPanel::Render()
         ImGui::Text("Light Type: ");
         const char* type = "";
 
-        if (std::dynamic_pointer_cast<DirectionalLight>(light))
+        if (Cast<DirectionalLight>(light))
             type = "Directional";
-        else if (std::dynamic_pointer_cast<PointLight>(light))
+        else if (Cast<PointLight>(light))
             type = "Point";
-        else if (std::dynamic_pointer_cast<SpotLight>(light))
+        else if (Cast<SpotLight>(light))
             type = "Spot";
 
         ImGui::SameLine();
@@ -102,7 +102,7 @@ void EntityDetailsPanel::Render()
                 if (!std::dynamic_pointer_cast<DirectionalLight>(light))
                 {
                     m_Entity->RemoveComponent<Light>();
-                    m_Entity->AddComponent<DirectionalLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
+                    m_Entity->AddComponent<DirectionalLight>(m_Entity->m_Scene->m_LightsUniformBuffer);
                 }
             }
             if (ImGui::MenuItem("Point"))
@@ -110,7 +110,7 @@ void EntityDetailsPanel::Render()
                 if (!std::dynamic_pointer_cast<PointLight>(light))
                 {
                     m_Entity->RemoveComponent<Light>();
-                    m_Entity->AddComponent<PointLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
+                    m_Entity->AddComponent<PointLight>(m_Entity->m_Scene->m_LightsUniformBuffer);
                 }
             }
             if (ImGui::MenuItem("Spot"))
@@ -118,7 +118,7 @@ void EntityDetailsPanel::Render()
                 if (!std::dynamic_pointer_cast<SpotLight>(light))
                 {
                     m_Entity->RemoveComponent<Light>();
-                    m_Entity->AddComponent<SpotLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
+                    m_Entity->AddComponent<SpotLight>(m_Entity->m_Scene->m_LightsUniformBuffer);
                 }
             }
 
@@ -184,11 +184,11 @@ void EntityDetailsPanel::Render()
     if (staticMesh)
         m_Entity->AddComponent<StaticMeshComponent>();
     if (dirLight)
-        m_Entity->AddComponent<DirectionalLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
+        m_Entity->AddComponent<DirectionalLight>(m_Entity->m_Scene->m_LightsUniformBuffer);
     if (pointLight)
-        m_Entity->AddComponent<PointLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
+        m_Entity->AddComponent<PointLight>(m_Entity->m_Scene->m_LightsUniformBuffer);
     if (spotLight)
-        m_Entity->AddComponent<SpotLight>(m_Entity, m_Entity->m_Scene->m_LightsUniformBuffer);
+        m_Entity->AddComponent<SpotLight>(m_Entity->m_Scene->m_LightsUniformBuffer);
 
     if (ImGui::Button("Close"))
     {

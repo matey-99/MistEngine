@@ -7,9 +7,9 @@
 #include "Renderer/Mesh.h"
 #include "Material/Material.h"
 #include "Material/ShaderLibrary.h"
-#include "Scene/Component/Component.h"
+#include "Scene/Component/RenderComponent.h"
 
-class StaticMeshComponent : public Component
+class StaticMeshComponent : public RenderComponent
 {
 private:
 	std::string m_Path;
@@ -20,9 +20,9 @@ private:
 	bool m_MultipleMaterials;
 
 public:
-	StaticMeshComponent();
-	StaticMeshComponent(std::string path);
-	StaticMeshComponent(std::string path, std::vector<std::string> materialsPath);
+	StaticMeshComponent(Entity* owner);
+	StaticMeshComponent(Entity* owner, std::string path);
+	StaticMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPath);
 	void Draw(bool depthOnly = false);
 
 	void LoadMesh(std::string path);
@@ -32,6 +32,8 @@ public:
 
 	virtual void Begin() override;
 	virtual void Update() override;
+	virtual void Render(ViewMode viewMode) override;
+	virtual void Destroy() override;
 
 	inline std::string GetPath() const { return m_Path; }
 	inline std::vector<Ref<Material>> GetMaterials() const { return m_Materials; }

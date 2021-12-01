@@ -46,6 +46,23 @@ void Entity::Update()
 	}
 }
 
+void Entity::Render(ViewMode viewMode)
+{
+	for (auto component : m_Components)
+	{
+		if (auto rc = Cast<RenderComponent>(component))
+			rc->Render(viewMode);
+	}
+}
+
+void Entity::Destroy()
+{
+	for (auto component : m_Components)
+	{
+		component->Destroy();
+	}
+}
+
 void Entity::SetEnable(bool enable)
 {
 	m_Enable = enable;

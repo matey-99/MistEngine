@@ -3,8 +3,8 @@
 #include "Renderer/UniformBuffer.h"
 #include "glm/gtc/type_ptr.hpp"
 
-DirectionalLight::DirectionalLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
-	: Light(entity, uniformBuffer)
+DirectionalLight::DirectionalLight(Entity* owner, Ref<UniformBuffer> uniformBuffer)
+	: Light(owner, uniformBuffer)
 {
 	m_Direction = glm::vec3(0.0f, -1.0f, 0.0f);
 }
@@ -12,14 +12,6 @@ DirectionalLight::DirectionalLight(Ref<Entity> entity, Ref<UniformBuffer> unifor
 DirectionalLight::~DirectionalLight()
 {
 	SwitchOff();
-}
-
-void DirectionalLight::Begin()
-{
-}
-
-void DirectionalLight::Update()
-{
 }
 
 void DirectionalLight::Use()

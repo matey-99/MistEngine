@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [14.6092567, 13.4864225, 7.22738266]
-  Yaw: 200.109558
-  Pitch: -39.972168
+  Position: [17.3836231, 16.349884, -0.284898281]
+  Yaw: 182.507202
+  Pitch: -41.3091431
 Entities:
   - Entity: Root
     ID: 0
@@ -64,36 +64,6 @@ Entities:
       Linear: 0.137999997
       Quadratic: 0.0329999998
       Color: [25, 25, 25]
-  - Entity: Knight
-    ID: 584249852
-    Parent: 0
-    Transform:
-      Position: [0, 2.24179506, 0.194790065]
-      Rotation: [0, 0, 0]
-      Scale: [2, 2, 2]
-    Model:
-      Mesh: ../../res/models/knight/knight.dae
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-        - Material: 1
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-        - Material: 2
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-        - Material: 3
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-        - Material: 4
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-        - Material: 5
-          Path: ../../res/materials/Knight/M_KnightMetal.mat
-        - Material: 6
-          Path: ../../res/materials/Knight/M_KnightEye.mat
-        - Material: 7
-          Path: ../../res/materials/Knight/M_KnightLeather.mat
-        - Material: 8
-          Path: ../../res/materials/Knight/M_KnightChainMail.mat
-        - Material: 9
-          Path: ../../res/materials/Knight/M_KnightSkinFace.mat
   - Entity: Chest
     ID: 530364290
     Parent: 0
@@ -112,11 +82,11 @@ Entities:
     ID: 832576323
     Parent: 0
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 0, -1.95987654]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Directional Light:
-      Direction: [-0.449999988, -0.50999999, -0.400000006]
+      Direction: [0, -1, 0]
       Color: [1, 1, 1]
   - Entity: Ground
     ID: 818049914
@@ -130,13 +100,13 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/Default.mat
-  - Entity: New Entity
+  - Entity: Shadow Map Camera Position
     ID: 478491488
     Parent: 0
     Transform:
-      Position: [-1.50951052, 1.06141615, 5.58154154]
+      Position: [0, 5, 3.75]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [0.220000029, 0.220000029, 0.220000029]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
       Materials:

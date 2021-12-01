@@ -219,7 +219,7 @@ int main(int, char**)
 
         if (shouldRender)
         {
-            Renderer::GetInstance()->RenderMainScene(scene);
+            Renderer::GetInstance()->RenderScene(scene, ViewMode::Lit);
 
             if (Renderer::GetInstance()->IsPostProcessing())
                 Renderer::GetInstance()->AddPostProcessingEffects();

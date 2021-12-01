@@ -8,7 +8,7 @@ Mesh::Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices)
 	SetupMesh();
 }
 
-void Mesh::Draw()
+void Mesh::Render()
 {
 	//unsigned int diffuseNr = 1;
 	//unsigned int specularNr = 1;

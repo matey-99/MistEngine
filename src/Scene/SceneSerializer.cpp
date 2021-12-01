@@ -113,7 +113,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 			if (auto dirLight = entity["Directional Light"])
 			{
-				e->AddComponent<DirectionalLight>(e, scene->m_LightsUniformBuffer);
+				e->AddComponent<DirectionalLight>(scene->m_LightsUniformBuffer);
 
 				glm::vec3 direction = dirLight["Direction"].as<glm::vec3>();
 				glm::vec3 color = dirLight["Color"].as<glm::vec3>();
@@ -125,7 +125,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 			if (auto pointLight = entity["Point Light"])
 			{
-				e->AddComponent<PointLight>(e, scene->m_LightsUniformBuffer);
+				e->AddComponent<PointLight>(scene->m_LightsUniformBuffer);
 
 				float linear = pointLight["Linear"].as<float>();
 				float quadratic = pointLight["Quadratic"].as<float>();
@@ -139,7 +139,7 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 			if (auto spotLight = entity["Spot Light"])
 			{
-				e->AddComponent<SpotLight>(e, scene->m_LightsUniformBuffer);
+				e->AddComponent<SpotLight>(scene->m_LightsUniformBuffer);
 
 				glm::vec3 direction = spotLight["Direction"].as<glm::vec3>();
 				float innerCutOff = spotLight["Inner Cut Off"].as<float>();

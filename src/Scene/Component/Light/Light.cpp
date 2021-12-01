@@ -1,7 +1,7 @@
 #include "Light.h"
 
-Light::Light(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer)
-	: m_Entity(entity), m_UniformBuffer(uniformBuffer)
+Light::Light(Entity* owner, Ref<UniformBuffer> uniformBuffer)
+	: Component(owner), m_UniformBuffer(uniformBuffer)
 {
 	m_Color = glm::vec3(1.0f);
 }
@@ -12,4 +12,10 @@ void Light::Begin()
 
 void Light::Update()
 {
+	Use();
+}
+
+void Light::Destroy()
+{
+	SwitchOff();
 }

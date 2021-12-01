@@ -2,6 +2,7 @@
 
 #include "glm/glm.hpp"
 #include "Scene/Component/Component.h"
+#include "Scene/Component/RenderComponent.h"
 #include "Scene/Component/Transform.h"
 
 class Scene;
@@ -17,11 +18,13 @@ public:
 
 	void Begin();
 	void Update();
+	void Render(ViewMode viewMode);
+	void Destroy();
 
 	template<typename T, typename ... Args>
 	Ref<T> AddComponent(Args&& ... args)
 	{
-		Ref<T> comp = CreateRef<T>(std::forward<Args>(args)...);
+		Ref<T> comp = CreateRef<T>(this, std::forward<Args>(args)...);
 		m_Components.push_back(comp);
 
 		return comp;
@@ -32,7 +35,7 @@ public:
 	{
 		for (auto component : m_Components)
 		{
-			if (Ref<T> comp = std::dynamic_pointer_cast<T>(component))
+			if (Ref<T> comp = Cast<T>(component))
 				return comp;
 		}
 
@@ -44,7 +47,7 @@ public:
 	{
 		for (auto component : m_Components)
 		{
-			if (std::dynamic_pointer_cast<T>(component))
+			if (Cast<T>(component))
 			{
 				m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), component), m_Components.end());
 			}

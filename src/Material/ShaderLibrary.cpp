@@ -10,11 +10,15 @@ ShaderLibrary::ShaderLibrary()
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Refraction", CreateRef<Shader>("Refraction", "res/shaders/Material/Refraction.vert", "res/shaders/Material/Refraction.frag")));
 
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Viewport", CreateRef<Shader>("Viewport", "res/shaders/PostProcessing/Viewport.vert", "res/shaders/PostProcessing/Viewport.frag")));
-	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMap", CreateRef<Shader>("DepthMap", "res/shaders/PostProcessing/DepthMap.vert", "res/shaders/PostProcessing/DepthMap.frag")));
+	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMapOrtographic", 
+		CreateRef<Shader>("DepthMapOrtographic", "res/shaders/PostProcessing/DepthMapOrtographic.vert", "res/shaders/PostProcessing/DepthMapOrtographic.frag")));
+	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMapPerspective",
+		CreateRef<Shader>("DepthMapPerspective", "res/shaders/PostProcessing/DepthMapPerspective.vert", "res/shaders/PostProcessing/DepthMapPerspective.frag")));
 
 	m_SkyboxShaders.insert(std::make_pair<std::string, Ref<Shader>>("Skybox", CreateRef<Shader>("Skybox", "res/shaders/Skybox/Skybox.vert", "res/shaders/Skybox/Skybox.frag")));
 
-	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("SimpleDepth", CreateRef<Shader>("SimpleDepth", "res/shaders/Calculation/SimpleDepth.vert", "res/shaders/Calculation/SimpleDepth.frag")));
+	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("SceneDepth", CreateRef<Shader>("SceneDepth", 
+		"res/shaders/Calculation/SceneDepth.vert", "res/shaders/Calculation/SceneDepth.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("EquirectangularToCubemap", 
 		CreateRef<Shader>("EquirectangularToCubemap", "res/shaders/Calculation/EquirectangularToCubemap.vert", "res/shaders/Calculation/EquirectangularToCubemap.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("Irradiance", CreateRef<Shader>("Irradiance", "res/shaders/Calculation/Irradiance.vert", "res/shaders/Calculation/Irradiance.frag")));

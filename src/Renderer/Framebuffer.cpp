@@ -50,7 +50,7 @@ void Framebuffer::Resize(unsigned int width, unsigned int height)
 
 	glGenRenderbuffers(1, &m_DepthAttachment);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_DepthAttachment);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_Width, m_Height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthAttachment);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

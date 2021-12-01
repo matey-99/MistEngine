@@ -11,11 +11,8 @@ private:
 	float m_Quadratic;
 
 public:
-	PointLight(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
+	PointLight(Entity* owner, Ref<UniformBuffer> uniformBuffer);
 	~PointLight();
-
-	virtual void Begin() override;
-	virtual void Update() override;
 
 	virtual void Use() override;
 	virtual void SwitchOff() override;

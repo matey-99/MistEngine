@@ -28,16 +28,16 @@ class UniformBuffer;
 class Light : public Component
 {
 protected:
-	Ref<Entity> m_Entity;
 	Ref<UniformBuffer> m_UniformBuffer;
 
 	glm::vec3 m_Color;
 
 public:
-	Light(Ref<Entity> entity, Ref<UniformBuffer> uniformBuffer);
+	Light(Entity* owner, Ref<UniformBuffer> uniformBuffer);
 
 	virtual void Begin() override;
 	virtual void Update() override;
+	virtual void Destroy() override;
 
 	virtual void Use() = 0;
 	virtual void SwitchOff() = 0;

@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Entity.h"
 #include "Material/ShaderLibrary.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/UniformBuffer.h"
 #include "Renderer/Framebuffer.h"
 #include "Skybox.h"
@@ -11,8 +12,11 @@
 class Scene
 {
 public:
-	bool m_Depth = false;
 	glm::mat4 m_LightSpace;
+
+	unsigned int m_IrradianceMap;
+	unsigned int m_PrefilterMap;
+	unsigned int m_BRDFLUT;
 
 private:
 	Ref<Camera> m_Camera;
@@ -25,9 +29,7 @@ private:
 	Ref<UniformBuffer> m_CameraFragmentUniformBuffer;
 	Ref<UniformBuffer> m_LightsUniformBuffer;
 
-	unsigned int m_IrradianceMap;
-	unsigned int m_PrefilterMap;
-	unsigned int m_BRDFLUT;
+
 
 	bool m_IsSkybox = true;
 
@@ -36,9 +38,10 @@ public:
 
 	void Begin();
 	void Update();
-	void Draw();
+	void Render(ViewMode viewMode);
+	void Destroy();
 
-	void RenderEntity(Ref<Entity> entity);
+	void RenderEntity(Ref<Entity> entity, ViewMode viewMode);
 
 	Ref<Entity> AddRoot();
 	Ref<Entity> AddEntity(std::string name);

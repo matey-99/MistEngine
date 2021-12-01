@@ -89,7 +89,7 @@ void Renderer::InitializePostProcessing()
 	glBindVertexArray(0);
 }
 
-void Renderer::RenderMainScene(Ref<Scene> scene)
+void Renderer::RenderScene(Ref<Scene> scene, ViewMode viewMode)
 {
 	glm::vec3 directionalLightDirection;
 	for (auto c : scene->GetComponents<DirectionalLight>())
@@ -98,10 +98,10 @@ void Renderer::RenderMainScene(Ref<Scene> scene)
 		directionalLightDirection = dirLight->GetDirection();
 	}
 
-	directionalLightDirection *= -5.0f;
+	directionalLightDirection *= -10.0f;
 	directionalLightDirection = glm::clamp(directionalLightDirection, glm::vec3(0.0001f), glm::vec3(10000.0f));
 
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 10.0f);
 	glm::mat4 lightView = glm::lookAt(directionalLightDirection,
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
@@ -109,9 +109,9 @@ void Renderer::RenderMainScene(Ref<Scene> scene)
 	glm::mat4 lightSpace = lightProjection * lightView;
 	scene->m_LightSpace = lightSpace;
 
-	auto sh = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SimpleDepth");
-	sh->Use();
-	sh->SetMat4("u_LightSpace", lightSpace);
+	//auto sh = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepth");
+	//sh->Use();
+	//sh->SetMat4("u_LightSpace", lightSpace);
 
 	glViewport(0, 0, 1024, 1024);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
@@ -119,9 +119,7 @@ void Renderer::RenderMainScene(Ref<Scene> scene)
 
 	glCullFace(GL_FRONT);
 
-	scene->m_Depth = true;
-	scene->Draw();
-	scene->m_Depth = false;
+	scene->Render(ViewMode::SceneDepth);
 
 	glCullFace(GL_BACK);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -131,7 +129,7 @@ void Renderer::RenderMainScene(Ref<Scene> scene)
 	glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindTexture(GL_TEXTURE_2D, m_DepthMap);
-	scene->Draw();
+	scene->Render(ViewMode::Lit);
 
 	m_MainSceneFramebuffer->Unbind();
 }
@@ -146,7 +144,7 @@ void Renderer::AddPostProcessingEffects()
 	viewportShader->SetFloat("u_Gamma", m_Gamma);
 	viewportShader->SetFloat("u_Exposure", m_Exposure);
 
-	//auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "DepthMap");
+	//auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "DepthMapPerspective");
 	//depthShader->Use();
 	//depthShader->SetInt("u_DepthMap", 0);
 

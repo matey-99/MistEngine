@@ -60,7 +60,7 @@ void Scene::Update()
 	}
 }
 
-void Scene::Draw()
+void Scene::Render(ViewMode viewMode)
 {
 	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
 	m_CameraFragmentUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Camera->Position));
@@ -71,7 +71,7 @@ void Scene::Draw()
 	m_LightsUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
 	m_LightsUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
 
-	RenderEntity(GetRoot());
+	RenderEntity(GetRoot(), viewMode);
 
 	if (m_IsSkybox)
 	{
@@ -83,7 +83,11 @@ void Scene::Draw()
 	}
 }
 
-void Scene::RenderEntity(Ref<Entity> entity)
+void Scene::Destroy()
+{
+}
+
+void Scene::RenderEntity(Ref<Entity> entity, ViewMode viewMode)
 {
 	if (!entity->IsEnable())
 	{
@@ -93,64 +97,13 @@ void Scene::RenderEntity(Ref<Entity> entity)
 		return;
 	}
 
-	if (auto dirLight = entity->GetComponent<DirectionalLight>())
-	{
-		dirLight->Use();
-	}
-	if (auto pointLight = entity->GetComponent<PointLight>())
-	{
-		pointLight->Use();
-	}
-	if (auto spotLight = entity->GetComponent<SpotLight>())
-	{
-		spotLight->Use();
-	}
-
-	if (auto mesh = entity->GetComponent<StaticMeshComponent>())
-	{
-		if (m_Depth)
-		{
-			auto sh = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SimpleDepth");
-			sh->Use();
-			//sh->SetMat4("u_LightSpace", m_Camera->GetViewProjectionMatrix());
-			sh->SetMat4("u_Model", entity->GetTransform().ModelMatrix);
-
-			mesh->Draw(true);
-		}
-		else
-		{
-			for (auto material : mesh->GetMaterials())
-			{
-				material->Use();
-				glActiveTexture(GL_TEXTURE0 + 20);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceMap);
-				material->GetShader()->SetInt("u_IrradianceMap", 20);
-				glActiveTexture(GL_TEXTURE0 + 21);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterMap);
-				material->GetShader()->SetInt("u_PrefilterMap", 21);
-				glActiveTexture(GL_TEXTURE0 + 22);
-				glBindTexture(GL_TEXTURE_2D, m_BRDFLUT);
-				material->GetShader()->SetInt("u_BRDFLUT", 22);
-				glActiveTexture(GL_TEXTURE0 + 23);
-				glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->m_DepthMap);
-				material->GetShader()->SetInt("u_ShadowMap", 23);
-				
-				material->GetShader()->SetMat4("u_LightSpaceMatrix", m_LightSpace);
-				material->GetShader()->SetMat4("u_Model", entity->GetTransform().ModelMatrix);
-			}
-			mesh->Draw();
-		}
-
-
-
-	}
+	entity->Render(viewMode);
 
 	if (!entity->GetChildren().empty())
 	{
 		for (auto child : entity->GetChildren())
 		{
-			int pointIndex, spotIndex;
-			RenderEntity(CreateRef<Entity>(*child));
+			RenderEntity(CreateRef<Entity>(*child), viewMode);
 		}
 	}
 }

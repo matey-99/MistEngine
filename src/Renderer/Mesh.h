@@ -19,7 +19,7 @@ public:
 	std::vector<unsigned int> indices;
 
 	Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices);
-	void Draw();
+	void Render();
 
 private:
 	unsigned int VAO, VBO, EBO;

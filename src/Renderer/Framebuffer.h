@@ -2,6 +2,12 @@
 
 #include <glm/glm.hpp>
 
+struct FramebufferConfig
+{
+	int texture;
+
+};
+
 class Framebuffer
 {
 private:

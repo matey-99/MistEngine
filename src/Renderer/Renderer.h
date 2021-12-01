@@ -11,6 +11,11 @@ enum class FramebufferType
 	MAIN_SCENE, POST_PROCESSING
 };
 
+enum class ViewMode
+{
+	Lit, Wireframe, SceneDepth
+};
+
 class Renderer
 {
 public:
@@ -45,7 +50,7 @@ public:
 
 	void InitializePostProcessing();
 
-	void RenderMainScene(Ref<Scene> scene);
+	void RenderScene(Ref<Scene> scene, ViewMode viewMode);
 	void AddPostProcessingEffects();
 
 	void RenderQuad();
