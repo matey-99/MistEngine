@@ -6,11 +6,6 @@
 class Framebuffer;
 class Scene;
 
-enum class FramebufferType
-{
-	MAIN_SCENE, POST_PROCESSING
-};
-
 enum class ViewMode
 {
 	Lit, Wireframe, SceneDepth
@@ -26,6 +21,7 @@ private:
 
 	Ref<Framebuffer> m_MainSceneFramebuffer;
 	Ref<Framebuffer> m_PostProcessingFramebuffer;
+	Ref<Framebuffer> m_ShadowMapFramebuffer;
 
 	uint32_t m_DepthMapFBO;
 
@@ -46,7 +42,9 @@ public:
 
 	static Ref<Renderer> GetInstance();
 
-	void CreateFramebuffer(FramebufferType type);
+	void InitializeMainSceneFramebuffer();
+	void InitializePostProcessingFramebuffer();
+	void InitializeShadowMapFramebuffer();
 
 	void InitializePostProcessing();
 
@@ -57,6 +55,7 @@ public:
 
 	inline Ref<Framebuffer> GetMainSceneFramebuffer() const { return m_MainSceneFramebuffer; }
 	inline Ref<Framebuffer> GetPostProcessingFramebuffer() const { return m_PostProcessingFramebuffer; }
+	inline Ref<Framebuffer> GetShadowMapFramebuffer() const { return m_ShadowMapFramebuffer; }
 	inline bool IsPostProcessing() const { return m_PostProcessing; }
 
 	friend class RendererSettingsPanel;

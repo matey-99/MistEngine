@@ -27,35 +27,68 @@ Ref<Renderer> Renderer::GetInstance()
 	return s_Instance;
 }
 
-void Renderer::CreateFramebuffer(FramebufferType type)
+void Renderer::InitializeMainSceneFramebuffer()
 {
-	switch (type)
-	{
-	case FramebufferType::MAIN_SCENE:
-		m_MainSceneFramebuffer = CreateRef<Framebuffer>(1920, 1080);
-		break;
-	case FramebufferType::POST_PROCESSING:
-		m_PostProcessingFramebuffer = CreateRef<Framebuffer>(1920, 1080);
-		break;
-	}
+	FramebufferTextureConfig textureConfig;
+	textureConfig.Target = GL_TEXTURE_2D;
+	textureConfig.InternalFormat = GL_RGBA32F;
+	textureConfig.Format = GL_RGBA;
+	textureConfig.MinFilter = GL_LINEAR;
+	textureConfig.MagFilter = GL_LINEAR;
 
-	glGenFramebuffers(1, &m_DepthMapFBO);
+	FramebufferRenderbufferConfig renderbufferConfig;
+	renderbufferConfig.InternalFormat = GL_DEPTH_STENCIL;
 
-	glGenTextures(1, &m_DepthMap);
-	glBindTexture(GL_TEXTURE_2D, m_DepthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	FramebufferConfig config;
+	config.Width = 1920;
+	config.Height = 1080;
+	config.Textures.push_back(textureConfig);
+	config.Renderbuffers.push_back(renderbufferConfig);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_MainSceneFramebuffer = Framebuffer::Create(config);
+}
+
+void Renderer::InitializePostProcessingFramebuffer()
+{
+	FramebufferTextureConfig textureConfig;
+	textureConfig.Target = GL_TEXTURE_2D;
+	textureConfig.InternalFormat = GL_RGBA32F;
+	textureConfig.Format = GL_RGBA;
+	textureConfig.MinFilter = GL_LINEAR;
+	textureConfig.MagFilter = GL_LINEAR;
+
+	FramebufferRenderbufferConfig renderbufferConfig;
+	renderbufferConfig.InternalFormat = GL_DEPTH_STENCIL;
+
+	FramebufferConfig config;
+	config.Width = 1920;
+	config.Height = 1080;
+	config.Textures.push_back(textureConfig);
+	config.Renderbuffers.push_back(renderbufferConfig);
+
+	m_PostProcessingFramebuffer = Framebuffer::Create(config);
+}
+
+void Renderer::InitializeShadowMapFramebuffer()
+{
+	FramebufferTextureConfig textureConfig;
+	textureConfig.Attachment = GL_DEPTH_ATTACHMENT;
+	textureConfig.Target = GL_TEXTURE_2D;
+	textureConfig.InternalFormat = GL_DEPTH_COMPONENT;
+	textureConfig.Format = GL_DEPTH_COMPONENT;
+	textureConfig.MinFilter = GL_NEAREST;
+	textureConfig.MagFilter = GL_NEAREST;
+	textureConfig.WrapS = GL_REPEAT;
+	textureConfig.WrapT = GL_REPEAT;
+	textureConfig.Type = GL_FLOAT;
+	textureConfig.Border = true;
+
+	FramebufferConfig config;
+	config.Width = 1024;
+	config.Height = 1024;
+	config.Textures.push_back(textureConfig);
+
+	m_ShadowMapFramebuffer = Framebuffer::Create(config);
 }
 
 void Renderer::InitializePostProcessing()
@@ -109,26 +142,20 @@ void Renderer::RenderScene(Ref<Scene> scene, ViewMode viewMode)
 	glm::mat4 lightSpace = lightProjection * lightView;
 	scene->m_LightSpace = lightSpace;
 
-	//auto sh = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepth");
-	//sh->Use();
-	//sh->SetMat4("u_LightSpace", lightSpace);
+	m_ShadowMapFramebuffer->Bind();
 
-	glViewport(0, 0, 1024, 1024);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
-
 	glCullFace(GL_FRONT);
-
 	scene->Render(ViewMode::SceneDepth);
-
 	glCullFace(GL_BACK);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	m_ShadowMapFramebuffer->Unbind();
+
 
 	m_MainSceneFramebuffer->Bind();
 
 	glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBindTexture(GL_TEXTURE_2D, m_DepthMap);
 	scene->Render(ViewMode::Lit);
 
 	m_MainSceneFramebuffer->Unbind();
@@ -144,14 +171,9 @@ void Renderer::AddPostProcessingEffects()
 	viewportShader->SetFloat("u_Gamma", m_Gamma);
 	viewportShader->SetFloat("u_Exposure", m_Exposure);
 
-	//auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "DepthMapPerspective");
-	//depthShader->Use();
-	//depthShader->SetInt("u_DepthMap", 0);
-
 	glBindVertexArray(m_PostProcessingVAO);
 	glDisable(GL_DEPTH_TEST);
 	glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
-	//glBindTexture(GL_TEXTURE_2D, m_DepthMap);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glEnable(GL_DEPTH_TEST);

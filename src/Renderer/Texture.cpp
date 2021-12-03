@@ -4,8 +4,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Texture::Texture(std::string path, std::string type, TextureRange range) 
-	: m_Path(path), m_Type(type)
+Texture::Texture(std::string path, TextureRange range) 
+	: m_Path(path)
 {
 	switch (range)
 	{
@@ -18,9 +18,14 @@ Texture::Texture(std::string path, std::string type, TextureRange range)
 	}
 }
 
-Ref<Texture> Texture::Create(std::string path, std::string type, TextureRange range)
+Texture::~Texture()
 {
-	return CreateRef<Texture>(path, type, range);
+	glDeleteTextures(1, &m_ID);
+}
+
+Ref<Texture> Texture::Create(std::string path, TextureRange range)
+{
+	return CreateRef<Texture>(path, range);
 }
 
 void Texture::Load(std::string path)
@@ -52,7 +57,7 @@ void Texture::Load(std::string path)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 	else
 	{

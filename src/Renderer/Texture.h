@@ -8,17 +8,20 @@ enum class TextureRange
 class Texture
 {
 public:
-	uint32_t m_ID;
-	std::string m_Path;
-	std::string m_Type;
-	
-	Texture(std::string path, std::string type, TextureRange range);
+	Texture(std::string path, TextureRange range);
+	~Texture();
 
-	static Ref<Texture> Create(std::string path, std::string type, TextureRange range = TextureRange::LDR);
+	static Ref<Texture> Create(std::string path, TextureRange range = TextureRange::LDR);
 
 	void Load(std::string path);
 	void LoadHDR(std::string path);
 
 	void Bind(uint32_t index);
 	void Unbind();
+
+	inline std::string GetPath() const { return m_Path; }
+
+private:
+	uint32_t m_ID;
+	std::string m_Path;
 };

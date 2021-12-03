@@ -171,8 +171,9 @@ int main(int, char**)
         return 1;
     }
 
-    Renderer::GetInstance()->CreateFramebuffer(FramebufferType::MAIN_SCENE);
-    Renderer::GetInstance()->CreateFramebuffer(FramebufferType::POST_PROCESSING);
+    Renderer::GetInstance()->InitializeMainSceneFramebuffer();
+    Renderer::GetInstance()->InitializePostProcessingFramebuffer();
+    Renderer::GetInstance()->InitializeShadowMapFramebuffer();
 
     Renderer::GetInstance()->InitializePostProcessing();
 

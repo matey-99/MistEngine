@@ -66,7 +66,7 @@ Ref<Skybox> Skybox::CreateFromEquirectangularMap(std::string path)
     shader->SetInt("u_EquirenctangularMap", 0);
     shader->SetMat4("u_Projection", captureProjection);
 
-    auto hdrTexture = Texture::Create(path, "default", TextureRange::HDR);
+    auto hdrTexture = Texture::Create(path, TextureRange::HDR);
     hdrTexture->Bind(0);
 
     glViewport(0, 0, 256, 256);

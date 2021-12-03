@@ -2,10 +2,15 @@
 
 #include <glad/glad.h>
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height)
-	: m_Width(width), m_Height(height)
+Ref<Framebuffer> Framebuffer::Create(const FramebufferConfig& config)
 {
-	Resize(width, height);
+	return CreateRef<Framebuffer>(config);
+}
+
+Framebuffer::Framebuffer(const FramebufferConfig& config)
+	: m_Config(config)
+{
+	Resize(m_Config.Width, m_Config.Height);
 }
 
 Framebuffer::~Framebuffer()
@@ -18,7 +23,12 @@ Framebuffer::~Framebuffer()
 void Framebuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-	glViewport(0, 0, m_Width, m_Height);
+	glViewport(0, 0, m_Config.Width, m_Config.Height);
+}
+
+void Framebuffer::UpdateTarget(const FramebufferTextureConfig& textureConfig, int i)
+{
+	glFramebufferTexture2D(GL_FRAMEBUFFER, textureConfig.Attachment, textureConfig.Target + i, m_ColorAttachment, 0);
 }
 
 void Framebuffer::Unbind()
@@ -26,10 +36,10 @@ void Framebuffer::Unbind()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::Resize(unsigned int width, unsigned int height)
+void Framebuffer::Resize(uint32_t width, uint32_t height)
 {
-	m_Width = width;
-	m_Height = height;
+	m_Config.Width = width;
+	m_Config.Height = height;
 
 	if (m_ID)
 	{
@@ -41,17 +51,67 @@ void Framebuffer::Resize(unsigned int width, unsigned int height)
 	glGenFramebuffers(1, &m_ID);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 
-	glGenTextures(1, &m_ColorAttachment);
-	glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+	if (m_Config.Textures.size())
+	{
+		for (auto& textureConfig : m_Config.Textures)
+		{
+			uint32_t* attachment;
+			if (textureConfig.Attachment == GL_COLOR_ATTACHMENT0)
+			{
+				attachment = &m_ColorAttachment;
+			}
+			else if (textureConfig.Attachment = GL_DEPTH_ATTACHMENT)
+			{
+				attachment = &m_DepthAttachment;
+			}
 
-	glGenRenderbuffers(1, &m_DepthAttachment);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_DepthAttachment);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_Width, m_Height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthAttachment);
+			glGenTextures(1, attachment);
+			glBindTexture(textureConfig.Target, *attachment);
+
+			if (textureConfig.Target == GL_TEXTURE_2D)
+			{
+				glTexImage2D(textureConfig.Target, 0, textureConfig.InternalFormat, m_Config.Width, m_Config.Height, 0, textureConfig.Format, textureConfig.Type, nullptr);
+			}
+			else if (textureConfig.Target == GL_TEXTURE_CUBE_MAP)
+			{
+				for (int i = 0; i < 6; i++)
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, textureConfig.InternalFormat, m_Config.Width, m_Config.Height, 0, textureConfig.Format, textureConfig.Type, nullptr);
+			}
+
+			glTexParameteri(textureConfig.Target, GL_TEXTURE_MIN_FILTER, textureConfig.MinFilter);
+			glTexParameteri(textureConfig.Target, GL_TEXTURE_MAG_FILTER, textureConfig.MagFilter);
+			glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_S, textureConfig.WrapS);
+			glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_T, textureConfig.WrapT);
+
+			if (textureConfig.Target == GL_TEXTURE_CUBE_MAP)
+				glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_R, textureConfig.WrapR);
+
+			if (textureConfig.Border)
+			{
+				float border[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+				glTexParameterfv(textureConfig.Target, GL_TEXTURE_BORDER_COLOR, border);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, textureConfig.Attachment, textureConfig.Target, *attachment, 0);
+		}
+	}
+	
+	if (!m_ColorAttachment)
+	{
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+	}
+
+	if (m_Config.Renderbuffers.size())
+	{
+		for (auto& renderbufferConfig : m_Config.Renderbuffers)
+		{
+			glGenRenderbuffers(1, &m_DepthAttachment);
+			glBindRenderbuffer(GL_RENDERBUFFER, m_DepthAttachment);
+			glRenderbufferStorage(GL_RENDERBUFFER, renderbufferConfig.InternalFormat, m_Config.Width, m_Config.Height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, renderbufferConfig.Attachment, GL_RENDERBUFFER, m_DepthAttachment);
+		}
+	}
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer is incomplete!" << std::endl;

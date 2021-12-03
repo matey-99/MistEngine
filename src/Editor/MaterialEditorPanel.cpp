@@ -60,7 +60,7 @@ void MaterialEditorPanel::Render()
         index++;
         if (param.second)
         {
-            filename = param.second->m_Path.substr(param.second->m_Path.find_last_of('/'));
+            filename = param.second->GetPath().substr(param.second->GetPath().find_last_of('/'));
         }
         if (ImGui::BeginMenu(filename.c_str()))
         {
@@ -116,7 +116,7 @@ void MaterialEditorPanel::DisplayTextures(std::string name)
             {
                 if (ImGui::MenuItem(shaderName.c_str()))
                 {
-                    auto texture = Texture::Create(path, "default");
+                    auto texture = Texture::Create(path);
                     m_Material->m_Texture2DParameters.find(name)->second = texture;
                 }
             }

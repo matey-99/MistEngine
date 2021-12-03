@@ -2,32 +2,70 @@
 
 #include <glm/glm.hpp>
 
+#include <glad/glad.h>
+
+struct FramebufferTextureConfig
+{
+	int Attachment = GL_COLOR_ATTACHMENT0;
+	int Target = GL_TEXTURE_2D;
+
+	int InternalFormat = GL_RGBA32F;
+	int Format = GL_RGBA;
+
+	int MinFilter = GL_LINEAR;
+	int MagFilter = GL_LINEAR;
+
+	int WrapS = GL_NONE;
+	int WrapT = GL_NONE;
+	int WrapR = GL_NONE;
+
+	int Type = GL_UNSIGNED_BYTE;
+
+	bool Mipmap = false;
+	bool Border = false;
+};
+
+struct FramebufferRenderbufferConfig
+{
+	int Attachment = GL_DEPTH_STENCIL_ATTACHMENT;
+	int InternalFormat = GL_DEPTH_STENCIL;
+};
+
 struct FramebufferConfig
 {
-	int texture;
-
+	uint32_t Width = 1024;
+	uint32_t Height = 1024;
+	
+	std::vector<FramebufferTextureConfig> Textures;
+	std::vector<FramebufferRenderbufferConfig> Renderbuffers;
 };
 
 class Framebuffer
 {
-private:
-	uint32_t m_ID = 0;
-	unsigned int m_ColorAttachment = 0;
-	unsigned int m_DepthAttachment = 0;
-	unsigned int m_Width;
-	unsigned int m_Height;
-
 public:
-	Framebuffer(unsigned int width, unsigned int height);
+	static Ref<Framebuffer> Create(const FramebufferConfig& config);
+
+	Framebuffer(const FramebufferConfig& config);
 	~Framebuffer();
 
 	void Bind();
+
+	void UpdateTarget(const FramebufferTextureConfig& textureConfig, int i = 0);
+
 	void Unbind();
 
-	void Resize(unsigned int width, unsigned int height);
+	void Resize(uint32_t width, uint32_t height);
 
-	inline unsigned int GetColorAttachment() const { return m_ColorAttachment; }
-	inline unsigned int GetDepthAttachment() const { return m_DepthAttachment; }
-	inline unsigned int GetWidth() const { return m_Width; }
-	inline unsigned int GetHeight() const { return m_Height; }
+	inline const FramebufferConfig& GetConfiguration() const { return m_Config; }
+
+	inline uint32_t GetID() const { return m_ID; }
+	inline uint32_t GetColorAttachment() const { return m_ColorAttachment; }
+	inline uint32_t GetDepthAttachment() const { return m_DepthAttachment; }
+
+private:
+	uint32_t m_ID = 0;
+	uint32_t m_ColorAttachment = 0;
+	uint32_t m_DepthAttachment = 0;
+
+	FramebufferConfig m_Config;
 };

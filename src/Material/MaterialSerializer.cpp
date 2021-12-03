@@ -46,7 +46,7 @@ void MaterialSerializer::Serialize(Ref<Material> material)
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "Name" << YAML::Value << param.first;
-		out << YAML::Key << "Path" << YAML::Value << (param.second ? param.second->m_Path : "null");
+		out << YAML::Key << "Path" << YAML::Value << (param.second ? param.second->GetPath() : "null");
 		out << YAML::EndMap;
 	}
 	out << YAML::EndSeq;
@@ -126,9 +126,9 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path)
 				Ref<Texture> texture;
 				std::string extension = path.substr(path.find_last_of('.') + 1);
 				if (extension == "hdr")
-					texture = Texture::Create(path, "default", TextureRange::HDR);
+					texture = Texture::Create(path, TextureRange::HDR);
 				else
-					texture = Texture::Create(path, "default");
+					texture = Texture::Create(path);
 
 				material->m_Texture2DParameters.find(name)->second = texture;
 			}

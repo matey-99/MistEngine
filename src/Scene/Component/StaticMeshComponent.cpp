@@ -61,7 +61,7 @@ void StaticMeshComponent::Render(ViewMode viewMode)
 			glBindTexture(GL_TEXTURE_2D, m_Owner->GetScene()->m_BRDFLUT);
 			material->GetShader()->SetInt("u_BRDFLUT", 22);
 			glActiveTexture(GL_TEXTURE0 + 23);
-			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->m_DepthMap);
+			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetShadowMapFramebuffer()->GetDepthAttachment());
 			material->GetShader()->SetInt("u_ShadowMap", 23);
 
 			material->GetShader()->SetMat4("u_LightSpaceMatrix", m_Owner->GetScene()->m_LightSpace);
