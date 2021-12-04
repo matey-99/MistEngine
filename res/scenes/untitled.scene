@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-6.21635532, 22.7797585, -19.0025139]
-  Yaw: 84.2411499
-  Pitch: -44.6833611
+  Position: [-22.8488178, 20.4046822, -7.50234365]
+  Yaw: 18.2475243
+  Pitch: -39.8960075
 Entities:
   - Entity: Root
     ID: 0
@@ -10,28 +10,6 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: Point Light
-    ID: 390156904
-    Parent: 0
-    Transform:
-      Position: [-3.456635, 4.52336407, 3.86330438]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Linear: 0.137999997
-      Quadratic: 0.0329999998
-      Color: [25, 25, 25]
-  - Entity: Point Light 2
-    ID: 390156905
-    Parent: 0
-    Transform:
-      Position: [-8.79512882, 2.25412369, -3.89240265]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Linear: 0.137999997
-      Quadratic: 0.0329999998
-      Color: [25, 25, 25]
   - Entity: Ground
     ID: 818049914
     Parent: 0
@@ -116,3 +94,25 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/Default.mat
+  - Entity: Point Light
+    ID: 846336089
+    Parent: 0
+    Transform:
+      Position: [-0.840229034, 5.34816074, 2.04470205]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Linear: 0.0900000036
+      Quadratic: 0.0320000015
+      Color: [25, 25, 25]
+  - Entity: Point Light 2
+    ID: 38406217
+    Parent: 0
+    Transform:
+      Position: [1.93396211, 6.73361969, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Linear: 0.0900000036
+      Quadratic: 0.0320000015
+      Color: [1, 1, 1]

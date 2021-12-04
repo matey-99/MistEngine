@@ -78,6 +78,15 @@ layout (location = 20) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowM
 
 const float PI = 3.14159265359;
 
+vec3 sampleOffsetDirections[20] = vec3[]
+(
+    vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1),
+    vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+    vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
+    vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
+    vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+);
+
 vec3 GetNormalFromNormalMap()
 {
     vec3 tangentNormal = texture(u_Material.normalMap, v_TexCoord).xyz * 2.0 - 1.0;
@@ -229,34 +238,20 @@ float CalculatePointLightShadow(PointLight light, samplerCube lightShadowMap, ve
 {
     vec3 fragToLight = position - light.position;
     float currentDepth = length(fragToLight);
-    // WITHOUT PCF
-    //float closestDepth = texture(u_PointLightShadowMap, fragToLight).r;
 
-    //closestDepth *= u_PointLightFarPlane;
-    //float currentDepth = length(fragToLight);
-
-    //float bias = 0.05;
-    //float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-
-    // WITH PCF
     float shadow = 0.0;
     float bias = 0.005;
-    float samples = 4.0;
-    float offset = 0.1;
-    for (float x = -offset; x < offset; x += offset / (samples * 0.5))
+    int samples = 20;
+    float viewDistance = length(u_ViewPosition - v_Position);
+    float diskRadius = (1.0 + (viewDistance / light.farPlane)) / 25.0;
+    for (int i = 0; i < samples; i++)
     {
-        for (float y = -offset; y < offset; y += offset / (samples * 0.5))
-        {
-            for (float z = -offset; z < offset; z += offset / (samples * 0.5))
-            {
-                float closestDepth = texture(lightShadowMap, fragToLight + vec3(x, y, z)).r;
-                closestDepth *= light.farPlane;
-                if (currentDepth - bias > closestDepth)
-                    shadow += 1.0;
-            }
-        }
+        float closestDepth = texture(lightShadowMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        closestDepth *= light.farPlane;
+        if (currentDepth - bias > closestDepth)
+            shadow += 1.0;
     }
-    shadow /= (samples * samples * samples);
+    shadow /= float(samples);
 
     return shadow;
 }

@@ -82,14 +82,12 @@ void StaticMeshComponent::Render(ViewMode viewMode)
 				}
 				else
 				{
-					auto shadowMap = Cast<PointLight>(pointLights[0])->GetShadowMap();
-
 					glActiveTexture(GL_TEXTURE0 + 24 + i);
-					glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMap);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, m_Owner->GetScene()->m_IrradianceMap);
 					material->GetShader()->SetInt("u_PointLightShadowMaps[" + std::to_string(i) + "]", 24 + i);
 				}
-
 			}
+
 
 			material->GetShader()->SetMat4("u_Model", m_Owner->GetTransform().ModelMatrix);
 		}
