@@ -137,6 +137,8 @@ void EntityDetailsPanel::Render()
         {
             ImGui::DragFloat("Linear", &pointLight->m_Linear, 0.001f, 0.0f, 1.0f);
             ImGui::DragFloat("Quadratic", &pointLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
+            ImGui::Checkbox("Shadows", &pointLight->m_ShadowsEnabled);
+            ImGui::DragFloat("Far Plane", &pointLight->m_FarPlane, 1.0f, 1.0f, 250.0f);
         }
         else if (auto spotLight = m_Entity->GetComponent<SpotLight>())
         {

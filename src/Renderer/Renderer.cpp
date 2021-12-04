@@ -95,22 +95,8 @@ void Renderer::InitializeShadowMapFramebuffers()
 	m_DirectionalLightShadowMapFramebuffer = Framebuffer::Create(config);
 
 	// POINT LIGHT
-	const uint32_t shadowWidth = 1024, shadowHeight = 1024;
-
-	glGenTextures(1, &m_DepthCubemap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_DepthCubemap);
-	for (int i = 0; i < 6; i++)
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
 	glGenFramebuffers(1, &m_DepthMapFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthCubemap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -213,12 +199,14 @@ void Renderer::RenderShadowMap(Scene* scene, PointLight* source)
 {
 	glViewport(0, 0, 1024, 1024);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
-	
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, source->GetShadowMap(), 0);
+
 	auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepthPoint");
 	depthShader->Use();
 	for (int i = 0; i < 6; i++)
 		depthShader->SetMat4("u_ShadowMatrices[" + std::to_string(i) + "]", source->GetLightViews().at(i));
-	depthShader->SetFloat("u_FarPlane", 25.0f);
+	depthShader->SetFloat("u_FarPlane", source->GetFarPlane());
 	depthShader->SetVec3("u_LightPos", source->GetOwner()->GetWorldPosition());
 
 	glClear(GL_DEPTH_BUFFER_BIT);

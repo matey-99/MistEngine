@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [9.91004658, 19.1745281, -6.58962345]
-  Yaw: 132.63147
-  Pitch: -43.0090942
+  Position: [-6.21635532, 22.7797585, -19.0025139]
+  Yaw: 84.2411499
+  Pitch: -44.6833611
 Entities:
   - Entity: Root
     ID: 0
@@ -14,27 +14,24 @@ Entities:
     ID: 390156904
     Parent: 0
     Transform:
-      Position: [0.608203173, 5.31106186, 0.814008892]
+      Position: [-3.456635, 4.52336407, 3.86330438]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
       Linear: 0.137999997
       Quadratic: 0.0329999998
       Color: [25, 25, 25]
-  - Entity: Chest
-    ID: 530364290
+  - Entity: Point Light 2
+    ID: 390156905
     Parent: 0
     Transform:
-      Position: [-2.57571387, 0.576182365, -0.0237042289]
-      Rotation: [0, 180, 0]
+      Position: [-8.79512882, 2.25412369, -3.89240265]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/chest/chest.dae
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/M_Chest.mat
-        - Material: 1
-          Path: ../../res/materials/M_Chest.mat
+    Point Light:
+      Linear: 0.137999997
+      Quadratic: 0.0329999998
+      Color: [25, 25, 25]
   - Entity: Ground
     ID: 818049914
     Parent: 0
@@ -63,7 +60,7 @@ Entities:
     ID: 905040060
     Parent: 0
     Transform:
-      Position: [-12.5672483, 4.57032013, 0]
+      Position: [-75.799942, 4.57032013, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 5.82242918, 10.8639355]
     Model:
@@ -111,7 +108,7 @@ Entities:
     ID: 462205457
     Parent: 0
     Transform:
-      Position: [-8.87122536, 2.86287332, 0]
+      Position: [-8.7701931, 2.86287332, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:

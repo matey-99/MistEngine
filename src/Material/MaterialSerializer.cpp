@@ -84,7 +84,8 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path)
 			std::string name = param["Name"].as<std::string>();
 			bool value = param["Value"].as<bool>();
 
-			material->m_BoolParameters.find(name)->second = value;
+			if (material->m_BoolParameters.find(name) != material->m_BoolParameters.end())
+				material->m_BoolParameters.find(name)->second = value;
 		}
 	}
 
@@ -96,7 +97,8 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path)
 			std::string name = param["Name"].as<std::string>();
 			float value = param["Value"].as<float>();
 			
-			material->m_FloatParameters.find(name)->second = value;
+			if (material->m_FloatParameters.find(name) != material->m_FloatParameters.end())
+				material->m_FloatParameters.find(name)->second = value;
 		}
 	}
 
@@ -108,7 +110,8 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path)
 			std::string name = param["Name"].as<std::string>();
 			glm::vec3 value = param["Value"].as<glm::vec3>();
 
-			material->m_Vec3Parameters.find(name)->second = value;
+			if (material->m_Vec3Parameters.find(name) != material->m_Vec3Parameters.end())
+				material->m_Vec3Parameters.find(name)->second = value;
 
 		}
 	}
@@ -130,7 +133,8 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path)
 				else
 					texture = Texture::Create(path);
 
-				material->m_Texture2DParameters.find(name)->second = texture;
+				if (material->m_Texture2DParameters.find(name) != material->m_Texture2DParameters.end())
+					material->m_Texture2DParameters.find(name)->second = texture;
 			}
 
 		}

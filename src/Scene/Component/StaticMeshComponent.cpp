@@ -5,6 +5,7 @@
 
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
+#include "Light/PointLight.h"
 
 #include <glad/glad.h>
 
@@ -67,10 +68,28 @@ void StaticMeshComponent::Render(ViewMode viewMode)
 			glActiveTexture(GL_TEXTURE0 + 23);
 			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetDirectionalLightShadowMapFramebuffer()->GetDepthAttachment());
 			material->GetShader()->SetInt("u_DirectionalLightShadowMap", 23);
-			glActiveTexture(GL_TEXTURE0 + 24);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->m_DepthCubemap);
-			material->GetShader()->SetInt("u_PointLightShadowMap", 24);
-			material->GetShader()->SetFloat("u_PointLightFarPlane", 25.0f);
+
+			auto pointLights = m_Owner->GetScene()->GetComponents<PointLight>();
+			for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+			{
+				if (i < pointLights.size())
+				{
+					auto shadowMap = Cast<PointLight>(pointLights[i])->GetShadowMap();
+
+					glActiveTexture(GL_TEXTURE0 + 24 + i);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMap);
+					material->GetShader()->SetInt("u_PointLightShadowMaps[" + std::to_string(i) + "]", 24 + i);
+				}
+				else
+				{
+					auto shadowMap = Cast<PointLight>(pointLights[0])->GetShadowMap();
+
+					glActiveTexture(GL_TEXTURE0 + 24 + i);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMap);
+					material->GetShader()->SetInt("u_PointLightShadowMaps[" + std::to_string(i) + "]", 24 + i);
+				}
+
+			}
 
 			material->GetShader()->SetMat4("u_Model", m_Owner->GetTransform().ModelMatrix);
 		}

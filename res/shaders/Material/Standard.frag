@@ -40,6 +40,9 @@ struct PointLight
 {
     vec3 position;
     vec3 color;
+
+    bool shadowsEnabled;
+    float farPlane;
 };
 
 struct SpotLight
@@ -71,8 +74,7 @@ layout (location = 16) uniform samplerCube u_IrradianceMap;
 layout (location = 17) uniform samplerCube u_PrefilterMap;
 layout (location = 18) uniform sampler2D u_BRDFLUT;
 layout (location = 19) uniform sampler2D u_DirectionalLightShadowMap;
-layout (location = 20) uniform samplerCube u_PointLightShadowMap;
-layout (location = 21) uniform float u_PointLightFarPlane;
+layout (location = 20) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowMaps;
 
 const float PI = 3.14159265359;
 
@@ -223,7 +225,7 @@ float CalculateDirectionalLightShadow(vec4 lightSpacePosition, vec3 normal)
     return shadow;
 }
 
-float CalculatePointLightShadow(PointLight light, vec3 position)
+float CalculatePointLightShadow(PointLight light, samplerCube lightShadowMap, vec3 position)
 {
     vec3 fragToLight = position - light.position;
     float currentDepth = length(fragToLight);
@@ -247,8 +249,8 @@ float CalculatePointLightShadow(PointLight light, vec3 position)
         {
             for (float z = -offset; z < offset; z += offset / (samples * 0.5))
             {
-                float closestDepth = texture(u_PointLightShadowMap, fragToLight + vec3(x, y, z)).r;
-                closestDepth *= u_PointLightFarPlane;
+                float closestDepth = texture(lightShadowMap, fragToLight + vec3(x, y, z)).r;
+                closestDepth *= light.farPlane;
                 if (currentDepth - bias > closestDepth)
                     shadow += 1.0;
             }
@@ -318,10 +320,15 @@ void main()
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
     //float shadow = CalculateDirectionalLightShadow(v_LightSpacePosition, N);
-    float shadow = CalculatePointLightShadow(u_PointLights[0], v_Position);
+    float shadow = 0.0;
+    for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+        if (u_PointLights[i].shadowsEnabled)
+            shadow += CalculatePointLightShadow(u_PointLights[i], u_PointLightShadowMaps[i], v_Position);
 
-    vec3 ambient = (kD * diffuse + specular) * (1.0 - shadow) * ao;
-    vec3 color = ambient + Lo;
+    shadow = clamp(shadow, 0.0, 1.0);
+
+    vec3 ambient = (kD * diffuse + specular) * ao;
+    vec3 color = ambient + Lo * (1.0 - shadow);
 
     f_Color = vec4(color, 1.0);
 }
