@@ -2,6 +2,10 @@
 #include "Framebuffer.h"
 #include "Scene/Scene.h"
 #include "Scene/Component/Light/DirectionalLight.h"
+#include "Scene/Component/StaticMeshComponent.h"
+#include "Mesh.h"
+#include "Scene/Component/Light/Light.h"
+#include "Scene/Component/Light/PointLight.h"
 
 #include <glad/glad.h>
 
@@ -69,7 +73,7 @@ void Renderer::InitializePostProcessingFramebuffer()
 	m_PostProcessingFramebuffer = Framebuffer::Create(config);
 }
 
-void Renderer::InitializeShadowMapFramebuffer()
+void Renderer::InitializeShadowMapFramebuffers()
 {
 	FramebufferTextureConfig textureConfig;
 	textureConfig.Attachment = GL_DEPTH_ATTACHMENT;
@@ -88,7 +92,28 @@ void Renderer::InitializeShadowMapFramebuffer()
 	config.Height = 1024;
 	config.Textures.push_back(textureConfig);
 
-	m_ShadowMapFramebuffer = Framebuffer::Create(config);
+	m_DirectionalLightShadowMapFramebuffer = Framebuffer::Create(config);
+
+	// POINT LIGHT
+	const uint32_t shadowWidth = 1024, shadowHeight = 1024;
+
+	glGenTextures(1, &m_DepthCubemap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_DepthCubemap);
+	for (int i = 0; i < 6; i++)
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glGenFramebuffers(1, &m_DepthMapFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthCubemap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::InitializePostProcessing()
@@ -124,38 +149,13 @@ void Renderer::InitializePostProcessing()
 
 void Renderer::RenderScene(Ref<Scene> scene, ViewMode viewMode)
 {
-	glm::vec3 directionalLightDirection;
-	for (auto c : scene->GetComponents<DirectionalLight>())
-	{
-		auto dirLight = Cast<DirectionalLight>(c);
-		directionalLightDirection = dirLight->GetDirection();
-	}
-
-	directionalLightDirection *= -10.0f;
-	directionalLightDirection = glm::clamp(directionalLightDirection, glm::vec3(0.0001f), glm::vec3(10000.0f));
-
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 10.0f);
-	glm::mat4 lightView = glm::lookAt(directionalLightDirection,
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm::mat4 lightSpace = lightProjection * lightView;
-	scene->m_LightSpace = lightSpace;
-
-	m_ShadowMapFramebuffer->Bind();
-
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glCullFace(GL_FRONT);
-	scene->Render(ViewMode::SceneDepth);
-	glCullFace(GL_BACK);
-
-	m_ShadowMapFramebuffer->Unbind();
-
+	scene->PreRender();
 
 	m_MainSceneFramebuffer->Bind();
 
 	glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	scene->Render(ViewMode::Lit);
 
 	m_MainSceneFramebuffer->Unbind();
@@ -180,6 +180,64 @@ void Renderer::AddPostProcessingEffects()
 	glBindVertexArray(0);
 
 	m_PostProcessingFramebuffer->Unbind();
+}
+
+void Renderer::RenderShadowMap(Scene* scene, DirectionalLight* source)
+{
+	m_DirectionalLightShadowMapFramebuffer->Bind();
+
+	auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepth");
+	depthShader->Use();
+	depthShader->SetMat4("u_LightSpace", source->GetLightSpace());
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_FRONT);
+
+	for (auto e : scene->GetEntities())
+	{
+		if (auto smc = e->GetComponent<StaticMeshComponent>())
+		{
+			depthShader->SetMat4("u_Model", e->GetTransform().ModelMatrix);
+
+			for (auto mesh : smc->GetMeshes())
+				mesh.Render();
+		}
+	}
+
+	glCullFace(GL_BACK);
+
+	m_DirectionalLightShadowMapFramebuffer->Unbind();
+}
+
+void Renderer::RenderShadowMap(Scene* scene, PointLight* source)
+{
+	glViewport(0, 0, 1024, 1024);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+	
+	auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepthPoint");
+	depthShader->Use();
+	for (int i = 0; i < 6; i++)
+		depthShader->SetMat4("u_ShadowMatrices[" + std::to_string(i) + "]", source->GetLightViews().at(i));
+	depthShader->SetFloat("u_FarPlane", 25.0f);
+	depthShader->SetVec3("u_LightPos", source->GetOwner()->GetWorldPosition());
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_FRONT);
+
+	for (auto e : scene->GetEntities())
+	{
+		if (auto smc = e->GetComponent<StaticMeshComponent>())
+		{
+			depthShader->SetMat4("u_Model", e->GetTransform().ModelMatrix);
+
+			for (auto mesh : smc->GetMeshes())
+				mesh.Render();
+		}
+	}
+
+	glCullFace(GL_BACK);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::RenderQuad()

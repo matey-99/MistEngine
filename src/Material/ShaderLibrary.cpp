@@ -19,6 +19,8 @@ ShaderLibrary::ShaderLibrary()
 
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("SceneDepth", CreateRef<Shader>("SceneDepth", 
 		"res/shaders/Calculation/SceneDepth.vert", "res/shaders/Calculation/SceneDepth.frag")));
+	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("SceneDepthPoint", CreateRef<Shader>("SceneDepthPoint",
+		"res/shaders/Calculation/SceneDepthPoint.vert", "res/shaders/Calculation/SceneDepthPoint.frag", "res/shaders/Calculation/SceneDepthPoint.geom")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("EquirectangularToCubemap", 
 		CreateRef<Shader>("EquirectangularToCubemap", "res/shaders/Calculation/EquirectangularToCubemap.vert", "res/shaders/Calculation/EquirectangularToCubemap.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("Irradiance", CreateRef<Shader>("Irradiance", "res/shaders/Calculation/Irradiance.vert", "res/shaders/Calculation/Irradiance.frag")));

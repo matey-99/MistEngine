@@ -4,8 +4,8 @@
 
 #include "Scene/Scene.h"
 
-SpotLight::SpotLight(Entity* owner, Ref<UniformBuffer> uniformBuffer)
-	: Light(owner, uniformBuffer)
+SpotLight::SpotLight(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Ref<UniformBuffer> fragmentUniformBuffer)
+	: Light(owner, vertexUniformBuffer, fragmentUniformBuffer)
 {
 	m_Index = owner->GetScene()->GetComponentsCount<SpotLight>();
 
@@ -26,19 +26,23 @@ SpotLight::~SpotLight()
 void SpotLight::Use()
 {
 	uint32_t offset = GLSL_SPOT_LIGHTS_OFFSET + (GLSL_SPOT_LIGHT_SIZE * m_Index);
-	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Owner->GetWorldPosition()));
-	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Direction));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(m_Color));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3) - GLSL_SCALAR_SIZE, sizeof(float), &m_InnerCutOff);
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(float), &m_OuterCutOff);
+	m_FragmentUniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Owner->GetWorldPosition()));
+	m_FragmentUniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Direction));
+	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(m_Color));
+	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3) - GLSL_SCALAR_SIZE, sizeof(float), &m_InnerCutOff);
+	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(float), &m_OuterCutOff);
 }
 
 void SpotLight::SwitchOff()
 {
 	uint32_t offset = GLSL_SPOT_LIGHTS_OFFSET + (GLSL_SPOT_LIGHT_SIZE * m_Index);
-	m_UniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
-	m_UniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3) - GLSL_SCALAR_SIZE, sizeof(float), (void*)0);
-	m_UniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(float), (void*)0);
+	m_FragmentUniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_FragmentUniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3) - GLSL_SCALAR_SIZE, sizeof(float), (void*)0);
+	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 3), sizeof(float), (void*)0);
+}
+
+void SpotLight::RenderShadowMap()
+{
 }

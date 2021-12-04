@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-#include "Scene/Component/Component.h"
+#include "Scene/Component/RenderComponent.h"
 #include "Scene/Entity.h"
 #include "Renderer/Shader.h"
 #include "Scene/Camera.h"
@@ -25,26 +25,37 @@
 
 class UniformBuffer;
 
-class Light : public Component
+class Light : public RenderComponent
 {
-protected:
-	Ref<UniformBuffer> m_UniformBuffer;
-
-	glm::vec3 m_Color;
-
 public:
-	Light(Entity* owner, Ref<UniformBuffer> uniformBuffer);
+	Light(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Ref<UniformBuffer> fragmentUniformBuffer);
 
 	virtual void Begin() override;
 	virtual void Update() override;
+	virtual void PreRender() override;
+	virtual void Render(ViewMode viewMode) override;
 	virtual void Destroy() override;
 
 	virtual void Use() = 0;
 	virtual void SwitchOff() = 0;
 
+	virtual void RenderShadowMap() = 0;
+
+	inline Entity* GetOwner() const { return m_Owner; }
 	inline glm::vec3 GetColor() const { return m_Color; }
+	inline glm::mat4 GetLightSpace() const { return m_LightSpace; }
 
 	inline void SetColor(glm::vec3 color) { m_Color = color; }
 
 	friend class EntityDetailsPanel;
+
+protected:
+	Ref<UniformBuffer> m_VertexUniformBuffer;
+	Ref<UniformBuffer> m_FragmentUniformBuffer;
+
+	glm::vec3 m_Color;
+
+	bool m_ShadowsEnabled;
+	glm::mat4 m_LightSpace;
+	uint32_t m_ShadowMap;
 };

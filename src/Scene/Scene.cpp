@@ -19,11 +19,12 @@ Scene::Scene()
 	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 0);
-	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_VEC3_SIZE, 1);
-	m_LightsUniformBuffer = CreateRef<UniformBuffer>(GLSL_SCALAR_SIZE * 2
+	m_LightsVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 1);
+	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_VEC3_SIZE, 2);
+	m_LightsFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_SCALAR_SIZE * 2
 		+ GLSL_DIRECTIONAL_LIGHT_SIZE
 		+ (GLSL_POINT_LIGHT_SIZE * MAX_POINT_LIGHTS)
-		+ (GLSL_SPOT_LIGHT_SIZE * MAX_SPOT_LIGHTS), 2);
+		+ (GLSL_SPOT_LIGHT_SIZE * MAX_SPOT_LIGHTS), 3);
 
 	std::vector<std::string> faces
 	{
@@ -60,6 +61,14 @@ void Scene::Update()
 	}
 }
 
+void Scene::PreRender()
+{
+	for (auto e : m_Entities)
+	{
+		e->PreRender();
+	}
+}
+
 void Scene::Render(ViewMode viewMode)
 {
 	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
@@ -68,8 +77,8 @@ void Scene::Render(ViewMode viewMode)
 	int pointLightsCount = GetComponentsCount<PointLight>();
 	int spotLightsCount = GetComponentsCount<SpotLight>();
 
-	m_LightsUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
-	m_LightsUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
+	m_LightsFragmentUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
+	m_LightsFragmentUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
 
 	RenderEntity(GetRoot(), viewMode);
 

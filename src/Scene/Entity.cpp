@@ -46,6 +46,15 @@ void Entity::Update()
 	}
 }
 
+void Entity::PreRender()
+{
+	for (auto component : m_Components)
+	{
+		if (auto rc = Cast<RenderComponent>(component))
+			rc->PreRender();
+	}
+}
+
 void Entity::Render(ViewMode viewMode)
 {
 	for (auto component : m_Components)

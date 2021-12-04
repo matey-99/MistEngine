@@ -1,6 +1,7 @@
 #include "Framebuffer.h"
 
 #include <glad/glad.h>
+#include "Renderer.h"
 
 Ref<Framebuffer> Framebuffer::Create(const FramebufferConfig& config)
 {
@@ -67,24 +68,16 @@ void Framebuffer::Resize(uint32_t width, uint32_t height)
 
 			glGenTextures(1, attachment);
 			glBindTexture(textureConfig.Target, *attachment);
-
-			if (textureConfig.Target == GL_TEXTURE_2D)
-			{
-				glTexImage2D(textureConfig.Target, 0, textureConfig.InternalFormat, m_Config.Width, m_Config.Height, 0, textureConfig.Format, textureConfig.Type, nullptr);
-			}
-			else if (textureConfig.Target == GL_TEXTURE_CUBE_MAP)
-			{
-				for (int i = 0; i < 6; i++)
-					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, textureConfig.InternalFormat, m_Config.Width, m_Config.Height, 0, textureConfig.Format, textureConfig.Type, nullptr);
-			}
+			glTexImage2D(textureConfig.Target, 0, textureConfig.InternalFormat, m_Config.Width, m_Config.Height, 0, textureConfig.Format, textureConfig.Type, nullptr);
 
 			glTexParameteri(textureConfig.Target, GL_TEXTURE_MIN_FILTER, textureConfig.MinFilter);
 			glTexParameteri(textureConfig.Target, GL_TEXTURE_MAG_FILTER, textureConfig.MagFilter);
-			glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_S, textureConfig.WrapS);
-			glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_T, textureConfig.WrapT);
 
-			if (textureConfig.Target == GL_TEXTURE_CUBE_MAP)
-				glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_R, textureConfig.WrapR);
+			if (textureConfig.WrapS != GL_NONE && textureConfig.WrapT != GL_NONE)
+			{
+				glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_S, textureConfig.WrapS);
+				glTexParameteri(textureConfig.Target, GL_TEXTURE_WRAP_T, textureConfig.WrapT);
+			}
 
 			if (textureConfig.Border)
 			{

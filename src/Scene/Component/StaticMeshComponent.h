@@ -23,7 +23,6 @@ public:
 	StaticMeshComponent(Entity* owner);
 	StaticMeshComponent(Entity* owner, std::string path);
 	StaticMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPath);
-	void Draw(bool depthOnly = false);
 
 	void LoadMesh(std::string path);
 	void LoadMaterial(std::string path);
@@ -32,20 +31,15 @@ public:
 
 	virtual void Begin() override;
 	virtual void Update() override;
+	virtual void PreRender() override;
 	virtual void Render(ViewMode viewMode) override;
 	virtual void Destroy() override;
 
 	inline std::string GetPath() const { return m_Path; }
+	inline std::vector<Mesh> GetMeshes() const { return m_Meshes; }
 	inline std::vector<Ref<Material>> GetMaterials() const { return m_Materials; }
 	inline std::vector<std::string> GetMaterialsPaths() const { return m_MaterialsPaths; }
 	uint32_t GetRenderedVerticesCount();
 
 	inline void SetMaterial(int index, Ref<Material> material) { m_Materials.at(index) = material; }
-
-private:
-	
-	void ProcessNode(aiNode* node, const aiScene* scene);
-	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	//std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-	//unsigned int TextureFromFile(const char* path, const std::string& directory);
 };

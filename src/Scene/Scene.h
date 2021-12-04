@@ -26,8 +26,9 @@ private:
 	glm::vec4 m_BackgroundColor;
 
 	Ref<UniformBuffer> m_CameraVertexUniformBuffer;
+	Ref<UniformBuffer> m_LightsVertexUniformBuffer;
 	Ref<UniformBuffer> m_CameraFragmentUniformBuffer;
-	Ref<UniformBuffer> m_LightsUniformBuffer;
+	Ref<UniformBuffer> m_LightsFragmentUniformBuffer;
 
 
 
@@ -38,6 +39,7 @@ public:
 
 	void Begin();
 	void Update();
+	void PreRender();
 	void Render(ViewMode viewMode);
 	void Destroy();
 

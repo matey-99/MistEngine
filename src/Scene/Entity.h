@@ -18,6 +18,7 @@ public:
 
 	void Begin();
 	void Update();
+	void PreRender();
 	void Render(ViewMode viewMode);
 	void Destroy();
 

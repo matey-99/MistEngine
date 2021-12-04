@@ -16,12 +16,13 @@ private:
 	float m_OuterCutOff;
 
 public:
-	SpotLight(Entity* owner, Ref<UniformBuffer> uniformBuffer);
+	SpotLight(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Ref<UniformBuffer> fragmentUniformBuffer);
 	~SpotLight();
 
 	virtual void Use() override;
 	virtual void SwitchOff() override;
 
+	virtual void RenderShadowMap() override;
 
 	inline void SetIndex(int index) { m_Index = index; }
 

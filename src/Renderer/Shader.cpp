@@ -2,10 +2,10 @@
 
 #include <glad/glad.h>
 
-Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPath) 
+Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPath, const char* geometryPath)
     : m_Name(name), m_Uniforms(std::vector<ShaderUniform>())
 {
-    std::string vertexSource, fragmentSource;
+    std::string vertexSource, fragmentSource, geometrySource;
     std::ifstream filestream;
 
     filestream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -24,6 +24,16 @@ Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPat
         buffer << filestream.rdbuf();
         fragmentSource = buffer.str();
         filestream.close();
+
+        if (geometryPath)
+        {
+            buffer.str(std::string());
+
+            filestream.open(geometryPath);
+            buffer << filestream.rdbuf();
+            geometrySource = buffer.str();
+            filestream.close();
+        }
     }
     catch (std::ifstream::failure e)
     {
@@ -33,9 +43,16 @@ Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPat
     unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertexSource.c_str());
     unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource.c_str());
 
+    uint32_t geometryShader;
+    if (geometryPath)
+        geometryShader = CompileShader(GL_GEOMETRY_SHADER, geometrySource.c_str());
+
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
+    if (geometryPath)
+        glAttachShader(shaderProgram, geometryShader);
+
     glLinkProgram(shaderProgram);
 
     int result;
@@ -49,6 +66,8 @@ Shader::Shader(std::string name, const char* vertexPath, const char* fragmentPat
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    if (geometryPath)
+        glDeleteShader(geometryShader);
 
     id = shaderProgram;
 
@@ -107,7 +126,7 @@ unsigned int Shader::CompileShader(unsigned int type, const char* source)
     if (result == GL_FALSE)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << ((type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment") << " Shader compilation failed: ";
+        std::cout << ((type == GL_VERTEX_SHADER) ? "Vertex" : (type == GL_FRAGMENT_SHADER) ? "Fragment" : "Geometry") << " Shader compilation failed: ";
         std::cout << infoLog << std::endl;
         glDeleteShader(shader);
         return 0;

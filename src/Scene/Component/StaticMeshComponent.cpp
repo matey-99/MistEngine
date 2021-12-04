@@ -42,6 +42,10 @@ void StaticMeshComponent::Update()
 
 }
 
+void StaticMeshComponent::PreRender()
+{
+}
+
 void StaticMeshComponent::Render(ViewMode viewMode)
 {
 	switch (viewMode)
@@ -61,10 +65,13 @@ void StaticMeshComponent::Render(ViewMode viewMode)
 			glBindTexture(GL_TEXTURE_2D, m_Owner->GetScene()->m_BRDFLUT);
 			material->GetShader()->SetInt("u_BRDFLUT", 22);
 			glActiveTexture(GL_TEXTURE0 + 23);
-			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetShadowMapFramebuffer()->GetDepthAttachment());
-			material->GetShader()->SetInt("u_ShadowMap", 23);
+			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetDirectionalLightShadowMapFramebuffer()->GetDepthAttachment());
+			material->GetShader()->SetInt("u_DirectionalLightShadowMap", 23);
+			glActiveTexture(GL_TEXTURE0 + 24);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->m_DepthCubemap);
+			material->GetShader()->SetInt("u_PointLightShadowMap", 24);
+			material->GetShader()->SetFloat("u_PointLightFarPlane", 25.0f);
 
-			material->GetShader()->SetMat4("u_LightSpaceMatrix", m_Owner->GetScene()->m_LightSpace);
 			material->GetShader()->SetMat4("u_Model", m_Owner->GetTransform().ModelMatrix);
 		}
 		if (!m_MultipleMaterials && m_Materials.at(0))

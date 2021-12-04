@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [17.3836231, 16.349884, -0.284898281]
-  Yaw: 182.507202
-  Pitch: -41.3091431
+  Position: [9.91004658, 19.1745281, -6.58962345]
+  Yaw: 132.63147
+  Pitch: -43.0090942
 Entities:
   - Entity: Root
     ID: 0
@@ -10,54 +10,11 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: Sphere1
-    ID: 449628831
-    Parent: 385882558
-    Transform:
-      Position: [-4.78897429, 1.62502658, -0.392062664]
-      Rotation: [0, 0, 0]
-      Scale: [0.550000012, 0.550000012, 0.550000012]
-    Model:
-      Mesh: ../../res/models/defaults/default_sphere.obj
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/New material 0.mat
-  - Entity: Spheres
-    ID: 385882558
-    Parent: 0
-    Transform:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: Sphere2
-    ID: 853186531
-    Parent: 385882558
-    Transform:
-      Position: [-3.49270916, 1.62197042, -0.445267349]
-      Rotation: [0, 0, 0]
-      Scale: [0.550000012, 0.550000012, 0.550000012]
-    Model:
-      Mesh: ../../res/models/defaults/default_sphere.obj
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/New material 1.mat
-  - Entity: Sphere3
-    ID: 365521167
-    Parent: 385882558
-    Transform:
-      Position: [-2.17467308, 1.61757123, -0.489803493]
-      Rotation: [0, 0, 0]
-      Scale: [0.550000012, 0.550000012, 0.550000012]
-    Model:
-      Mesh: ../../res/models/defaults/default_sphere.obj
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/New material 2.mat
   - Entity: Point Light
     ID: 390156904
     Parent: 0
     Transform:
-      Position: [-0.921927273, 3.75022793, 3.24346399]
+      Position: [0.608203173, 5.31106186, 0.814008892]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
@@ -78,16 +35,6 @@ Entities:
           Path: ../../res/materials/M_Chest.mat
         - Material: 1
           Path: ../../res/materials/M_Chest.mat
-  - Entity: Directional Light
-    ID: 832576323
-    Parent: 0
-    Transform:
-      Position: [0, 0, -1.95987654]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Directional Light:
-      Direction: [0, -1, 0]
-      Color: [1, 1, 1]
   - Entity: Ground
     ID: 818049914
     Parent: 0
@@ -107,6 +54,66 @@ Entities:
       Position: [0, 5, 3.75]
       Rotation: [0, 0, 0]
       Scale: [0.220000029, 0.220000029, 0.220000029]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity
+    ID: 905040060
+    Parent: 0
+    Transform:
+      Position: [-12.5672483, 4.57032013, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 5.82242918, 10.8639355]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity (1)
+    ID: 637749951
+    Parent: 0
+    Transform:
+      Position: [10.0085411, 4.59253025, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 5.44326448, 11.1166058]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity (2)
+    ID: 226597974
+    Parent: 0
+    Transform:
+      Position: [-0.812719107, 4.02040291, -11.6858931]
+      Rotation: [0, 0, 0]
+      Scale: [12.6608419, 6.24688005, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity (3)
+    ID: 421450560
+    Parent: 0
+    Transform:
+      Position: [-1.62177205, 3.95569181, 11.816987]
+      Rotation: [0, 0, 0]
+      Scale: [11.5294514, 6.39945555, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity (4)
+    ID: 462205457
+    Parent: 0
+    Transform:
+      Position: [-8.87122536, 2.86287332, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
       Materials:

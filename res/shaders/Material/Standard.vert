@@ -19,9 +19,13 @@ layout (std140, binding = 0) uniform u_VertexCamera
     mat4 u_ViewProjection;
 };
 
+layout (std140, binding = 1) uniform u_VertexLights
+{
+    mat4 u_LightSpaceMatrix;
+};
+
 layout (location = 0) uniform mat4 u_Model;
 layout (location = 1) uniform Material u_MaterialVS;
-layout (location = 2) uniform mat4 u_LightSpaceMatrix;
 
 void main()
 {

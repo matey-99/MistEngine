@@ -173,7 +173,7 @@ int main(int, char**)
 
     Renderer::GetInstance()->InitializeMainSceneFramebuffer();
     Renderer::GetInstance()->InitializePostProcessingFramebuffer();
-    Renderer::GetInstance()->InitializeShadowMapFramebuffer();
+    Renderer::GetInstance()->InitializeShadowMapFramebuffers();
 
     Renderer::GetInstance()->InitializePostProcessing();
 
