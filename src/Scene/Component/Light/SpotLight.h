@@ -15,6 +15,9 @@ private:
 	float m_InnerCutOff;
 	float m_OuterCutOff;
 
+	uint32_t m_ShadowMap;
+	float m_FarPlane;
+
 public:
 	SpotLight(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Ref<UniformBuffer> fragmentUniformBuffer);
 	~SpotLight();
@@ -31,6 +34,8 @@ public:
 	inline float GetOuterCutOff() const { return m_OuterCutOff; }
 	inline float GetLinear() const { return m_Linear; }
 	inline float GetQuadratic() const { return m_Quadratic; }
+	inline uint32_t GetShadowMap() const { return m_ShadowMap; }
+	inline float GetFarPlane() const { return m_FarPlane; }
 
 	inline void SetDirection(glm::vec3 direction) { m_Direction = direction; }
 	inline void SetInnerCutOff(float innerCutOff) { m_InnerCutOff = innerCutOff; }

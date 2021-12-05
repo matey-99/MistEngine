@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Scene/Component/Light/Light.h"
 #include "Scene/Component/Light/PointLight.h"
+#include "Scene/Component/Light/SpotLight.h"
 
 #include <glad/glad.h>
 
@@ -95,8 +96,15 @@ void Renderer::InitializeShadowMapFramebuffers()
 	m_DirectionalLightShadowMapFramebuffer = Framebuffer::Create(config);
 
 	// POINT LIGHT
-	glGenFramebuffers(1, &m_DepthMapFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+	glGenFramebuffers(1, &m_PointLightShadowMapFramebufferObject);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_PointLightShadowMapFramebufferObject);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// SPOT LIGHT
+	glGenFramebuffers(1, &m_SpotLightShadowMapFramebufferObject);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightShadowMapFramebufferObject);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -198,7 +206,7 @@ void Renderer::RenderShadowMap(Scene* scene, DirectionalLight* source)
 void Renderer::RenderShadowMap(Scene* scene, PointLight* source)
 {
 	glViewport(0, 0, 1024, 1024);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_PointLightShadowMapFramebufferObject);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, source->GetShadowMap(), 0);
 
@@ -208,6 +216,36 @@ void Renderer::RenderShadowMap(Scene* scene, PointLight* source)
 		depthShader->SetMat4("u_ShadowMatrices[" + std::to_string(i) + "]", source->GetLightViews().at(i));
 	depthShader->SetFloat("u_FarPlane", source->GetFarPlane());
 	depthShader->SetVec3("u_LightPos", source->GetOwner()->GetWorldPosition());
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glCullFace(GL_FRONT);
+
+	for (auto e : scene->GetEntities())
+	{
+		if (auto smc = e->GetComponent<StaticMeshComponent>())
+		{
+			depthShader->SetMat4("u_Model", e->GetTransform().ModelMatrix);
+
+			for (auto mesh : smc->GetMeshes())
+				mesh.Render();
+		}
+	}
+
+	glCullFace(GL_BACK);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::RenderShadowMap(Scene* scene, SpotLight* source)
+{
+	glViewport(0, 0, 1024, 1024);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightShadowMapFramebufferObject);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, source->GetShadowMap(), 0);
+
+	auto depthShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepth");
+	depthShader->Use();
+	depthShader->SetMat4("u_LightSpace", source->GetLightSpace());
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glCullFace(GL_FRONT);

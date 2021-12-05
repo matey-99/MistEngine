@@ -35,7 +35,8 @@ private:
 	Ref<Framebuffer> m_PointLightShadowMapFramebuffer;
 	Ref<Framebuffer> m_SpotLightShadowMapFramebuffer;
 
-	uint32_t m_DepthMapFBO;
+	uint32_t m_PointLightShadowMapFramebufferObject;
+	uint32_t m_SpotLightShadowMapFramebufferObject;
 
 	uint32_t m_PostProcessingVAO;
 	uint32_t m_PostProcessingVBO;

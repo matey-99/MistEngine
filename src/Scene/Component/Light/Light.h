@@ -9,11 +9,12 @@
 #include "Scene/Camera.h"
 #include "Renderer/UniformBuffer.h"
 
-#define MAX_POINT_LIGHTS 32
-#define MAX_SPOT_LIGHTS 32
+#define MAX_POINT_LIGHTS 16
+#define MAX_SPOT_LIGHTS 16
 
 #define GLSL_SCALAR_SIZE 4
 #define GLSL_VEC3_SIZE 16
+#define GLSL_MAT4_SIZE 64
 #define GLSL_DIRECTIONAL_LIGHT_SIZE 32
 #define GLSL_POINT_LIGHT_SIZE 48
 #define GLSL_SPOT_LIGHT_SIZE 64

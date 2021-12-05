@@ -19,7 +19,7 @@ Scene::Scene()
 	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 0);
-	m_LightsVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 1);
+	m_LightsVertexUniformBuffer = CreateRef<UniformBuffer>(GLSL_MAT4_SIZE + (MAX_SPOT_LIGHTS * GLSL_MAT4_SIZE), 1);
 	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_VEC3_SIZE, 2);
 	m_LightsFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_SCALAR_SIZE * 2
 		+ GLSL_DIRECTIONAL_LIGHT_SIZE

@@ -6,6 +6,7 @@
 #include "Scene/Entity.h"
 #include "Scene/Scene.h"
 #include "Light/PointLight.h"
+#include "Light/SpotLight.h"
 
 #include <glad/glad.h>
 
@@ -85,6 +86,25 @@ void StaticMeshComponent::Render(ViewMode viewMode)
 					glActiveTexture(GL_TEXTURE0 + 24 + i);
 					glBindTexture(GL_TEXTURE_CUBE_MAP, m_Owner->GetScene()->m_IrradianceMap);
 					material->GetShader()->SetInt("u_PointLightShadowMaps[" + std::to_string(i) + "]", 24 + i);
+				}
+			}
+
+			auto spotLights = m_Owner->GetScene()->GetComponents<SpotLight>();
+			for (int i = 0; i < MAX_SPOT_LIGHTS; i++)
+			{
+				if (i < spotLights.size())
+				{
+					auto shadowMap = Cast<SpotLight>(spotLights[i])->GetShadowMap();
+
+					glActiveTexture(GL_TEXTURE0 + 24 + MAX_POINT_LIGHTS + i);
+					glBindTexture(GL_TEXTURE_2D, shadowMap);
+					material->GetShader()->SetInt("u_SpotLightShadowMaps[" + std::to_string(i) + "]", 24 + MAX_POINT_LIGHTS + i);
+				}
+				else
+				{
+					glActiveTexture(GL_TEXTURE0 + 24 + MAX_POINT_LIGHTS + i);
+					glBindTexture(GL_TEXTURE_2D, m_Owner->GetScene()->m_BRDFLUT);
+					material->GetShader()->SetInt("u_SpotLightShadowMaps[" + std::to_string(i) + "]", 24 + MAX_POINT_LIGHTS + i);
 				}
 			}
 

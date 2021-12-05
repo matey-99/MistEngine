@@ -1,14 +1,15 @@
 #version 450 core
 
-#define MAX_POINT_LIGHTS 32
-#define MAX_SPOT_LIGHTS 32
+#define MAX_POINT_LIGHTS 16
+#define MAX_SPOT_LIGHTS 16
 
 layout (location = 0) out vec4 f_Color;
 
 layout (location = 0) in vec3 v_Position;
 layout (location = 1) in vec3 v_Normal;
 layout (location = 2) in vec2 v_TexCoord;
-layout (location = 3) in vec4 v_LightSpacePosition;
+layout (location = 3) in vec4 v_DirectionalLightSpacePosition;
+layout (location = 4) in vec4[MAX_SPOT_LIGHTS] v_SpotLightSpacePositions;
 
 struct Material
 {
@@ -34,6 +35,8 @@ struct DirectionalLight
 {
     vec3 direction;
     vec3 color;
+
+    bool shadowsEnabled;
 };
 
 struct PointLight
@@ -52,6 +55,8 @@ struct SpotLight
     vec3 color;
     float innerCutOff;
     float outerCutOff;
+
+    bool shadowsEnabled;
 };
 
 layout (std140, binding = 2) uniform u_FragmentCamera
@@ -75,6 +80,7 @@ layout (location = 17) uniform samplerCube u_PrefilterMap;
 layout (location = 18) uniform sampler2D u_BRDFLUT;
 layout (location = 19) uniform sampler2D u_DirectionalLightShadowMap;
 layout (location = 20) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowMaps;
+layout (location = 20 + MAX_POINT_LIGHTS) uniform sampler2D[MAX_SPOT_LIGHTS] u_SpotLightShadowMaps;
 
 const float PI = 3.14159265359;
 
@@ -256,6 +262,33 @@ float CalculatePointLightShadow(PointLight light, samplerCube lightShadowMap, ve
     return shadow;
 }
 
+float CalculateSpotLightShadow(SpotLight light, vec4 lightSpacePosition, sampler2D lightShadowMap, vec3 normal)
+{
+    vec3 projectionCoords = lightSpacePosition.xyz / lightSpacePosition.w;
+    projectionCoords = projectionCoords * 0.5 + 0.5;
+    float closestDepth = texture(lightShadowMap, projectionCoords.xy).r;
+    float currentDepth = projectionCoords.z;
+
+    float bias = max(0.00025 * (1.0 - dot(normal, light.direction)), 0.000005);
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(lightShadowMap, 0);
+    for (int x = -1; x < 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(lightShadowMap, projectionCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+
+    shadow /= 9.0;
+
+    if (projectionCoords.z > 1.0)
+        shadow = 0.0;
+
+    return shadow;
+}
+
 void main()
 {
     vec3 albedo;
@@ -314,11 +347,17 @@ void main()
     vec2 brdf = texture(u_BRDFLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-    //float shadow = CalculateDirectionalLightShadow(v_LightSpacePosition, N);
     float shadow = 0.0;
+    if (u_DirectionalLight.shadowsEnabled)
+        shadow += CalculateDirectionalLightShadow(v_DirectionalLightSpacePosition, N);
+
     for (int i = 0; i < MAX_POINT_LIGHTS; i++)
         if (u_PointLights[i].shadowsEnabled)
             shadow += CalculatePointLightShadow(u_PointLights[i], u_PointLightShadowMaps[i], v_Position);
+
+    for (int i = 0; i < MAX_SPOT_LIGHTS; i++)
+        if (u_SpotLights[i].shadowsEnabled)
+            shadow += CalculateSpotLightShadow(u_SpotLights[i], v_SpotLightSpacePositions[i], u_SpotLightShadowMaps[i], N);      
 
     shadow = clamp(shadow, 0.0, 1.0);
 

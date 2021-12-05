@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-22.8488178, 20.4046822, -7.50234365]
-  Yaw: 18.2475243
-  Pitch: -39.8960075
+  Position: [-19.6543102, 14.2218647, 3.31766105]
+  Yaw: 335.527191
+  Pitch: -30.5905914
 Entities:
   - Entity: Root
     ID: 0
@@ -26,7 +26,7 @@ Entities:
     ID: 478491488
     Parent: 0
     Transform:
-      Position: [0, 5, 3.75]
+      Position: [0.29120934, 5.60190773, 4.87598848]
       Rotation: [0, 0, 0]
       Scale: [0.220000029, 0.220000029, 0.220000029]
     Model:
@@ -86,7 +86,7 @@ Entities:
     ID: 462205457
     Parent: 0
     Transform:
-      Position: [-8.7701931, 2.86287332, 0]
+      Position: [-3.64181232, 4.04277992, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:
@@ -94,25 +94,50 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/Default.mat
-  - Entity: Point Light
-    ID: 846336089
+  - Entity: Spot Light
+    ID: 960233669
     Parent: 0
     Transform:
-      Position: [-0.840229034, 5.34816074, 2.04470205]
+      Position: [-3.1922276, 4.18802404, -0.681155086]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Spot Light:
+      Direction: [0, 0, -1]
+      Inner Cut Off: 0.910000026
+      Outer Cut Off: 0.819999993
+      Linear: 0.0900000036
+      Quadratic: 0.0320000015
+      Color: [250, 250, 250]
+  - Entity: New Entity (5)
+    ID: 675760838
+    Parent: 0
+    Transform:
+      Position: [-3.2888689, 4.45604038, -8.81222534]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Directional Light
+    ID: 224007415
+    Parent: 0
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Directional Light:
+      Direction: [0, -1, 0]
+      Color: [1, 1, 1]
+  - Entity: Point Light
+    ID: 107379871
+    Parent: 0
+    Transform:
+      Position: [-0.746014357, 6.09592724, 0.75888741]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
       Linear: 0.0900000036
       Quadratic: 0.0320000015
       Color: [25, 25, 25]
-  - Entity: Point Light 2
-    ID: 38406217
-    Parent: 0
-    Transform:
-      Position: [1.93396211, 6.73361969, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Linear: 0.0900000036
-      Quadratic: 0.0320000015
-      Color: [1, 1, 1]
