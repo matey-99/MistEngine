@@ -46,7 +46,7 @@ public:
 	inline glm::vec3 GetColor() const { return m_Color; }
 	inline glm::mat4 GetLightSpace() const { return m_LightSpace; }
 
-	inline void SetColor(glm::vec3 color) { m_Color = color; }
+	void SetColor(glm::vec3 color);
 
 	friend class EntityDetailsPanel;
 

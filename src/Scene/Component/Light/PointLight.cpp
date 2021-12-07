@@ -10,9 +10,6 @@ PointLight::PointLight(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Re
 {
 	m_Index = owner->GetScene()->GetComponentsCount<PointLight>();
 
-	m_Linear = 0.09f;
-	m_Quadratic = 0.032f;
-
 	for (int i = 0; i < 6; i++)
 		m_LightViews.push_back(glm::mat4(0.0f));
 
@@ -40,10 +37,12 @@ PointLight::~PointLight()
 void PointLight::Use()
 {
 	uint32_t offset = GLSL_POINT_LIGHTS_OFFSET + (GLSL_POINT_LIGHT_SIZE * m_Index);
+	m_FragmentUniformBuffer->Bind();
 	m_FragmentUniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(m_Owner->GetWorldPosition()));
 	m_FragmentUniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(m_Color));
 	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2) - GLSL_SCALAR_SIZE, sizeof(bool), &m_ShadowsEnabled);
 	m_FragmentUniformBuffer->SetUniform(offset + (GLSL_VEC3_SIZE * 2), sizeof(float), &m_FarPlane);
+	m_FragmentUniformBuffer->Unbind();
 
 	glm::mat4 lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, m_FarPlane);
 	m_LightViews.at(0) = (lightProjection * glm::lookAt(m_Owner->GetWorldPosition(), m_Owner->GetWorldPosition() + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0)));
@@ -57,8 +56,10 @@ void PointLight::Use()
 void PointLight::SwitchOff()
 {
 	uint32_t offset = GLSL_POINT_LIGHTS_OFFSET + (GLSL_POINT_LIGHT_SIZE * m_Index);
+	m_FragmentUniformBuffer->Bind();
 	m_FragmentUniformBuffer->SetUniform(offset, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
 	m_FragmentUniformBuffer->SetUniform(offset + GLSL_VEC3_SIZE, sizeof(glm::vec3), glm::value_ptr(glm::vec3(0.0f)));
+	m_FragmentUniformBuffer->Unbind();
 }
 
 void PointLight::RenderShadowMap()

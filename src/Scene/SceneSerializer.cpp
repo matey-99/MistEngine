@@ -113,47 +113,29 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 			if (auto dirLight = entity["Directional Light"])
 			{
-				e->AddComponent<DirectionalLight>(scene->m_LightsVertexUniformBuffer, scene->m_LightsFragmentUniformBuffer);
-
-				glm::vec3 direction = dirLight["Direction"].as<glm::vec3>();
 				glm::vec3 color = dirLight["Color"].as<glm::vec3>();
 
-				auto l = e->GetComponent<DirectionalLight>();
-				l->SetDirection(direction);
+				auto l = e->AddComponent<DirectionalLight>(scene->m_LightsVertexUniformBuffer, scene->m_LightsFragmentUniformBuffer);
 				l->SetColor(color);
 			}
 
 			if (auto pointLight = entity["Point Light"])
 			{
-				e->AddComponent<PointLight>(scene->m_LightsVertexUniformBuffer, scene->m_LightsFragmentUniformBuffer);
-
-				float linear = pointLight["Linear"].as<float>();
-				float quadratic = pointLight["Quadratic"].as<float>();
 				glm::vec3 color = pointLight["Color"].as<glm::vec3>();
 
-				auto l = e->GetComponent<PointLight>();
-				l->SetLinear(linear);
-				l->SetQuadratic(quadratic);
+				auto l = e->AddComponent<PointLight>(scene->m_LightsVertexUniformBuffer, scene->m_LightsFragmentUniformBuffer);
 				l->SetColor(color);
 			}
 
 			if (auto spotLight = entity["Spot Light"])
 			{
-				e->AddComponent<SpotLight>(scene->m_LightsVertexUniformBuffer, scene->m_LightsFragmentUniformBuffer);
-
-				glm::vec3 direction = spotLight["Direction"].as<glm::vec3>();
 				float innerCutOff = spotLight["Inner Cut Off"].as<float>();
 				float outerCutOff = spotLight["Outer Cut Off"].as<float>();
-				float linear = spotLight["Linear"].as<float>();
-				float quadratic = spotLight["Quadratic"].as<float>();
 				glm::vec3 color = spotLight["Color"].as<glm::vec3>();
 
-				auto l = e->GetComponent<SpotLight>();
-				l->SetDirection(direction);
+				auto l = e->AddComponent<SpotLight>(scene->m_LightsVertexUniformBuffer, scene->m_LightsFragmentUniformBuffer);
 				l->SetInnerCutOff(innerCutOff);
 				l->SetOuterCutOff(outerCutOff);
-				l->SetLinear(linear);
-				l->SetQuadratic(quadratic);
 				l->SetColor(color);
 			}
 		}
@@ -207,7 +189,6 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	{
 		out << YAML::Key << "Directional Light";
 		out << YAML::BeginMap;
-		out << YAML::Key << "Direction" << YAML::Value << dirLight->GetDirection();
 		out << YAML::Key << "Color" << YAML::Value << dirLight->GetColor();
 		out << YAML::EndMap;
 	}
@@ -215,8 +196,6 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	{
 		out << YAML::Key << "Point Light";
 		out << YAML::BeginMap;
-		out << YAML::Key << "Linear" << YAML::Value << pointLight->GetLinear();
-		out << YAML::Key << "Quadratic" << YAML::Value << pointLight->GetQuadratic();
 		out << YAML::Key << "Color" << YAML::Value << pointLight->GetColor();
 		out << YAML::EndMap;
 	}
@@ -224,11 +203,8 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 	{
 		out << YAML::Key << "Spot Light";
 		out << YAML::BeginMap;
-		out << YAML::Key << "Direction" << YAML::Value << spotLight->GetDirection();
 		out << YAML::Key << "Inner Cut Off" << YAML::Value << spotLight->GetInnerCutOff();
 		out << YAML::Key << "Outer Cut Off" << YAML::Value << spotLight->GetOuterCutOff();
-		out << YAML::Key << "Linear" << YAML::Value << spotLight->GetLinear();
-		out << YAML::Key << "Quadratic" << YAML::Value << spotLight->GetQuadratic();
 		out << YAML::Key << "Color" << YAML::Value << spotLight->GetColor();
 		out << YAML::EndMap;
 	}

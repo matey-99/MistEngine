@@ -30,9 +30,9 @@ private:
 	Ref<UniformBuffer> m_CameraFragmentUniformBuffer;
 	Ref<UniformBuffer> m_LightsFragmentUniformBuffer;
 
-
-
 	bool m_IsSkybox = true;
+
+	bool m_ChangedSinceLastFrame = false;
 
 public:
 	Scene();
@@ -98,8 +98,10 @@ public:
 	inline Ref<Entity> GetRoot() const { return m_Root; }
 	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }
 	inline glm::vec4* GetBackgroundColor() { return &m_BackgroundColor; }
+	inline bool IsChangedSinceLastFrame() const { return m_ChangedSinceLastFrame; }
 	inline bool IsSkybox() { return m_IsSkybox; }
 
+	inline void SetChangedSinceLastFrame(bool changed) { m_ChangedSinceLastFrame = changed; }
 	inline void RenderSkybox(bool render) { m_IsSkybox = true; }
 
 	friend class SceneSerializer;

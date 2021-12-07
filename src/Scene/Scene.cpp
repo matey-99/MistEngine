@@ -71,14 +71,23 @@ void Scene::PreRender()
 
 void Scene::Render(ViewMode viewMode)
 {
-	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
-	m_CameraFragmentUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Camera->Position));
+	m_ChangedSinceLastFrame = false;
 
+	m_CameraVertexUniformBuffer->Bind();
+	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
+	m_CameraVertexUniformBuffer->Unbind();
+
+	m_CameraFragmentUniformBuffer->Bind();
+	m_CameraFragmentUniformBuffer->SetUniform(0, sizeof(glm::vec3), glm::value_ptr(m_Camera->Position));
+	m_CameraFragmentUniformBuffer->Unbind();
+	
 	int pointLightsCount = GetComponentsCount<PointLight>();
 	int spotLightsCount = GetComponentsCount<SpotLight>();
 
+	m_LightsFragmentUniformBuffer->Bind();
 	m_LightsFragmentUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
 	m_LightsFragmentUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
+	m_LightsFragmentUniformBuffer->Unbind();
 
 	RenderEntity(GetRoot(), viewMode);
 

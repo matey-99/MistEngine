@@ -71,6 +71,8 @@ public:
 	void SetID(uint64_t id);
 
 	glm::vec3 GetWorldPosition();
+	glm::vec3 GetWorldRotation();
+
 	void SetWorldPosition(glm::vec3 position);
 
 	void CalculateModelMatrix();

@@ -7,6 +7,15 @@
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
+bool Equals(float arr[3], glm::vec3 vec)
+{
+    return arr[0] == vec.x &&
+           arr[1] == vec.y &&
+           arr[2] == vec.z;
+}
+
 EntityDetailsPanel::EntityDetailsPanel(Ref<Editor> editor) : m_Editor(editor)
 {
 	m_Entity = Ref<Entity>();
@@ -28,19 +37,25 @@ void EntityDetailsPanel::Render()
     arr[1] = m_Entity->GetTransform().LocalPosition.y;
     arr[2] = m_Entity->GetTransform().LocalPosition.z;
     ImGui::DragFloat3("Position", arr, 0.5f);
-    m_Entity->SetLocalPosition({ arr[0], arr[1], arr[2] });
+
+    if (!Equals(arr, m_Entity->GetTransform().LocalPosition))
+        m_Entity->SetLocalPosition({ arr[0], arr[1], arr[2] });
 
     arr[0] = m_Entity->GetTransform().LocalRotation.x;
     arr[1] = m_Entity->GetTransform().LocalRotation.y;
     arr[2] = m_Entity->GetTransform().LocalRotation.z;
     ImGui::DragFloat3("Rotation", arr, 1.0f);
-    m_Entity->SetLocalRotation({ arr[0], arr[1], arr[2] });
+
+    if (!Equals(arr, m_Entity->GetTransform().LocalRotation))
+        m_Entity->SetLocalRotation({ arr[0], arr[1], arr[2] });
 
     arr[0] = m_Entity->GetTransform().LocalScale.x;
     arr[1] = m_Entity->GetTransform().LocalScale.y;
     arr[2] = m_Entity->GetTransform().LocalScale.z;
     ImGui::DragFloat3("Scale", arr, 0.1f);
-    m_Entity->SetLocalScale({ arr[0], arr[1], arr[2] });
+
+    if (!Equals(arr, m_Entity->GetTransform().LocalScale))
+        m_Entity->SetLocalScale({ arr[0], arr[1], arr[2] });
 
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
@@ -99,7 +114,7 @@ void EntityDetailsPanel::Render()
         {
             if (ImGui::MenuItem("Directional"))
             {
-                if (!std::dynamic_pointer_cast<DirectionalLight>(light))
+                if (!Cast<DirectionalLight>(light))
                 {
                     m_Entity->RemoveComponent<Light>();
                     m_Entity->AddComponent<DirectionalLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
@@ -107,7 +122,7 @@ void EntityDetailsPanel::Render()
             }
             if (ImGui::MenuItem("Point"))
             {
-                if (!std::dynamic_pointer_cast<PointLight>(light))
+                if (!Cast<PointLight>(light))
                 {
                     m_Entity->RemoveComponent<Light>();
                     m_Entity->AddComponent<PointLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
@@ -115,7 +130,7 @@ void EntityDetailsPanel::Render()
             }
             if (ImGui::MenuItem("Spot"))
             {
-                if (!std::dynamic_pointer_cast<SpotLight>(light))
+                if (!Cast<SpotLight>(light))
                 {
                     m_Entity->RemoveComponent<Light>();
                     m_Entity->AddComponent<SpotLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
@@ -125,36 +140,21 @@ void EntityDetailsPanel::Render()
             ImGui::EndMenu();
         }
 
-        if (auto dirLight = m_Entity->GetComponent<DirectionalLight>())
-        {
-            float* arr[3];
-            arr[0] = &dirLight->m_Direction.x;
-            arr[1] = &dirLight->m_Direction.y;
-            arr[2] = &dirLight->m_Direction.z;
-            ImGui::DragFloat3("Direction", *arr, 0.01f, -1.0f, 1.0f);
-        }
-        else if (auto pointLight = m_Entity->GetComponent<PointLight>())
-        {
-            ImGui::DragFloat("Linear", &pointLight->m_Linear, 0.001f, 0.0f, 1.0f);
-            ImGui::DragFloat("Quadratic", &pointLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
-            ImGui::Checkbox("Shadows", &pointLight->m_ShadowsEnabled);
-            ImGui::DragFloat("Far Plane", &pointLight->m_FarPlane, 1.0f, 1.0f, 250.0f);
-        }
-        else if (auto spotLight = m_Entity->GetComponent<SpotLight>())
-        {
-            float* arr[3];
-            arr[0] = &spotLight->m_Direction.x;
-            arr[1] = &spotLight->m_Direction.y;
-            arr[2] = &spotLight->m_Direction.z;
-            ImGui::DragFloat3("Direction", *arr, 0.01f, -1.0f, 1.0f);
-
-            ImGui::DragFloat("Inner Cut Off", &spotLight->m_InnerCutOff, 0.01f, 0.0f, 1.0f);
-            ImGui::DragFloat("Outer Cut Off", &spotLight->m_OuterCutOff, 0.01f, 0.0f, 1.0f);
-            ImGui::DragFloat("Linear", &spotLight->m_Linear, 0.001f, 0.0f, 1.0f);
-            ImGui::DragFloat("Quadratic", &spotLight->m_Quadratic, 0.0001f, 0.0f, 2.0f);
-        }
-
         ImGui::DragFloat3("Color", (float*)&light->m_Color, 0.1f, 0.0f, 100.0f);
+        ImGui::Checkbox("Cast Shadows", &light->m_ShadowsEnabled);
+
+        if (auto spotLight = m_Entity->GetComponent<SpotLight>())
+        {
+            float temp = spotLight->m_InnerCutOff;
+            ImGui::DragFloat("Inner Cut Off", &temp, 0.01f, 0.0f, 1.0f);
+            if (temp != spotLight->m_InnerCutOff)
+                spotLight->SetInnerCutOff(temp);
+
+            temp = spotLight->m_OuterCutOff;
+            ImGui::DragFloat("Outer Cut Off", &temp, 0.01f, 0.0f, 1.0f);
+            if (temp != spotLight->m_OuterCutOff)
+                spotLight->SetOuterCutOff(temp);
+        }
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 

@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-19.6543102, 14.2218647, 3.31766105]
-  Yaw: 335.527191
-  Pitch: -30.5905914
+  Position: [-22.9359837, 13.8333759, 7.15349054]
+  Yaw: 339.297302
+  Pitch: -28.0302429
 Entities:
   - Entity: Root
     ID: 0
@@ -98,37 +98,35 @@ Entities:
     ID: 960233669
     Parent: 0
     Transform:
-      Position: [-3.1922276, 4.18802404, -0.681155086]
-      Rotation: [0, 0, 0]
+      Position: [-0.164294973, 4.18801355, -0.788515449]
+      Rotation: [0, 3.52181678e-06, -90.0001678]
       Scale: [1, 1, 1]
     Spot Light:
-      Direction: [0, 0, -1]
       Inner Cut Off: 0.910000026
       Outer Cut Off: 0.819999993
-      Linear: 0.0900000036
-      Quadratic: 0.0320000015
       Color: [250, 250, 250]
   - Entity: New Entity (5)
     ID: 675760838
     Parent: 0
     Transform:
-      Position: [-3.2888689, 4.45604038, -8.81222534]
-      Rotation: [0, 0, 0]
+      Position: [-3.68854523, 0.647885799, -8.81222534]
+      Rotation: [180, 5.16905594, 180]
       Scale: [1, 1, 1]
     Model:
-      Mesh: ../../res/models/defaults/default_cube.obj
+      Mesh: ../../res/models/chest/chest.dae
       Materials:
         - Material: 0
-          Path: ../../res/materials/Default.mat
+          Path: ../../res/materials/M_Chest.mat
+        - Material: 1
+          Path: ../../res/materials/M_Chest.mat
   - Entity: Directional Light
     ID: 224007415
     Parent: 0
     Transform:
       Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [0, -90, 0]
       Scale: [1, 1, 1]
     Directional Light:
-      Direction: [0, -1, 0]
       Color: [1, 1, 1]
   - Entity: Point Light
     ID: 107379871
@@ -138,6 +136,16 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
-      Linear: 0.0900000036
-      Quadratic: 0.0320000015
       Color: [25, 25, 25]
+  - Entity: Sphere
+    ID: 76766590
+    Parent: 0
+    Transform:
+      Position: [-1.91344774, 3.58405209, -8.39195061]
+      Rotation: [0, 0, 0]
+      Scale: [0.710000038, 0.710000038, 0.710000038]
+    Model:
+      Mesh: ../../res/models/defaults/default_sphere.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 0.mat

@@ -75,12 +75,6 @@ void Entity::Destroy()
 void Entity::SetEnable(bool enable)
 {
 	m_Enable = enable;
-	//if (!m_Transform->Children.empty())
-	//{
-	//	for (auto child : m_Transform->Children)
-	//		child->GetEntity()->SetEnable(enable);
-
-	//}
 }
 
 void Entity::SetParent(Entity* parent)
@@ -90,24 +84,32 @@ void Entity::SetParent(Entity* parent)
 
 	m_Parent = parent;
 	m_Parent->m_Children.emplace_back(this);
+
+	CalculateModelMatrix();
 }
 
 void Entity::SetLocalPosition(glm::vec3 position)
 {
 	m_Transform.LocalPosition = position;
 	CalculateModelMatrix();
+
+	m_Scene->SetChangedSinceLastFrame(true);
 }
 
 void Entity::SetLocalRotation(glm::vec3 rotation)
 {
 	m_Transform.LocalRotation = rotation;
 	CalculateModelMatrix();
+
+	m_Scene->SetChangedSinceLastFrame(true);
 }
 
 void Entity::SetLocalScale(glm::vec3 scale)
 {
 	m_Transform.LocalScale = scale;
 	CalculateModelMatrix();
+
+	m_Scene->SetChangedSinceLastFrame(true);
 }
 
 void Entity::SetID(uint64_t id)
@@ -120,9 +122,14 @@ glm::vec3 Entity::GetWorldPosition()
 	return m_Transform.LocalPosition + (m_Parent ? m_Parent->GetWorldPosition() : glm::vec3(0.0f));
 }
 
+glm::vec3 Entity::GetWorldRotation()
+{
+	return m_Transform.LocalRotation + (m_Parent ? m_Parent->GetWorldRotation() : glm::vec3(0.0f));
+}
+
 void Entity::SetWorldPosition(glm::vec3 position)
 {
-	m_Transform.LocalPosition = position - (m_Parent ? m_Parent->GetWorldPosition() : glm::vec3(0.0f));
+	SetLocalPosition(position - (m_Parent ? m_Parent->GetWorldPosition() : glm::vec3(0.0f)));
 }
 
 void Entity::CalculateModelMatrix()

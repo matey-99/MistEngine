@@ -24,7 +24,5 @@ void UniformBuffer::Unbind()
 
 void UniformBuffer::SetUniform(uint32_t offset, uint32_t size, const void* data)
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
