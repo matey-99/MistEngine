@@ -10,7 +10,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float yaw, flo
 	FieldOfView = 45.0f;
 	AspectRactio = glm::vec2(16.0f, 9.0f);
 	Near = 0.1f;
-	Far = 100.0f;
+	Far = 1000.0f;
 }
 
 void Camera::Update()

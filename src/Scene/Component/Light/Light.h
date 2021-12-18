@@ -34,7 +34,7 @@ public:
 	virtual void Begin() override;
 	virtual void Update() override;
 	virtual void PreRender() override;
-	virtual void Render(ViewMode viewMode) override;
+	virtual void Render() override;
 	virtual void Destroy() override;
 
 	virtual void Use() = 0;

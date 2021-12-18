@@ -220,7 +220,7 @@ int main(int, char**)
 
         if (shouldRender)
         {
-            Renderer::GetInstance()->RenderScene(scene, ViewMode::Lit);
+            Renderer::GetInstance()->RenderScene(scene);
 
             if (Renderer::GetInstance()->IsPostProcessing())
                 Renderer::GetInstance()->AddPostProcessingEffects();

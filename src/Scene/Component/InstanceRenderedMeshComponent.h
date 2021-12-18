@@ -9,7 +9,7 @@
 #include "Material/ShaderLibrary.h"
 #include "Scene/Component/RenderComponent.h"
 
-class StaticMeshComponent : public RenderComponent
+class InstanceRenderedMeshComponent : public RenderComponent
 {
 private:
 	std::string m_Path;
@@ -19,10 +19,17 @@ private:
 
 	bool m_MultipleMaterials;
 
+	uint32_t m_Amount = 10;
+	float m_Radius = 150.0f;
+	float m_Offset = 25.0f;
+	std::vector<glm::mat4> m_ModelMatrices;
+
+	uint32_t m_ModelMatricesBuffer;
+
 public:
-	StaticMeshComponent(Entity* owner);
-	StaticMeshComponent(Entity* owner, std::string path);
-	StaticMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPath);
+	InstanceRenderedMeshComponent(Entity* owner);
+	InstanceRenderedMeshComponent(Entity* owner, std::string path);
+	InstanceRenderedMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPath);
 
 	void LoadMesh(std::string path);
 	void LoadMaterial(std::string path);

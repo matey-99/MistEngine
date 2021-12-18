@@ -10,5 +10,5 @@ public:
 	RenderComponent(Entity* owner) : Component(owner) {};
 
 	virtual void PreRender() = 0;
-	virtual void Render(ViewMode viewMode) = 0;
+	virtual void Render() = 0;
 };

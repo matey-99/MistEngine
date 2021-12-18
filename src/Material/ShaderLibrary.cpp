@@ -6,6 +6,7 @@ std::mutex ShaderLibrary::s_Mutex;
 ShaderLibrary::ShaderLibrary()
 {
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Standard", CreateRef<Shader>("Standard", "res/shaders/Material/Standard.vert", "res/shaders/Material/Standard.frag")));
+	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("StandardInstanced", CreateRef<Shader>("StandardInstanced", "res/shaders/Material/StandardInstanced.vert", "res/shaders/Material/Standard.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Shiny", CreateRef<Shader>("Shiny", "res/shaders/Material/Shiny.vert", "res/shaders/Material/Shiny.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Refraction", CreateRef<Shader>("Refraction", "res/shaders/Material/Refraction.vert", "res/shaders/Material/Refraction.frag")));
 

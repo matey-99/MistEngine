@@ -31,7 +31,7 @@ void Light::PreRender()
 	}
 }
 
-void Light::Render(ViewMode viewMode)
+void Light::Render()
 {
 }
 

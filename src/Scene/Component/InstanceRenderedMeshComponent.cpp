@@ -1,4 +1,4 @@
-#include "StaticMeshComponent.h"
+#include "InstanceRenderedMeshComponent.h"
 
 #include "Importer/MeshImporter.h"
 #include "Importer/MaterialImporter.h"
@@ -9,22 +9,76 @@
 #include "Light/SpotLight.h"
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-StaticMeshComponent::StaticMeshComponent(Entity* owner)
-	: StaticMeshComponent(owner, "../../res/models/defaults/default_cube.obj")
+InstanceRenderedMeshComponent::InstanceRenderedMeshComponent(Entity* owner)
+	: InstanceRenderedMeshComponent(owner, "../../res/models/defaults/default_cube.obj")
 {
 }
 
-StaticMeshComponent::StaticMeshComponent(Entity* owner, std::string path)
+InstanceRenderedMeshComponent::InstanceRenderedMeshComponent(Entity* owner, std::string path)
 	: RenderComponent(owner), m_Path(path)
 {
 	LoadMesh(path);
 
 	for (int i = 0; i < m_Meshes.size(); i++)
-		LoadMaterial("../../res/materials/Default.mat");
+		LoadMaterial("../../res/materials/DefaultInstanced.mat");
+
+
+	srand(glfwGetTime());
+	for (uint32_t i = 0; i < m_Amount; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+
+		float angle = (float)i / (float)m_Amount * 360.0f;
+		float displacement = (rand() % (int)(2 * m_Offset * 100)) / 100.0f - m_Offset;
+		float x = sin(angle) * m_Radius + displacement;
+		displacement = (rand() % (int)(2 * m_Offset * 100)) / 100.0f - m_Offset;
+		float y = displacement * 0.4f;
+		displacement = (rand() % (int)(2 * m_Offset * 100)) / 100.0f - m_Offset;
+		float z = cos(angle) * m_Radius + displacement;
+		model = glm::translate(model, glm::vec3(x, y, z));
+
+		float scale = (rand() % 20) / 100.0f + 0.05f;
+		model = glm::scale(model, glm::vec3(scale));
+
+		float rotAngle = (rand() % 360);
+		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+		m_ModelMatrices.push_back(model);
+	}
+
+	uint32_t buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, m_Amount * sizeof(glm::mat4), &m_ModelMatrices[0], GL_STATIC_DRAW);
+
+	for (int i = 0; i < m_Meshes.size(); i++)
+	{
+		glBindVertexArray(m_Meshes[i].GetVAO());
+
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(7, 1);
+
+		glBindVertexArray(0);
+	}
 }
 
-StaticMeshComponent::StaticMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPaths)
+InstanceRenderedMeshComponent::InstanceRenderedMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPaths)
 	: RenderComponent(owner), m_Path(path), m_MaterialsPaths(materialsPaths)
 {
 	LoadMesh(path);
@@ -34,21 +88,21 @@ StaticMeshComponent::StaticMeshComponent(Entity* owner, std::string path, std::v
 
 }
 
-void StaticMeshComponent::Begin()
+void InstanceRenderedMeshComponent::Begin()
+{
+	
+}
+
+void InstanceRenderedMeshComponent::Update()
 {
 
 }
 
-void StaticMeshComponent::Update()
-{
-
-}
-
-void StaticMeshComponent::PreRender()
+void InstanceRenderedMeshComponent::PreRender()
 {
 }
 
-void StaticMeshComponent::Render()
+void InstanceRenderedMeshComponent::Render()
 {
 	for (auto material : GetMaterials())
 	{
@@ -104,7 +158,6 @@ void StaticMeshComponent::Render()
 			}
 		}
 
-
 		material->GetShader()->SetMat4("u_Model", m_Owner->GetTransform().ModelMatrix);
 	}
 	if (!m_MultipleMaterials && m_Materials.at(0))
@@ -113,7 +166,7 @@ void StaticMeshComponent::Render()
 
 		for (auto mesh : m_Meshes)
 		{
-			mesh.Render();
+			mesh.RenderInstanced(m_Amount);
 		}
 
 		return;
@@ -124,16 +177,16 @@ void StaticMeshComponent::Render()
 		if (m_Materials.size() > i)
 			m_Materials.at(i)->Use();
 
-		m_Meshes.at(i).Render();
+		m_Meshes.at(i).RenderInstanced(m_Amount);
 	}
 
 }
 
-void StaticMeshComponent::Destroy()
+void InstanceRenderedMeshComponent::Destroy()
 {
 }
 
-uint32_t StaticMeshComponent::GetRenderedVerticesCount()
+uint32_t InstanceRenderedMeshComponent::GetRenderedVerticesCount()
 {
 	uint32_t vertices = 0;
 	for (auto mesh : m_Meshes)
@@ -144,19 +197,19 @@ uint32_t StaticMeshComponent::GetRenderedVerticesCount()
 	return vertices;
 }
 
-void StaticMeshComponent::LoadMesh(std::string path)
+void InstanceRenderedMeshComponent::LoadMesh(std::string path)
 {
 	m_Path = path;
 	m_Meshes = MeshImporter::GetInstance()->ImportMesh(path);
 }
 
-void StaticMeshComponent::LoadMaterial(std::string path)
+void InstanceRenderedMeshComponent::LoadMaterial(std::string path)
 {
 	m_Materials.push_back(MaterialImporter::GetInstance()->ImportMaterial(path));
 	m_MaterialsPaths.push_back(path);
 }
 
-void StaticMeshComponent::ChangeMesh(std::string path)
+void InstanceRenderedMeshComponent::ChangeMesh(std::string path)
 {
 	LoadMesh(path);
 
@@ -167,7 +220,7 @@ void StaticMeshComponent::ChangeMesh(std::string path)
 		LoadMaterial("../../res/materials/Default.mat");
 }
 
-void StaticMeshComponent::ChangeMaterial(int index, std::string path)
+void InstanceRenderedMeshComponent::ChangeMaterial(int index, std::string path)
 {
 	m_MaterialsPaths.at(index) = path;
 	m_Materials.at(index) = MaterialImporter::GetInstance()->ImportMaterial(path);

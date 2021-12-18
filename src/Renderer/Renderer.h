@@ -14,11 +14,6 @@ class DirectionalLight;
 class PointLight;
 class SpotLight;
 
-enum class ViewMode
-{
-	Lit, Wireframe, SceneDepth
-};
-
 class Renderer
 {
 public:
@@ -61,7 +56,7 @@ public:
 
 	void InitializePostProcessing();
 
-	void RenderScene(Ref<Scene> scene, ViewMode viewMode);
+	void RenderScene(Ref<Scene> scene);
 	void AddPostProcessingEffects();
 
 	void RenderShadowMap(Scene* scene, DirectionalLight* source);

@@ -141,7 +141,7 @@ void Renderer::InitializePostProcessing()
 	glBindVertexArray(0);
 }
 
-void Renderer::RenderScene(Ref<Scene> scene, ViewMode viewMode)
+void Renderer::RenderScene(Ref<Scene> scene)
 {
 	scene->PreRender();
 
@@ -150,7 +150,7 @@ void Renderer::RenderScene(Ref<Scene> scene, ViewMode viewMode)
 	glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	scene->Render(ViewMode::Lit);
+	scene->Render();
 
 	m_MainSceneFramebuffer->Unbind();
 }

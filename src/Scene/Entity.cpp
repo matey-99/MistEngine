@@ -55,12 +55,12 @@ void Entity::PreRender()
 	}
 }
 
-void Entity::Render(ViewMode viewMode)
+void Entity::Render()
 {
 	for (auto component : m_Components)
 	{
 		if (auto rc = Cast<RenderComponent>(component))
-			rc->Render(viewMode);
+			rc->Render();
 	}
 }
 

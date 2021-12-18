@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-22.9359837, 13.8333759, 7.15349054]
-  Yaw: 339.297302
-  Pitch: -28.0302429
+  Position: [-1.85977638, 1.82061803, 3.30693221]
+  Yaw: 297.730347
+  Pitch: -21.453558
 Entities:
   - Entity: Root
     ID: 0
@@ -16,7 +16,7 @@ Entities:
     Transform:
       Position: [-1.84795094, -0.42503345, 0]
       Rotation: [0, 0, 0]
-      Scale: [10.9326324, 0.589995801, 10.8595104]
+      Scale: [100, 0.589995861, 100]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
       Materials:
@@ -86,7 +86,7 @@ Entities:
     ID: 462205457
     Parent: 0
     Transform:
-      Position: [-3.64181232, 4.04277992, 0]
+      Position: [-3.64181232, 3.73840237, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:
@@ -109,7 +109,7 @@ Entities:
     ID: 675760838
     Parent: 0
     Transform:
-      Position: [-3.68854523, 0.647885799, -8.81222534]
+      Position: [-3.76425409, 0.647885799, -7.97531986]
       Rotation: [180, 5.16905594, 180]
       Scale: [1, 1, 1]
     Model:
@@ -149,3 +149,10 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 0.mat
+  - Entity: New Entity (6)
+    ID: 851834744
+    Parent: 0
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]

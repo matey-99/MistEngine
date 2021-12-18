@@ -69,7 +69,7 @@ void Scene::PreRender()
 	}
 }
 
-void Scene::Render(ViewMode viewMode)
+void Scene::Render()
 {
 	m_ChangedSinceLastFrame = false;
 
@@ -89,7 +89,7 @@ void Scene::Render(ViewMode viewMode)
 	m_LightsFragmentUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
 	m_LightsFragmentUniformBuffer->Unbind();
 
-	RenderEntity(GetRoot(), viewMode);
+	RenderEntity(GetRoot());
 
 	if (m_IsSkybox)
 	{
@@ -105,7 +105,7 @@ void Scene::Destroy()
 {
 }
 
-void Scene::RenderEntity(Ref<Entity> entity, ViewMode viewMode)
+void Scene::RenderEntity(Ref<Entity> entity)
 {
 	if (!entity->IsEnable())
 	{
@@ -115,13 +115,13 @@ void Scene::RenderEntity(Ref<Entity> entity, ViewMode viewMode)
 		return;
 	}
 
-	entity->Render(viewMode);
+	entity->Render();
 
 	if (!entity->GetChildren().empty())
 	{
 		for (auto child : entity->GetChildren())
 		{
-			RenderEntity(CreateRef<Entity>(*child), viewMode);
+			RenderEntity(CreateRef<Entity>(*child));
 		}
 	}
 }

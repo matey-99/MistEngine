@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "Editor.h"
 #include "Scene/Component/StaticMeshComponent.h"
+#include "Scene/Component/InstanceRenderedMeshComponent.h"
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
@@ -62,6 +63,42 @@ void EntityDetailsPanel::Render()
     if (auto mesh = m_Entity->GetComponent<StaticMeshComponent>())
     {
         ImGui::Text("Static Mesh");
+
+        std::string path = mesh->GetPath();
+        std::string name = path.substr(path.find_last_of("/") + 1);
+        if (ImGui::BeginCombo("Static Mesh", name.c_str()))
+        {
+            std::vector<std::string> extensions = std::vector<std::string>();
+            extensions.push_back("obj");
+            extensions.push_back("fbx");
+            extensions.push_back("3ds");
+            extensions.push_back("dae");
+            DisplayResources(extensions);
+
+            ImGui::EndCombo();
+        }
+
+        ImGui::Text("Materials");
+        for (int i = 0; i < mesh->GetMaterials().size(); i++)
+        {
+            path = mesh->GetMaterialsPaths().at(i);
+            name = path.substr(path.find_last_of("/") + 1);
+
+            ImGui::PushID(i);
+            if (ImGui::BeginCombo(("[" + std::to_string(i) + "]").c_str(), name.c_str()))
+            {
+                std::vector<std::string> extensions = std::vector<std::string>();
+                extensions.push_back("mat");
+                DisplayResources(extensions, i);
+
+                ImGui::EndCombo();
+            }
+            ImGui::PopID();
+        }
+    }
+    if (auto mesh = m_Entity->GetComponent<InstanceRenderedMeshComponent>())
+    {
+        ImGui::Text("Instance Rendered Mesh");
 
         std::string path = mesh->GetPath();
         std::string name = path.substr(path.find_last_of("/") + 1);
@@ -160,6 +197,7 @@ void EntityDetailsPanel::Render()
 
     bool addComponent = false;
     bool staticMesh = false;
+    bool instanceRenderedMesh = false;
     bool dirLight = false;
     bool pointLight = false;
     bool spotLight = false;
@@ -168,6 +206,7 @@ void EntityDetailsPanel::Render()
         if (ImGui::BeginMenu("Add Component"))
         {
             ImGui::MenuItem("Static Mesh", "", &staticMesh);
+            ImGui::MenuItem("Instance Rendered Mesh", "", &instanceRenderedMesh);
             if (ImGui::BeginMenu("Light"))
             {
                 ImGui::MenuItem("Directional Light", "", &dirLight);
@@ -185,6 +224,8 @@ void EntityDetailsPanel::Render()
 
     if (staticMesh)
         m_Entity->AddComponent<StaticMeshComponent>();
+    if (instanceRenderedMesh)
+        m_Entity->AddComponent<InstanceRenderedMeshComponent>();
     if (dirLight)
         m_Entity->AddComponent<DirectionalLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
     if (pointLight)
