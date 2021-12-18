@@ -131,6 +131,16 @@ void EntityDetailsPanel::Render()
             }
             ImGui::PopID();
         }
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+        
+        ImGui::Text("Instancing");
+        ImGui::DragFloat("Radius", &mesh->m_Radius, 25.0f, 1.0f, 1000000.0f);
+        ImGui::DragInt("Instances Count", &mesh->m_InstancesCount, 25, 1, 10000000);
+        ImGui::DragFloat("Min Mesh Scale", &mesh->m_MinMeshScale, 0.1f, 0.1f, 2.0f);
+        ImGui::DragFloat("Max Mesh Scale", &mesh->m_MaxMeshScale, 0.1f, 0.1f, 2.0f);
+
+        if (ImGui::Button("Generate"))
+            mesh->Generate();
     }
     if (auto light = m_Entity->GetComponent<Light>())
     {
@@ -262,13 +272,17 @@ void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions, i
                 {
                     if (ext == "obj" || ext == "fbx" || ext == "3ds" || ext == "dae")
                     {
-                        auto mesh = m_Entity->GetComponent<StaticMeshComponent>();
-                        mesh->ChangeMesh(path);
+                        if (auto mesh = m_Entity->GetComponent<StaticMeshComponent>())
+                            mesh->ChangeMesh(path);
+                        else if (auto mesh = m_Entity->GetComponent<InstanceRenderedMeshComponent>())
+                            mesh->ChangeMesh(path);
                     }
                     else if (ext == "mat")
                     {
-                        auto mesh = m_Entity->GetComponent<StaticMeshComponent>();
-                        mesh->ChangeMaterial(index, path);
+                        if (auto mesh = m_Entity->GetComponent<StaticMeshComponent>())
+                            mesh->ChangeMaterial(index, path);
+                        else if (auto mesh = m_Entity->GetComponent<InstanceRenderedMeshComponent>())
+                            mesh->ChangeMaterial(index, path);
                     }
                 }
             }

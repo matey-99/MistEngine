@@ -3,6 +3,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/StaticMeshComponent.h"
+#include "Scene/Component/InstanceRenderedMeshComponent.h"
 #include "Mesh.h"
 #include "Scene/Component/Light/Light.h"
 #include "Scene/Component/Light/PointLight.h"
@@ -196,6 +197,18 @@ void Renderer::RenderShadowMap(Scene* scene, DirectionalLight* source)
 			for (auto mesh : smc->GetMeshes())
 				mesh.Render();
 		}
+
+
+	}
+
+	auto depthIstancedShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepthInstanced");
+	depthIstancedShader->Use();
+	depthIstancedShader->SetMat4("u_LightSpace", source->GetLightSpace());
+	for (auto c : scene->GetComponents<InstanceRenderedMeshComponent>())
+	{
+		auto irmc = Cast<InstanceRenderedMeshComponent>(c);
+		for (auto mesh : irmc->GetMeshes())
+			mesh.RenderInstanced(irmc->GetInstancesCount());
 	}
 
 	glCullFace(GL_BACK);
@@ -231,6 +244,20 @@ void Renderer::RenderShadowMap(Scene* scene, PointLight* source)
 		}
 	}
 
+	auto depthIstancedShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepthPointInstanced");
+	depthIstancedShader->Use();
+	for (int i = 0; i < 6; i++)
+		depthIstancedShader->SetMat4("u_ShadowMatrices[" + std::to_string(i) + "]", source->GetLightViews().at(i));
+	depthIstancedShader->SetFloat("u_FarPlane", source->GetFarPlane());
+	depthIstancedShader->SetVec3("u_LightPos", source->GetOwner()->GetWorldPosition());
+	
+	for (auto c : scene->GetComponents<InstanceRenderedMeshComponent>())
+	{
+		auto irmc = Cast<InstanceRenderedMeshComponent>(c);
+		for (auto mesh : irmc->GetMeshes())
+			mesh.RenderInstanced(irmc->GetInstancesCount());
+	}
+
 	glCullFace(GL_BACK);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -259,6 +286,16 @@ void Renderer::RenderShadowMap(Scene* scene, SpotLight* source)
 			for (auto mesh : smc->GetMeshes())
 				mesh.Render();
 		}
+	}
+
+	auto depthIstancedShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::CALCULATION, "SceneDepthInstanced");
+	depthIstancedShader->Use();
+	depthIstancedShader->SetMat4("u_LightSpace", source->GetLightSpace());
+	for (auto c : scene->GetComponents<InstanceRenderedMeshComponent>())
+	{
+		auto irmc = Cast<InstanceRenderedMeshComponent>(c);
+		for (auto mesh : irmc->GetMeshes())
+			mesh.RenderInstanced(irmc->GetInstancesCount());
 	}
 
 	glCullFace(GL_BACK);

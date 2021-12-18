@@ -19,9 +19,11 @@ private:
 
 	bool m_MultipleMaterials;
 
-	uint32_t m_Amount = 10;
-	float m_Radius = 150.0f;
-	float m_Offset = 25.0f;
+	int32_t m_InstancesCount;
+	float m_Radius;
+	float m_MinMeshScale;
+	float m_MaxMeshScale;
+
 	std::vector<glm::mat4> m_ModelMatrices;
 
 	uint32_t m_ModelMatricesBuffer;
@@ -36,6 +38,8 @@ public:
 	void ChangeMesh(std::string path);
 	void ChangeMaterial(int index, std::string path);
 
+	void Generate();
+
 	virtual void Begin() override;
 	virtual void Update() override;
 	virtual void PreRender() override;
@@ -46,7 +50,13 @@ public:
 	inline std::vector<Mesh> GetMeshes() const { return m_Meshes; }
 	inline std::vector<Ref<Material>> GetMaterials() const { return m_Materials; }
 	inline std::vector<std::string> GetMaterialsPaths() const { return m_MaterialsPaths; }
+	inline int32_t GetInstancesCount() const { return m_InstancesCount; }
+	inline std::vector<glm::mat4> GetModelMatrices() const { return m_ModelMatrices; }
+	inline uint32_t GetModelMatricesBuffer() const { return m_ModelMatricesBuffer; }
 	uint32_t GetRenderedVerticesCount();
 
 	inline void SetMaterial(int index, Ref<Material> material) { m_Materials.at(index) = material; }
+
+	friend class EntityDetailsPanel;
+	friend class SceneSerializer;
 };

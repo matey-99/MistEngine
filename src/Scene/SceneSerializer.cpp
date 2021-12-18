@@ -2,6 +2,7 @@
 
 #include "yaml/yaml.h"
 #include "Scene/Component/StaticMeshComponent.h"
+#include "Scene/Component/InstanceRenderedMeshComponent.h"
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
@@ -16,6 +17,7 @@ void SceneSerializer::Serialize(Ref<Scene> scene)
 	out << YAML::Key << "Position" << YAML::Value << scene->m_Camera->Position;
 	out << YAML::Key << "Yaw" << YAML::Value << scene->m_Camera->Yaw;
 	out << YAML::Key << "Pitch" << YAML::Value << scene->m_Camera->Pitch;
+	out << YAML::Key << "Movement Speed" << YAML::Value << scene->m_Camera->MovementSpeed;
 	out << YAML::EndMap;
 	out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 	for (auto entity : scene->GetEntities())
@@ -52,13 +54,13 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 		glm::vec3 cameraPosition = camera["Position"].as<glm::vec3>();
 		float cameraYaw = camera["Yaw"].as<float>();
 		float cameraPitch = camera["Pitch"].as<float>();
+		float cameraSpeed = camera["Movement Speed"].as<float>();
 
 		scene->m_Camera->Position = cameraPosition;
 		scene->m_Camera->Yaw = cameraYaw;
 		scene->m_Camera->Pitch = cameraPitch;
+		scene->m_Camera->MovementSpeed = cameraSpeed;
 	}
-
-
 
 	YAML::Node entities = data["Entities"];
 	if (entities)
@@ -109,6 +111,29 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 
 				}
 				e->AddComponent<StaticMeshComponent>(path.c_str(), materialsPaths);
+			}
+
+			if (auto mesh = entity["Instance Rendered Mesh"])
+			{
+				std::string path = mesh["Mesh"].as<std::string>();
+				std::vector<std::string> materialsPaths;
+				YAML::Node materials = mesh["Materials"];
+				for (auto material : materials)
+				{
+					materialsPaths.push_back(material["Path"].as<std::string>());
+				}
+
+				float radius = mesh["Radius"].as<float>();
+				int count = mesh["Instances Count"].as<int>();
+				float minScale = mesh["Min Mesh Scale"].as<float>();
+				float maxScale = mesh["Max Mesh Scale"].as<float>();
+
+				auto m = e->AddComponent<InstanceRenderedMeshComponent>(path.c_str(), materialsPaths);
+				m->m_Radius = radius;
+				m->m_InstancesCount = count;
+				m->m_MinMeshScale = minScale;
+				m->m_MaxMeshScale = maxScale;
+				m->Generate();
 			}
 
 			if (auto dirLight = entity["Directional Light"])
@@ -183,6 +208,29 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 			out << YAML::EndMap;
 		}
 		out << YAML::EndSeq;
+		out << YAML::EndMap;
+	}
+	if (auto mesh = entity->GetComponent<InstanceRenderedMeshComponent>())
+	{
+		out << YAML::Key << "Instance Rendered Mesh";
+		out << YAML::BeginMap;
+		out << YAML::Key << "Mesh" << YAML::Value << mesh->GetPath();
+		out << YAML::Key << "Materials" << YAML::Value << YAML::BeginSeq;
+		for (int i = 0; i < mesh->GetMaterialsPaths().size(); i++)
+		{
+			out << YAML::BeginMap;
+			out << YAML::Key << "Material" << YAML::Value << i;
+			out << YAML::Key << "Path" << YAML::Value << mesh->GetMaterialsPaths().at(i);
+			out << YAML::EndMap;
+		}
+		out << YAML::EndSeq;
+
+		out << YAML::Key << "Radius" << YAML::Value << mesh->m_Radius;
+		out << YAML::Key << "Instances Count" << YAML::Value << mesh->m_InstancesCount;
+		out << YAML::Key << "Min Mesh Scale" << YAML::Value << mesh->m_MinMeshScale;
+		out << YAML::Key << "Max Mesh Scale" << YAML::Value << mesh->m_MaxMeshScale;
+
+
 		out << YAML::EndMap;
 	}
 	if (auto dirLight = entity->GetComponent<DirectionalLight>())

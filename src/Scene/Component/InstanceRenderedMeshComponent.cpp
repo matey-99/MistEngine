@@ -24,58 +24,12 @@ InstanceRenderedMeshComponent::InstanceRenderedMeshComponent(Entity* owner, std:
 	for (int i = 0; i < m_Meshes.size(); i++)
 		LoadMaterial("../../res/materials/DefaultInstanced.mat");
 
+	m_Radius = 1.0f;
+	m_InstancesCount = 1;
+	m_MinMeshScale = 1.0f;
+	m_MaxMeshScale = 1.0f;
 
-	srand(glfwGetTime());
-	for (uint32_t i = 0; i < m_Amount; i++)
-	{
-		glm::mat4 model = glm::mat4(1.0f);
-
-		float angle = (float)i / (float)m_Amount * 360.0f;
-		float displacement = (rand() % (int)(2 * m_Offset * 100)) / 100.0f - m_Offset;
-		float x = sin(angle) * m_Radius + displacement;
-		displacement = (rand() % (int)(2 * m_Offset * 100)) / 100.0f - m_Offset;
-		float y = displacement * 0.4f;
-		displacement = (rand() % (int)(2 * m_Offset * 100)) / 100.0f - m_Offset;
-		float z = cos(angle) * m_Radius + displacement;
-		model = glm::translate(model, glm::vec3(x, y, z));
-
-		float scale = (rand() % 20) / 100.0f + 0.05f;
-		model = glm::scale(model, glm::vec3(scale));
-
-		float rotAngle = (rand() % 360);
-		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
-
-		m_ModelMatrices.push_back(model);
-	}
-
-	uint32_t buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_Amount * sizeof(glm::mat4), &m_ModelMatrices[0], GL_STATIC_DRAW);
-
-	for (int i = 0; i < m_Meshes.size(); i++)
-	{
-		glBindVertexArray(m_Meshes[i].GetVAO());
-
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
-
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
-
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
-
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
-
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-		glVertexAttribDivisor(7, 1);
-
-		glBindVertexArray(0);
-	}
+	Generate();
 }
 
 InstanceRenderedMeshComponent::InstanceRenderedMeshComponent(Entity* owner, std::string path, std::vector<std::string> materialsPaths)
@@ -86,6 +40,12 @@ InstanceRenderedMeshComponent::InstanceRenderedMeshComponent(Entity* owner, std:
 	for (auto path : m_MaterialsPaths)
 		m_Materials.push_back(MaterialImporter::GetInstance()->ImportMaterial(path));
 
+	m_Radius = 1.0f;
+	m_InstancesCount = 1;
+	m_MinMeshScale = 1.0f;
+	m_MaxMeshScale = 1.0f;
+
+	Generate();
 }
 
 void InstanceRenderedMeshComponent::Begin()
@@ -95,7 +55,7 @@ void InstanceRenderedMeshComponent::Begin()
 
 void InstanceRenderedMeshComponent::Update()
 {
-
+	
 }
 
 void InstanceRenderedMeshComponent::PreRender()
@@ -166,7 +126,7 @@ void InstanceRenderedMeshComponent::Render()
 
 		for (auto mesh : m_Meshes)
 		{
-			mesh.RenderInstanced(m_Amount);
+			mesh.RenderInstanced(m_InstancesCount);
 		}
 
 		return;
@@ -177,7 +137,7 @@ void InstanceRenderedMeshComponent::Render()
 		if (m_Materials.size() > i)
 			m_Materials.at(i)->Use();
 
-		m_Meshes.at(i).RenderInstanced(m_Amount);
+		m_Meshes.at(i).RenderInstanced(m_InstancesCount);
 	}
 
 }
@@ -217,11 +177,71 @@ void InstanceRenderedMeshComponent::ChangeMesh(std::string path)
 	m_MaterialsPaths.clear();
 
 	for (int i = 0; i < m_Meshes.size(); i++)
-		LoadMaterial("../../res/materials/Default.mat");
+		LoadMaterial("../../res/materials/DefaultInstanced.mat");
 }
 
 void InstanceRenderedMeshComponent::ChangeMaterial(int index, std::string path)
 {
 	m_MaterialsPaths.at(index) = path;
 	m_Materials.at(index) = MaterialImporter::GetInstance()->ImportMaterial(path);
+}
+
+void InstanceRenderedMeshComponent::Generate()
+{
+	m_ModelMatrices.clear();
+
+	glm::vec3 center = m_Owner->GetWorldPosition();
+
+	srand(glfwGetTime());
+	for (uint32_t i = 0; i < m_InstancesCount; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+
+		float theta = 2 * glm::pi<float>() * ((float)rand() / RAND_MAX);
+		float distance = sqrt((float)rand() / RAND_MAX) * m_Radius;
+		float x = center.x + distance * cos(theta);
+		float z = center.z + distance * sin(theta);
+
+		float scale = (rand() % (int)(m_MaxMeshScale * 100)) / 100.0f + m_MinMeshScale;
+		float rotationY = (rand() % 360);
+
+		Transform t = Transform(m_Owner);
+		t.LocalPosition = glm::vec3(x, center.y, z);
+		t.LocalScale = glm::vec3(scale);
+		t.LocalRotation = glm::vec3(0.0f, rotationY, 0.0f);
+		t.CalculateModelMatrix();
+
+		m_ModelMatrices.push_back(t.ModelMatrix);
+	}
+
+	if (m_ModelMatricesBuffer)
+		glDeleteBuffers(1, &m_ModelMatricesBuffer);
+
+	glGenBuffers(1, &m_ModelMatricesBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ModelMatricesBuffer);
+	glBufferData(GL_ARRAY_BUFFER, m_InstancesCount * sizeof(glm::mat4), &m_ModelMatrices[0], GL_STATIC_DRAW);
+
+	for (int i = 0; i < m_Meshes.size(); i++)
+	{
+		glBindVertexArray(m_Meshes[i].GetVAO());
+
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(7, 1);
+
+		glBindVertexArray(0);
+	}
 }
