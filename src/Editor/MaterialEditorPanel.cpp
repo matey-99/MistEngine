@@ -75,7 +75,7 @@ void MaterialEditorPanel::Render()
     {
         std::string name = param.first.substr(param.first.find_first_of('.') + 1);
 
-        ImGui::ColorEdit3(name.c_str(), (float*)&param.second);
+        ImGui::ColorEdit3(name.c_str(), (float*)&param.second, ImGuiColorEditFlags_Float);
     }
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 

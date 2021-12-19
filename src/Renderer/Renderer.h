@@ -25,6 +25,7 @@ private:
 
 	Ref<Framebuffer> m_MainSceneFramebuffer;
 	Ref<Framebuffer> m_PostProcessingFramebuffer;
+	Ref<Framebuffer> m_ThresholdFramebuffer;
 
 	Ref<Framebuffer> m_DirectionalLightShadowMapFramebuffer;
 	Ref<Framebuffer> m_PointLightShadowMapFramebuffer;

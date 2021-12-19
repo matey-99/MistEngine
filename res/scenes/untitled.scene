@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-17.7812634, 22.3995342, -7.79362679]
-  Yaw: 17.0273056
-  Pitch: -34.6560135
+  Position: [0.956462622, 0.338156819, 3.0843215]
+  Yaw: 276.430389
+  Pitch: -0.544006348
   Movement Speed: 55
 Entities:
   - Entity: Root
@@ -11,43 +11,15 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: Ground
-    ID: 818049914
+  - Entity: Bloom text
+    ID: 511897439
     Parent: 0
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [100, 0.589995861, 100]
-    Model:
-      Mesh: ../../res/models/defaults/default_cube.obj
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/Default.mat
-  - Entity: Instancing
-    ID: 851834744
-    Parent: 0
-    Transform:
-      Position: [0, 5.87639761, 37.6831818]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Instance Rendered Mesh:
-      Mesh: ../../res/models/defaults/default_sphere.obj
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/New material 1.mat
-      Radius: 50
-      Instances Count: 25
-      Min Mesh Scale: 0.800000012
-      Max Mesh Scale: 1.20000005
-  - Entity: Cube
-    ID: 781455349
-    Parent: 0
-    Transform:
-      Position: [0, 5.14758205, 0]
-      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Model:
-      Mesh: ../../res/models/defaults/default_cube.obj
+      Mesh: ../../res/models/defaults/bloom_text.obj
       Materials:
         - Material: 0
-          Path: ../../res/materials/Default.mat
+          Path: ../../res/materials/New material 0.mat

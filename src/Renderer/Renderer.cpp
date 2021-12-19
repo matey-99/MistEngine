@@ -44,7 +44,7 @@ void Renderer::InitializeMainSceneFramebuffer()
 
 	FramebufferRenderbufferConfig renderbufferConfig;
 	renderbufferConfig.InternalFormat = GL_DEPTH_STENCIL;
-
+	
 	FramebufferConfig config;
 	config.Width = 1920;
 	config.Height = 1080;
@@ -73,6 +73,24 @@ void Renderer::InitializePostProcessingFramebuffer()
 	config.Renderbuffers.push_back(renderbufferConfig);
 
 	m_PostProcessingFramebuffer = Framebuffer::Create(config);
+
+	FramebufferTextureConfig thresholdTextureConfig;
+	thresholdTextureConfig.Target = GL_TEXTURE_2D;
+	thresholdTextureConfig.InternalFormat = GL_RGBA32F;
+	thresholdTextureConfig.Format = GL_RGBA;
+	thresholdTextureConfig.MinFilter = GL_LINEAR_MIPMAP_LINEAR;
+	thresholdTextureConfig.MagFilter = GL_LINEAR_MIPMAP_LINEAR;
+
+	FramebufferRenderbufferConfig thresholdRenderbufferConfig;
+	thresholdRenderbufferConfig.InternalFormat = GL_DEPTH_STENCIL;
+
+	FramebufferConfig thresholdConfig;
+	thresholdConfig.Width = 1920;
+	thresholdConfig.Height = 1080;
+	thresholdConfig.Textures.push_back(thresholdTextureConfig);
+	thresholdConfig.Renderbuffers.push_back(thresholdRenderbufferConfig);
+
+	m_ThresholdFramebuffer = Framebuffer::Create(thresholdConfig);
 }
 
 void Renderer::InitializeShadowMapFramebuffers()
@@ -158,13 +176,11 @@ void Renderer::RenderScene(Ref<Scene> scene)
 
 void Renderer::AddPostProcessingEffects()
 {
-	m_PostProcessingFramebuffer->Bind();
+	m_ThresholdFramebuffer->Bind();
 
-	auto viewportShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Viewport");
-	viewportShader->Use();
-	viewportShader->SetInt("u_Screen", 0);
-	viewportShader->SetFloat("u_Gamma", m_Gamma);
-	viewportShader->SetFloat("u_Exposure", m_Exposure);
+	auto thresholdShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Threshold");
+	thresholdShader->Use();
+	thresholdShader->SetInt("u_Screen", 0);
 
 	glBindVertexArray(m_PostProcessingVAO);
 	glDisable(GL_DEPTH_TEST);
@@ -174,7 +190,34 @@ void Renderer::AddPostProcessingEffects()
 	glEnable(GL_DEPTH_TEST);
 	glBindVertexArray(0);
 
+	m_ThresholdFramebuffer->Unbind();
+
+	m_PostProcessingFramebuffer->Bind();
+
+	glBindTexture(GL_TEXTURE_2D, m_ThresholdFramebuffer->GetColorAttachment());
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	auto postProcessingShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "PostProcessing");
+	postProcessingShader->Use();
+	postProcessingShader->SetInt("u_Screen", 0);
+	postProcessingShader->SetInt("u_ThresholdScreen", 1);
+	postProcessingShader->SetFloat("u_Gamma", m_Gamma);
+	postProcessingShader->SetFloat("u_Exposure", m_Exposure);
+
+	glBindVertexArray(m_PostProcessingVAO);
+	glDisable(GL_DEPTH_TEST);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_ThresholdFramebuffer->GetColorAttachment());
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glEnable(GL_DEPTH_TEST);
+	glBindVertexArray(0);
+
 	m_PostProcessingFramebuffer->Unbind();
+
 }
 
 void Renderer::RenderShadowMap(Scene* scene, DirectionalLight* source)

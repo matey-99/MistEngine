@@ -10,7 +10,8 @@ ShaderLibrary::ShaderLibrary()
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Shiny", CreateRef<Shader>("Shiny", "res/shaders/Material/Shiny.vert", "res/shaders/Material/Shiny.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Refraction", CreateRef<Shader>("Refraction", "res/shaders/Material/Refraction.vert", "res/shaders/Material/Refraction.frag")));
 
-	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Viewport", CreateRef<Shader>("Viewport", "res/shaders/PostProcessing/Viewport.vert", "res/shaders/PostProcessing/Viewport.frag")));
+	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("PostProcessing", CreateRef<Shader>("PostProcessing", "res/shaders/PostProcessing/PostProcessing.vert", "res/shaders/PostProcessing/PostProcessing.frag")));
+	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Threshold", CreateRef<Shader>("Threshold", "res/shaders/PostProcessing/Threshold.vert", "res/shaders/PostProcessing/Threshold.frag")));
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMapOrtographic", 
 		CreateRef<Shader>("DepthMapOrtographic", "res/shaders/PostProcessing/DepthMapOrtographic.vert", "res/shaders/PostProcessing/DepthMapOrtographic.frag")));
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMapPerspective",
