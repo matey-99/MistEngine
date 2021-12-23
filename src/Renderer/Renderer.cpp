@@ -18,6 +18,11 @@ Renderer::Renderer()
 {
 	m_Gamma = 2.2f;
 	m_Exposure = 1.0f;
+
+	m_Bloom = true;
+	m_BloomThreshold = 1.0f;
+	m_BloomIntensity = 0.8f;
+	m_BlurWidth = 0.8f;
 }
 
 Renderer::~Renderer()
@@ -62,6 +67,8 @@ void Renderer::InitializePostProcessingFramebuffer()
 	textureConfig.Format = GL_RGBA;
 	textureConfig.MinFilter = GL_LINEAR;
 	textureConfig.MagFilter = GL_LINEAR;
+	textureConfig.WrapS = GL_CLAMP_TO_EDGE;
+	textureConfig.WrapT = GL_CLAMP_TO_EDGE;
 
 	FramebufferRenderbufferConfig renderbufferConfig;
 	renderbufferConfig.InternalFormat = GL_DEPTH_STENCIL;
@@ -78,19 +85,49 @@ void Renderer::InitializePostProcessingFramebuffer()
 	thresholdTextureConfig.Target = GL_TEXTURE_2D;
 	thresholdTextureConfig.InternalFormat = GL_RGBA32F;
 	thresholdTextureConfig.Format = GL_RGBA;
-	thresholdTextureConfig.MinFilter = GL_LINEAR_MIPMAP_LINEAR;
-	thresholdTextureConfig.MagFilter = GL_LINEAR_MIPMAP_LINEAR;
-
-	FramebufferRenderbufferConfig thresholdRenderbufferConfig;
-	thresholdRenderbufferConfig.InternalFormat = GL_DEPTH_STENCIL;
+	thresholdTextureConfig.MinFilter = GL_LINEAR;
+	thresholdTextureConfig.MagFilter = GL_LINEAR;
+	thresholdTextureConfig.WrapS = GL_CLAMP_TO_EDGE;
+	thresholdTextureConfig.WrapT = GL_CLAMP_TO_EDGE;
 
 	FramebufferConfig thresholdConfig;
-	thresholdConfig.Width = 1920;
-	thresholdConfig.Height = 1080;
+	thresholdConfig.Width = m_PostProcessingFramebuffer->GetConfiguration().Width;
+	thresholdConfig.Height = m_PostProcessingFramebuffer->GetConfiguration().Height;
 	thresholdConfig.Textures.push_back(thresholdTextureConfig);
-	thresholdConfig.Renderbuffers.push_back(thresholdRenderbufferConfig);
 
 	m_ThresholdFramebuffer = Framebuffer::Create(thresholdConfig);
+
+	FramebufferTextureConfig halfResolutionTextureConfig;
+	halfResolutionTextureConfig.Target = GL_TEXTURE_2D;
+	halfResolutionTextureConfig.InternalFormat = GL_RGBA32F;
+	halfResolutionTextureConfig.Format = GL_RGBA;
+	halfResolutionTextureConfig.MinFilter = GL_NEAREST;
+	halfResolutionTextureConfig.MagFilter = GL_NEAREST;
+	halfResolutionTextureConfig.WrapS = GL_CLAMP_TO_EDGE;
+	halfResolutionTextureConfig.WrapT = GL_CLAMP_TO_EDGE;
+
+	FramebufferConfig halfResolutionConfig;
+	halfResolutionConfig.Width = m_PostProcessingFramebuffer->GetConfiguration().Width / 4;
+	halfResolutionConfig.Height = m_PostProcessingFramebuffer->GetConfiguration().Height / 4;
+	halfResolutionConfig.Textures.push_back(halfResolutionTextureConfig);
+
+	m_HalfResolutionFramebuffer = Framebuffer::Create(halfResolutionConfig);
+
+	FramebufferTextureConfig blurTextureConfig;
+	blurTextureConfig.Target = GL_TEXTURE_2D;
+	blurTextureConfig.InternalFormat = GL_RGBA32F;
+	blurTextureConfig.Format = GL_RGBA;
+	blurTextureConfig.MinFilter = GL_NEAREST;
+	blurTextureConfig.MagFilter = GL_NEAREST;
+	blurTextureConfig.WrapS = GL_CLAMP_TO_EDGE;
+	blurTextureConfig.WrapT = GL_CLAMP_TO_EDGE;
+
+	FramebufferConfig blurConfig;
+	blurConfig.Width = m_PostProcessingFramebuffer->GetConfiguration().Width / 4;
+	blurConfig.Height = m_PostProcessingFramebuffer->GetConfiguration().Height / 4;
+	blurConfig.Textures.push_back(blurTextureConfig);
+
+	m_BlurFramebuffer = Framebuffer::Create(blurConfig);
 }
 
 void Renderer::InitializeShadowMapFramebuffers()
@@ -176,48 +213,102 @@ void Renderer::RenderScene(Ref<Scene> scene)
 
 void Renderer::AddPostProcessingEffects()
 {
-	m_ThresholdFramebuffer->Bind();
+	if (m_Bloom)
+	{
+		m_ThresholdFramebuffer->Bind();
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
 
-	auto thresholdShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Threshold");
-	thresholdShader->Use();
-	thresholdShader->SetInt("u_Screen", 0);
+		auto thresholdShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Threshold");
+		thresholdShader->Use();
+		thresholdShader->SetInt("u_Screen", 0);
+		thresholdShader->SetFloat("u_Threshold", m_BloomThreshold);
 
-	glBindVertexArray(m_PostProcessingVAO);
-	glDisable(GL_DEPTH_TEST);
-	glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(m_PostProcessingVAO);
+		glDisable(GL_DEPTH_TEST);
+		glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_ThresholdFramebuffer->Unbind();
 
-	glEnable(GL_DEPTH_TEST);
-	glBindVertexArray(0);
+		m_HalfResolutionFramebuffer->Bind();
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
 
-	m_ThresholdFramebuffer->Unbind();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_ThresholdFramebuffer->GetColorAttachment());
+
+		auto downfilterShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Downfilter");
+		downfilterShader->Use();
+		downfilterShader->SetInt("u_SourceTexture", 0);
+		downfilterShader->SetVec2("u_TexelOffset", glm::vec2(1.0f / (float)m_HalfResolutionFramebuffer->GetConfiguration().Width,
+			1.0f / (float)m_HalfResolutionFramebuffer->GetConfiguration().Height));
+
+		glBindVertexArray(m_PostProcessingVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_HalfResolutionFramebuffer->Unbind();
+
+		m_BlurFramebuffer->Bind();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_HalfResolutionFramebuffer->GetColorAttachment());
+
+		auto blurShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "Blur");
+		blurShader->Use();
+		blurShader->SetInt("u_SourceTexture", 0);
+		blurShader->SetVec2("u_TexelOffset", glm::vec2(m_BlurWidth / (float)m_HalfResolutionFramebuffer->GetConfiguration().Width, 0.0f));
+
+		glBindVertexArray(m_PostProcessingVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_BlurFramebuffer->Unbind();
+
+		m_HalfResolutionFramebuffer->Bind();
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_BlurFramebuffer->GetColorAttachment());
+
+		blurShader->Use();
+		blurShader->SetInt("u_SourceTexture", 0);
+		blurShader->SetVec2("u_TexelOffset", glm::vec2(0.0f, m_BlurWidth / (float)m_HalfResolutionFramebuffer->GetConfiguration().Height));
+
+		glBindVertexArray(m_PostProcessingVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_HalfResolutionFramebuffer->Unbind();
+	}
 
 	m_PostProcessingFramebuffer->Bind();
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
-	glBindTexture(GL_TEXTURE_2D, m_ThresholdFramebuffer->GetColorAttachment());
-	glGenerateMipmap(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
+
+	if (m_Bloom)
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_HalfResolutionFramebuffer->GetColorAttachment());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
 
 	auto postProcessingShader = ShaderLibrary::GetInstance()->GetShader(ShaderType::POST_PROCESSING, "PostProcessing");
 	postProcessingShader->Use();
 	postProcessingShader->SetInt("u_Screen", 0);
-	postProcessingShader->SetInt("u_ThresholdScreen", 1);
+	postProcessingShader->SetBool("u_IsBloom", m_Bloom);
+	postProcessingShader->SetFloat("u_BloomIntensity", m_BloomIntensity);
+	if (m_Bloom)
+		postProcessingShader->SetInt("u_BloomTexture", 1);
+
 	postProcessingShader->SetFloat("u_Gamma", m_Gamma);
 	postProcessingShader->SetFloat("u_Exposure", m_Exposure);
 
 	glBindVertexArray(m_PostProcessingVAO);
-	glDisable(GL_DEPTH_TEST);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_ThresholdFramebuffer->GetColorAttachment());
-
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glBindVertexArray(0);
-
 	m_PostProcessingFramebuffer->Unbind();
-
 }
 
 void Renderer::RenderShadowMap(Scene* scene, DirectionalLight* source)

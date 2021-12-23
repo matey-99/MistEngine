@@ -12,6 +12,8 @@ ShaderLibrary::ShaderLibrary()
 
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("PostProcessing", CreateRef<Shader>("PostProcessing", "res/shaders/PostProcessing/PostProcessing.vert", "res/shaders/PostProcessing/PostProcessing.frag")));
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Threshold", CreateRef<Shader>("Threshold", "res/shaders/PostProcessing/Threshold.vert", "res/shaders/PostProcessing/Threshold.frag")));
+	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Downfilter", CreateRef<Shader>("Downfilter", "res/shaders/PostProcessing/PostProcessing.vert", "res/shaders/PostProcessing/Downfilter.frag")));
+	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Blur", CreateRef<Shader>("Blur", "res/shaders/PostProcessing/PostProcessing.vert", "res/shaders/PostProcessing/Blur.frag")));
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMapOrtographic", 
 		CreateRef<Shader>("DepthMapOrtographic", "res/shaders/PostProcessing/DepthMapOrtographic.vert", "res/shaders/PostProcessing/DepthMapOrtographic.frag")));
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("DepthMapPerspective",

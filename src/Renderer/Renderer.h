@@ -26,6 +26,8 @@ private:
 	Ref<Framebuffer> m_MainSceneFramebuffer;
 	Ref<Framebuffer> m_PostProcessingFramebuffer;
 	Ref<Framebuffer> m_ThresholdFramebuffer;
+	Ref<Framebuffer> m_HalfResolutionFramebuffer;
+	Ref<Framebuffer> m_BlurFramebuffer;
 
 	Ref<Framebuffer> m_DirectionalLightShadowMapFramebuffer;
 	Ref<Framebuffer> m_PointLightShadowMapFramebuffer;
@@ -38,6 +40,11 @@ private:
 	uint32_t m_PostProcessingVBO;
 
 	bool m_PostProcessing;
+	
+	bool m_Bloom;
+	float m_BloomIntensity;
+	float m_BloomThreshold;
+	float m_BlurWidth;
 
 	float m_Gamma;
 	float m_Exposure;
