@@ -36,6 +36,8 @@ public:
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 	}
 
+	inline uint32_t GetID() const { return m_ID; }
+
 private:
 	uint32_t m_ID;
 	uint32_t m_Size;

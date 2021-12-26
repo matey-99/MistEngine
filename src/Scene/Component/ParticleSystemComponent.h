@@ -2,6 +2,7 @@
 
 #include "Scene/Component/RenderComponent.h"
 #include "Renderer/ShaderStorageBuffer.h"
+#include "Renderer/ComputeShader.h"
 
 class ParticleSystemComponent : public RenderComponent
 {
@@ -17,6 +18,10 @@ public:
 private:
 	Ref<ShaderStorageBuffer<glm::vec4>> m_PositionBuffer;
 	Ref<ShaderStorageBuffer<glm::vec4>> m_VelocityBuffer;
+	Ref<ShaderStorageBuffer<uint32_t>> m_IndexBuffer;
+
+	uint32_t m_ProgramPipeline;
+	Ref<ComputeShader> m_ComputeShader;
 
 	uint32_t m_ParticlesCount;
 	uint32_t m_Radius;
