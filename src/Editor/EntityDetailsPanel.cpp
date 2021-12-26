@@ -7,6 +7,7 @@
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
+#include "Scene/Component/ParticleSystemComponent.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -205,12 +206,20 @@ void EntityDetailsPanel::Render()
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 
+    if (auto particles = m_Entity->GetComponent<ParticleSystemComponent>())
+    {
+        ImGui::Text("Particle System");
+
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+    }
+
     bool addComponent = false;
     bool staticMesh = false;
     bool instanceRenderedMesh = false;
     bool dirLight = false;
     bool pointLight = false;
     bool spotLight = false;
+    bool particleSystem = false;
     if (ImGui::BeginPopupContextWindow())
     {
         if (ImGui::BeginMenu("Add Component"))
@@ -225,6 +234,7 @@ void EntityDetailsPanel::Render()
 
                 ImGui::EndMenu();
             }
+            ImGui::MenuItem("Particle System", "", &particleSystem);
 
             ImGui::EndMenu();
         }
@@ -242,6 +252,8 @@ void EntityDetailsPanel::Render()
         m_Entity->AddComponent<PointLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
     if (spotLight)
         m_Entity->AddComponent<SpotLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
+    if (particleSystem)
+        m_Entity->AddComponent<ParticleSystemComponent>();
 
     if (ImGui::Button("Close"))
     {
