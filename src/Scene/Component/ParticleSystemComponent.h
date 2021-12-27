@@ -16,14 +16,30 @@ public:
 	virtual void Destroy() override;
 
 private:
+	uint32_t GenerateNoiseTexture(int width, int height, int depth, int internalFormat);
+
+private:
 	Ref<ShaderStorageBuffer<glm::vec4>> m_PositionBuffer;
 	Ref<ShaderStorageBuffer<glm::vec4>> m_VelocityBuffer;
 	Ref<ShaderStorageBuffer<uint32_t>> m_IndexBuffer;
 
-	uint32_t m_ProgramPipeline;
 	Ref<ComputeShader> m_ComputeShader;
 
+	uint32_t m_NoiseTexture;
+
+	uint32_t m_ParticleVAO;
+
 	uint32_t m_ParticlesCount;
-	uint32_t m_Radius;
-	uint32_t m_Velocity;
+	float m_Radius;
+	glm::vec3 m_Velocity;
+	float m_ParticleLifeTime;
+
+	// noise
+	int m_NoiseSize;
+	float m_NoiseFrequency;
+	float m_NoiseStrength;
+	float m_Damping;
+
+
+	friend class SceneSerializer;
 };

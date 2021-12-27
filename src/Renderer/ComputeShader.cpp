@@ -66,7 +66,7 @@ void ComputeShader::SetInt(const std::string& name, int value) const
 
 void ComputeShader::SetUint(const std::string& name, unsigned int value) const
 {
-    glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+    glUniform1ui(glGetUniformLocation(m_ID, name.c_str()), value);
 }
 
 void ComputeShader::SetFloat(const std::string& name, float value) const

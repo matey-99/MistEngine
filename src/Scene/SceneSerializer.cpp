@@ -6,6 +6,7 @@
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
+#include "Scene/Component/ParticleSystemComponent.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
 {
@@ -163,6 +164,14 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				l->SetOuterCutOff(outerCutOff);
 				l->SetColor(color);
 			}
+
+			if (auto particle = entity["Particle System"])
+			{
+				int count = particle["Particles Count"].as<int>();
+
+				auto p = e->AddComponent<ParticleSystemComponent>();
+				//p->m_ParticlesCount = count;
+			}
 		}
 
 		for (int i = 0; i < parentsIDs.size(); i++)
@@ -254,6 +263,14 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Inner Cut Off" << YAML::Value << spotLight->GetInnerCutOff();
 		out << YAML::Key << "Outer Cut Off" << YAML::Value << spotLight->GetOuterCutOff();
 		out << YAML::Key << "Color" << YAML::Value << spotLight->GetColor();
+		out << YAML::EndMap;
+	}
+
+	if (auto particleSystem = entity->GetComponent<ParticleSystemComponent>())
+	{
+		out << YAML::Key << "Particle System";
+		out << YAML::BeginMap;
+		out << YAML::Key << "Particles Count" << YAML::Value << particleSystem->m_ParticlesCount;
 		out << YAML::EndMap;
 	}
 

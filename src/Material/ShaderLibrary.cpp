@@ -34,6 +34,8 @@ ShaderLibrary::ShaderLibrary()
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("Irradiance", CreateRef<Shader>("Irradiance", "res/shaders/Calculation/Irradiance.vert", "res/shaders/Calculation/Irradiance.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("Prefilter", CreateRef<Shader>("Prefilter", "res/shaders/Calculation/Prefilter.vert", "res/shaders/Calculation/Prefilter.frag")));
 	m_CalculationShaders.insert(std::make_pair<std::string, Ref<Shader>>("BRDF", CreateRef<Shader>("BRDF", "res/shaders/Calculation/BRDF.vert", "res/shaders/Calculation/BRDF.frag")));
+
+	m_ParticleShaders.insert(std::make_pair<std::string, Ref<Shader>>("StandardParticle", CreateRef<Shader>("StandardParticle", "res/shaders/Particle/StandardParticle.vert", "res/shaders/Particle/StandardParticle.frag")));
 }
 
 Ref<ShaderLibrary> ShaderLibrary::GetInstance()
@@ -57,6 +59,8 @@ Ref<Shader> ShaderLibrary::GetShader(ShaderType type, std::string name)
 		return m_SkyboxShaders.find(name)->second;
 	case ShaderType::CALCULATION:
 		return m_CalculationShaders.find(name)->second;
+	case ShaderType::PARTICLE:
+		return m_ParticleShaders.find(name)->second;
 	}
 
 	return Ref<Shader>();

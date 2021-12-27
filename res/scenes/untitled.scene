@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [0.956462622, 0.338156819, 3.0843215]
-  Yaw: 276.430389
-  Pitch: -0.544006348
+  Position: [31.5485001, -7.02229118, 43.9609604]
+  Yaw: 234.004593
+  Pitch: 7.47228146
   Movement Speed: 55
 Entities:
   - Entity: Root
@@ -11,15 +11,12 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: Bloom text
-    ID: 511897439
+  - Entity: New Entity
+    ID: 722797560
     Parent: 0
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Model:
-      Mesh: ../../res/models/defaults/bloom_text.obj
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/New material 0.mat
+    Particle System:
+      Particles Count: 1048576
