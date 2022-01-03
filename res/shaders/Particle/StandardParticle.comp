@@ -13,43 +13,6 @@ layout (std140, binding = 2) buffer Velocity
 layout (local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
 
 layout (location = 0) uniform uint u_ParticlesCount;
-layout (location = 1) uniform sampler3D u_NoiseTexture;
-layout (location = 2) uniform float u_InverseNoiseSize;
-layout (location = 3) uniform float u_NoiseFrequency;
-layout (location = 4) uniform float u_NoiseStrength;
-layout (location = 5) uniform float u_Damping;
-layout (location = 6) uniform vec4 u_Attractor;
-
-vec3 Noise(vec3 p)
-{
-    return texture(u_NoiseTexture, p * u_InverseNoiseSize).xyz;
-}
-
-vec3 FractalSum(vec3 p, int octaves, float lacunarity, float gain)
-{
-    float freq = 1.0, amp = 0.5;
-    vec3 sum = vec3(0.0);
-    for (int i = 0; i < octaves; i++)
-    {
-        sum += Noise(p * freq) * amp;
-        freq *= lacunarity;
-        amp *= gain;
-    }
-
-    return sum;
-}
-
-vec3 Attract(vec3 p, vec3 p2)
-{
-    const float softeningSquared = 0.01;
-    vec3 v = p2 - p;
-    float r2 = dot(v, v);
-    r2 += softeningSquared;
-    float invDistance = 1.0 / sqrt(r2);
-    float invDistanceCubed = invDistance * invDistance * invDistance;
-    
-    return v * invDistanceCubed;
-}
 
 void main()
 {
@@ -60,11 +23,7 @@ void main()
     vec3 p = positions[i].xyz;
     vec3 v = velocities[i].xyz;
 
-    v += FractalSum(p * u_NoiseFrequency, 4, 2.0, 0.5) * u_NoiseStrength;
-    v += Attract(p, u_Attractor.xyz) * u_Attractor.w;
-
     p += v;
-    v *= u_Damping;
 
     positions[i] = vec4(p, 1.0);
     velocities[i] = vec4(v, 0.0);

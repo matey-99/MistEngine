@@ -15,8 +15,13 @@ public:
 	virtual void Render() override;
 	virtual void Destroy() override;
 
-private:
-	uint32_t GenerateNoiseTexture(int width, int height, int depth, int internalFormat);
+	void Reset();
+
+	void SetParticlesCount(uint32_t count);
+	void SetParticleLifeTime(float lifeTime);
+	void SetRadius(float radius);
+	void SetMinVelocity(glm::vec3 minVelocity);
+	void SetMaxVelocity(glm::vec3 maxVelocity);
 
 private:
 	Ref<ShaderStorageBuffer<glm::vec4>> m_PositionBuffer;
@@ -31,15 +36,12 @@ private:
 
 	uint32_t m_ParticlesCount;
 	float m_Radius;
-	glm::vec3 m_Velocity;
+	glm::vec3 m_MinVelocity;
+	glm::vec3 m_MaxVelocity;
 	float m_ParticleLifeTime;
 
-	// noise
-	int m_NoiseSize;
-	float m_NoiseFrequency;
-	float m_NoiseStrength;
-	float m_Damping;
-
+	float m_ParticlesLifeTimeCounter;
 
 	friend class SceneSerializer;
+	friend class EntityDetailsPanel;
 };

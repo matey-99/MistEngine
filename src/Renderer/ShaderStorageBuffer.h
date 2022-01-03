@@ -16,6 +16,11 @@ public:
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	}
 
+	~ShaderStorageBuffer()
+	{
+		glDeleteBuffers(1, &m_ID);
+	}
+
 	void Bind()
 	{
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ID);

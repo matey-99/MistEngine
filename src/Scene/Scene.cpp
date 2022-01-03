@@ -89,8 +89,6 @@ void Scene::Render()
 	m_LightsFragmentUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
 	m_LightsFragmentUniformBuffer->Unbind();
 
-	RenderEntity(GetRoot());
-
 	if (m_IsSkybox)
 	{
 		glm::mat4 skyboxProjection = m_Camera->GetProjectionMatrix();
@@ -99,6 +97,8 @@ void Scene::Render()
 
 		m_Skybox->Render(skyboxView, skyboxProjection);
 	}
+
+	RenderEntity(GetRoot());
 }
 
 void Scene::Destroy()

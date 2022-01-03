@@ -7,86 +7,57 @@
 ParticleSystemComponent::ParticleSystemComponent(Entity* owner)
 	: RenderComponent(owner)
 {
-	m_ParticlesCount = 1 << 20;
-	m_Radius = 15.0f;
-	m_Velocity = glm::vec3(0.0f, 2.0f, 0.0f);
+	m_ParticlesCount = 10000;
+	m_Radius = 2.0f;
+	m_MinVelocity = glm::vec3(0.0f, 0.1f, 0.0f);
+	m_MaxVelocity = glm::vec3(0.0f, 0.5f, 0.0f);
 	m_ParticleLifeTime = 3.0f;
+	m_ParticlesLifeTimeCounter = 0.0f;
 
-	// noise
-	m_NoiseSize = 16;
-	m_NoiseFrequency = 10.0f;
-	m_NoiseStrength = 0.001f;
-	m_Damping = 0.95f;
-
-	m_PositionBuffer = CreateRef<ShaderStorageBuffer<glm::vec4>>(m_ParticlesCount);
-	m_VelocityBuffer = CreateRef<ShaderStorageBuffer<glm::vec4>>(m_ParticlesCount);
-	m_IndexBuffer = CreateRef<ShaderStorageBuffer<uint32_t>>(m_ParticlesCount * 6);
-
-	m_PositionBuffer->Bind();
-	glm::vec4* positions = m_PositionBuffer->Map();
-	for (size_t i = 0; i < m_ParticlesCount; i++)
-	{
-		glm::vec3 center = m_Owner->GetWorldPosition();
-
-		float theta = 2 * glm::pi<float>() * ((float)rand() / RAND_MAX);
-		float phi = glm::pi<float>() * ((float)rand() / RAND_MAX);
-		float distance = sqrt((float)rand() / RAND_MAX);
-		float x = center.x + distance * cos(theta) * sin(phi);
-		float y = center.y + distance * cos(theta);
-		float z = center.z + distance * sin(theta) * sin(phi);
-
-		positions[i] = glm::vec4(x, y, z, 1.0f);
-	}
-	m_PositionBuffer->Unmap();
-	m_PositionBuffer->Unbind();
-
-	m_IndexBuffer->Bind();
-	uint32_t* indices = m_IndexBuffer->Map();
-	for (size_t i = 0; i < m_ParticlesCount; i++)
-	{
-		size_t index = i << 2;
-		*(indices++) = index;
-		*(indices++) = index + 1;
-		*(indices++) = index + 2;
-		*(indices++) = index;
-		*(indices++) = index + 2;
-		*(indices++) = index + 3;
-	}
-	m_IndexBuffer->Unmap();
-	m_IndexBuffer->Unbind();
-
-	m_NoiseTexture = GenerateNoiseTexture(m_NoiseSize, m_NoiseSize, m_NoiseSize, GL_RGBA8_SNORM);
-
-	m_ComputeShader = CreateRef<ComputeShader>("res/shaders/Particle/StandardParticle.comp");
-	m_ComputeShader->Use();
-	m_ComputeShader->SetUint("u_ParticlesCount", m_ParticlesCount);
-	m_ComputeShader->SetFloat("u_InverseNoiseSize", 1.0f / m_NoiseSize);
-	m_ComputeShader->SetInt("u_NoiseTexture", 0);
-	m_ComputeShader->SetFloat("u_NoiseFrequency", m_NoiseFrequency);
-	m_ComputeShader->SetFloat("u_NoiseStrength", m_NoiseStrength);
-	m_ComputeShader->SetFloat("u_Damping", m_Damping);
-	m_ComputeShader->SetVec4("u_Attractor", glm::vec4(0.0f));
-
-	glGenVertexArrays(1, &m_ParticleVAO);
+	Reset();
 }
 
 void ParticleSystemComponent::Begin()
 {
-	
 }
 
 void ParticleSystemComponent::Update()
 {
+	m_ParticlesLifeTimeCounter += 0.016f;
+	if (m_ParticlesLifeTimeCounter > m_ParticleLifeTime)
+	{
+		m_ParticlesLifeTimeCounter = 0.0f;
+
+		m_PositionBuffer->Bind();
+		glm::vec4* positions = m_PositionBuffer->Map();
+		for (size_t i = 0; i < m_ParticlesCount; i++)
+		{
+			glm::vec3 center = m_Owner->GetWorldPosition();
+
+			float u = ((float)rand() / RAND_MAX) * m_Radius;
+			float v = ((float)rand() / RAND_MAX) * m_Radius;
+			float theta = 2.0f * glm::pi<float>() * u;
+			float phi = acos(2.0f * v - 1.0f);
+			float r = cbrt((float)rand() / RAND_MAX) * m_Radius;
+			float sinTheta = sin(theta);
+			float cosTheta = cos(theta);
+			float sinPhi = sin(phi);
+			float cosPhi = cos(phi);
+			float x = center.x + r * sinPhi * cosTheta;
+			float y = center.y + r * sinPhi * sinTheta;
+			float z = center.z + r * cosPhi;
+
+			positions[i] = glm::vec4(x, y, z, 1.0f);
+		}
+		m_PositionBuffer->Unmap();
+		m_PositionBuffer->Unbind();
+	}
+
+
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_PositionBuffer->GetID());
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_VelocityBuffer->GetID());
 
-
-	const float speed = 0.2f;
-	glm::vec4 attractor = glm::vec4(sin(glfwGetTime() * speed), sin(glfwGetTime() * speed * 1.3f), cos(glfwGetTime() * speed), 0.02f);
-
 	m_ComputeShader->Use();
-	m_ComputeShader->SetVec4("u_Attractor", attractor);
-
 
 	glDispatchCompute(m_ParticlesCount / 128, 1, 1);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -103,15 +74,13 @@ void ParticleSystemComponent::Render()
 	particleShader->SetMat4("u_Model", m_Owner->GetTransform().ModelMatrix);
 	particleShader->SetMat4("u_View", m_Owner->GetScene()->GetCamera()->GetViewMatrix());
 	particleShader->SetMat4("u_Projection", m_Owner->GetScene()->GetCamera()->GetProjectionMatrix());
-	particleShader->SetVec2("u_SpriteSize", glm::vec2(0.015f, 0.015f));
+	particleShader->SetVec2("u_SpriteSize", glm::vec2(0.03f, 0.03f));
 	particleShader->SetBool("u_IsSprite", false);
 	particleShader->SetInt("u_Sprite", 0);
-	particleShader->SetVec4("u_Color", glm::vec4(0.4f, 6.0f, 7.0f, 1.0f));
+	particleShader->SetVec4("u_Color", glm::vec4(0.4f, 6.0f, 7.0f, std::clamp((m_ParticleLifeTime - m_ParticlesLifeTimeCounter), 0.0f, 1.0f)));
 
-	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	glBindVertexArray(m_ParticleVAO);
 
@@ -125,9 +94,6 @@ void ParticleSystemComponent::Render()
 
 	glBindVertexArray(0);
 
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 }
@@ -136,38 +102,102 @@ void ParticleSystemComponent::Destroy()
 {
 }
 
-uint32_t ParticleSystemComponent::GenerateNoiseTexture(int width, int height, int depth, int internalFormat)
+void ParticleSystemComponent::Reset()
 {
-	srand(glfwGetTime());
+	m_PositionBuffer = CreateRef<ShaderStorageBuffer<glm::vec4>>(m_ParticlesCount);
+	m_VelocityBuffer = CreateRef<ShaderStorageBuffer<glm::vec4>>(m_ParticlesCount);
+	m_IndexBuffer = CreateRef<ShaderStorageBuffer<uint32_t>>(m_ParticlesCount * 6);
 
-	uint8_t* data = new uint8_t[width * height * depth * 4];
-	uint8_t* ptr = data;
-	for (int z = 0; z < depth; z++)
+	m_PositionBuffer->Bind();
+	glm::vec4* positions = m_PositionBuffer->Map();
+	for (size_t i = 0; i < m_ParticlesCount; i++)
 	{
-		for (int y = 0; y < height; y++)
-		{
-			for (int x = 0; x < width; x++)
-			{
-				*ptr++ = rand() & 0xff;
-				*ptr++ = rand() & 0xff;
-				*ptr++ = rand() & 0xff;
-				*ptr++ = rand() & 0xff;
-			}
-		}
+		glm::vec3 center = m_Owner->GetWorldPosition();
+
+		float u = ((float)rand() / RAND_MAX) * m_Radius;
+		float v = ((float)rand() / RAND_MAX) * m_Radius;
+		float theta = 2.0f * glm::pi<float>() * u;
+		float phi = acos(2.0f * v - 1.0f);
+		float r = cbrt((float)rand() / RAND_MAX) * m_Radius;
+		float sinTheta = sin(theta);
+		float cosTheta = cos(theta);
+		float sinPhi = sin(phi);
+		float cosPhi = cos(phi);
+		float x = center.x + r * sinPhi * cosTheta;
+		float y = center.y + r * sinPhi * sinTheta;
+		float z = center.z + r * cosPhi;
+
+		positions[i] = glm::vec4(x, y, z, 1.0f);
+	}
+	m_PositionBuffer->Unmap();
+	m_PositionBuffer->Unbind();
+
+	m_VelocityBuffer->Bind();
+	glm::vec4* velocities = m_VelocityBuffer->Map();
+	for (size_t i = 0; i < m_ParticlesCount; i++)
+	{
+		float x = (float)rand() / (RAND_MAX / (m_MaxVelocity.x - m_MinVelocity.x));
+		float y = (float)rand() / (RAND_MAX / (m_MaxVelocity.y - m_MinVelocity.y));
+		float z = (float)rand() / (RAND_MAX / (m_MaxVelocity.z - m_MinVelocity.z));
+
+		velocities[i] = glm::vec4(x, y, z, 1.0f);
+	}
+	m_VelocityBuffer->Unmap();
+	m_VelocityBuffer->Unbind();
+
+	m_IndexBuffer->Bind();
+	uint32_t* indices = m_IndexBuffer->Map();
+	for (size_t i = 0; i < m_ParticlesCount; i++)
+	{
+		size_t index = i << 2;
+		*(indices++) = index;
+		*(indices++) = index + 1;
+		*(indices++) = index + 2;
+		*(indices++) = index;
+		*(indices++) = index + 2;
+		*(indices++) = index + 3;
+	}
+	m_IndexBuffer->Unmap();
+	m_IndexBuffer->Unbind();
+
+	m_ComputeShader = CreateRef<ComputeShader>("res/shaders/Particle/StandardParticle.comp");
+	m_ComputeShader->Use();
+	m_ComputeShader->SetUint("u_ParticlesCount", m_ParticlesCount);
+
+	if (m_ParticleVAO)
+	{
+		glDeleteVertexArrays(1, &m_ParticleVAO);
 	}
 
-	uint32_t texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_3D, texture);
+	glGenVertexArrays(1, &m_ParticleVAO);
+}
 
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+void ParticleSystemComponent::SetParticlesCount(uint32_t count)
+{
+	m_ParticlesCount = count;
+	Reset();
+}
 
-	glTexImage3D(GL_TEXTURE_3D, 0, internalFormat, width, height, depth, 0, GL_RGBA, GL_BYTE, data);
+void ParticleSystemComponent::SetParticleLifeTime(float lifeTime)
+{
+	m_ParticleLifeTime = lifeTime;
+	Reset();
+}
 
-	delete[] data;
-	return texture;
+void ParticleSystemComponent::SetRadius(float radius)
+{
+	m_Radius = radius;
+	Reset();
+}
+
+void ParticleSystemComponent::SetMinVelocity(glm::vec3 minVelocity)
+{
+	m_MinVelocity = minVelocity;
+	Reset();
+}
+
+void ParticleSystemComponent::SetMaxVelocity(glm::vec3 maxVelocity)
+{
+	m_MaxVelocity = maxVelocity;
+	Reset();
 }
