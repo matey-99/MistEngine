@@ -12,8 +12,6 @@ void WorldSettingsPanel::Render()
 {
     ImGui::Begin("World Settings");
 
-    ImGui::Checkbox("Skybox", &m_Scene->m_IsSkybox);
-
     auto bg = &m_Scene->m_BackgroundColor;
     ImGui::ColorEdit3("Background color", (float*)bg);
 

@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [31.5485001, -7.02229118, 43.9609604]
-  Yaw: 234.004593
-  Pitch: 7.47228146
+  Position: [50.9171371, 21.6128273, 18.1695538]
+  Yaw: 182.578644
+  Pitch: -19.860096
   Movement Speed: 55
 Entities:
   - Entity: Root
@@ -11,7 +11,7 @@ Entities:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: New Entity
+  - Entity: Particle System
     ID: 722797560
     Parent: 0
     Transform:
@@ -19,4 +19,55 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Particle System:
-      Particles Count: 1048576
+      Particles Count: 10000
+  - Entity: Ground
+    ID: 941475294
+    Parent: 0
+    Transform:
+      Position: [0, 0, 14.6971836]
+      Rotation: [0, 0, 0]
+      Scale: [12.9249611, 1, 17.8765278]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Cube
+    ID: 670737612
+    Parent: 0
+    Transform:
+      Position: [0, 3.08800459, 14.7266827]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: New Entity
+    ID: 643321389
+    Parent: 0
+    Transform:
+      Position: [0, 5.64436245, 4.43914032]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Color: [1, 1, 1]
+  - Entity: New Entity (1)
+    ID: 793234452
+    Parent: 0
+    Transform:
+      Position: [-6.18995476, 4.42853355, 21.664053]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Color: [1, 1, 1]
+  - Entity: New Entity (2)
+    ID: 693773029
+    Parent: 0
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Sky Light:
+      Path: res/textures/equirectangularMap/default.hdr

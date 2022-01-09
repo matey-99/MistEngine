@@ -7,7 +7,6 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/UniformBuffer.h"
 #include "Renderer/Framebuffer.h"
-#include "Skybox.h"
 
 class Scene
 {
@@ -22,15 +21,12 @@ private:
 	Ref<Camera> m_Camera;
 	Ref<Entity> m_Root;
 	std::vector<Ref<Entity>> m_Entities;
-	Ref<Skybox> m_Skybox;
 	glm::vec4 m_BackgroundColor;
 
 	Ref<UniformBuffer> m_CameraVertexUniformBuffer;
 	Ref<UniformBuffer> m_LightsVertexUniformBuffer;
 	Ref<UniformBuffer> m_CameraFragmentUniformBuffer;
 	Ref<UniformBuffer> m_LightsFragmentUniformBuffer;
-
-	bool m_IsSkybox = true;
 
 	bool m_ChangedSinceLastFrame = false;
 
@@ -99,10 +95,8 @@ public:
 	inline std::vector<Ref<Entity>> GetEntities() const { return m_Entities; }
 	inline glm::vec4* GetBackgroundColor() { return &m_BackgroundColor; }
 	inline bool IsChangedSinceLastFrame() const { return m_ChangedSinceLastFrame; }
-	inline bool IsSkybox() { return m_IsSkybox; }
 
 	inline void SetChangedSinceLastFrame(bool changed) { m_ChangedSinceLastFrame = changed; }
-	inline void RenderSkybox(bool render) { m_IsSkybox = true; }
 
 	friend class SceneSerializer;
 	friend class WorldSettingsPanel;

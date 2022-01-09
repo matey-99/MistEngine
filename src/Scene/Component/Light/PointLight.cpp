@@ -19,6 +19,7 @@ PointLight::PointLight(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Re
 
 	glGenTextures(1, &m_ShadowMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_ShadowMap);
+
 	for (int i = 0; i < 6; i++)
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
@@ -27,6 +28,7 @@ PointLight::PointLight(Entity* owner, Ref<UniformBuffer> vertexUniformBuffer, Re
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
 }
 
 PointLight::~PointLight()

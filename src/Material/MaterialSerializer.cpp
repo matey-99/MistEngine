@@ -2,7 +2,6 @@
 
 #include "yaml/yaml.h"
 
-
 void MaterialSerializer::Serialize(Ref<Material> material)
 {
 	YAML::Emitter out;
@@ -136,7 +135,6 @@ Ref<Material> MaterialSerializer::Deserialize(std::string path)
 				if (material->m_Texture2DParameters.find(name) != material->m_Texture2DParameters.end())
 					material->m_Texture2DParameters.find(name)->second = texture;
 			}
-
 		}
 	}
 

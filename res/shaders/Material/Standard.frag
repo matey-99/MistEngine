@@ -75,12 +75,14 @@ layout (std140, binding = 3) uniform u_FragmentLights
 };
 
 layout (location = 2) uniform Material u_Material;
-layout (location = 16) uniform samplerCube u_IrradianceMap;
-layout (location = 17) uniform samplerCube u_PrefilterMap;
-layout (location = 18) uniform sampler2D u_BRDFLUT;
-layout (location = 19) uniform sampler2D u_DirectionalLightShadowMap;
-layout (location = 20) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowMaps;
-layout (location = 20 + MAX_POINT_LIGHTS) uniform sampler2D[MAX_SPOT_LIGHTS] u_SpotLightShadowMaps;
+layout (location = 16) uniform bool u_IsSkyLight;
+layout (location = 17) uniform float u_SkyLightIntensity;
+layout (location = 18) uniform samplerCube u_IrradianceMap;
+layout (location = 19) uniform samplerCube u_PrefilterMap;
+layout (location = 20) uniform sampler2D u_BRDFLUT;
+layout (location = 21) uniform sampler2D u_DirectionalLightShadowMap;
+layout (location = 22) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowMaps;
+layout (location = 22 + MAX_POINT_LIGHTS) uniform sampler2D[MAX_SPOT_LIGHTS] u_SpotLightShadowMaps;
 
 const float PI = 3.14159265359;
 
@@ -339,13 +341,23 @@ void main()
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;
 
-    vec3 irradiance = texture(u_IrradianceMap, N).rgb;
-    vec3 diffuse = irradiance * albedo;
+    vec3 diffuse, specular;
 
-    const float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(u_PrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
-    vec2 brdf = texture(u_BRDFLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+    if (u_IsSkyLight)
+    {
+        vec3 irradiance = texture(u_IrradianceMap, N).rgb;
+        diffuse = irradiance * albedo * u_SkyLightIntensity;
+
+        const float MAX_REFLECTION_LOD = 4.0;
+        vec3 prefilteredColor = textureLod(u_PrefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+        vec2 brdf = texture(u_BRDFLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+        specular = prefilteredColor * (F * brdf.x + brdf.y) * u_SkyLightIntensity;
+    }
+    else
+    {
+        diffuse = vec3(0.0);
+        specular = vec3(0.0);
+    }
 
     float shadow = 0.0;
     if (u_DirectionalLight.shadowsEnabled)

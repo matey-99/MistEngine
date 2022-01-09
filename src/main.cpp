@@ -209,7 +209,6 @@ int main(int, char**)
         ProcessMouseInput(window);
         glfwPollEvents();
 
-
         while (lag >= MS_PER_UPDATE)
         {
             scene->Update();

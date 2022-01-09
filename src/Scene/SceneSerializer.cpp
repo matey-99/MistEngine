@@ -6,6 +6,7 @@
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
+#include "Scene/Component/Light/SkyLight.h"
 #include "Scene/Component/ParticleSystemComponent.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
@@ -165,6 +166,13 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				l->SetColor(color);
 			}
 
+			if (auto skyLight = entity["Sky Light"])
+			{
+				std::string path = skyLight["Path"].as<std::string>();
+
+				auto l = e->AddComponent<SkyLight>(path);
+			}
+
 			if (auto particle = entity["Particle System"])
 			{
 				int count = particle["Particles Count"].as<int>();
@@ -263,6 +271,13 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Inner Cut Off" << YAML::Value << spotLight->GetInnerCutOff();
 		out << YAML::Key << "Outer Cut Off" << YAML::Value << spotLight->GetOuterCutOff();
 		out << YAML::Key << "Color" << YAML::Value << spotLight->GetColor();
+		out << YAML::EndMap;
+	}
+	if (auto skyLight = entity->GetComponent<SkyLight>())
+	{
+		out << YAML::Key << "Sky Light";
+		out << YAML::BeginMap;
+		out << YAML::Key << "Path" << YAML::Value << skyLight->GetPath();
 		out << YAML::EndMap;
 	}
 

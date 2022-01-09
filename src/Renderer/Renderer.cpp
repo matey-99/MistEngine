@@ -164,6 +164,8 @@ void Renderer::InitializeShadowMapFramebuffers()
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	CreateShadowMapsPlaceholders();
 }
 
 void Renderer::InitializePostProcessing()
@@ -231,7 +233,10 @@ void Renderer::AddPostProcessingEffects()
 
 		glBindVertexArray(m_PostProcessingVAO);
 		glDisable(GL_DEPTH_TEST);
+
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_MainSceneFramebuffer->GetColorAttachment());
+
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		m_ThresholdFramebuffer->Unbind();
 
@@ -474,4 +479,36 @@ void Renderer::RenderQuad()
 
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
+}
+
+void Renderer::CreateShadowMapsPlaceholders()
+{
+	const uint32_t shadowWidth = 1024, shadowHeight = 1024;
+
+	for (int i = 0; i < 16; i++)
+	{
+		glGenTextures(1, &m_PointLightShadowMapsPlaceholders[i]);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PointLightShadowMapsPlaceholders[i]);
+		for (int i = 0; i < 6; i++)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+		glGenTextures(1, &m_SpotLightShadowMapsPlaceholders[i]);
+		glBindTexture(GL_TEXTURE_2D, m_SpotLightShadowMapsPlaceholders[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
+
+
+	
 }

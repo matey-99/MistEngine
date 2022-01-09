@@ -18,27 +18,13 @@ Scene::Scene()
 
 	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
-	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4), 0);
+	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4) * 3, 0);
 	m_LightsVertexUniformBuffer = CreateRef<UniformBuffer>(GLSL_MAT4_SIZE + (MAX_SPOT_LIGHTS * GLSL_MAT4_SIZE), 1);
 	m_CameraFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_VEC3_SIZE, 2);
 	m_LightsFragmentUniformBuffer = CreateRef<UniformBuffer>(GLSL_SCALAR_SIZE * 2
 		+ GLSL_DIRECTIONAL_LIGHT_SIZE
 		+ (GLSL_POINT_LIGHT_SIZE * MAX_POINT_LIGHTS)
 		+ (GLSL_SPOT_LIGHT_SIZE * MAX_SPOT_LIGHTS), 3);
-
-	std::vector<std::string> faces
-	{
-		"res/textures/skybox/right.jpg",
-		"res/textures/skybox/left.jpg",
-		"res/textures/skybox/top.jpg",
-		"res/textures/skybox/bottom.jpg",
-		"res/textures/skybox/front.jpg",
-		"res/textures/skybox/back.jpg"
-	};
-	m_Skybox = Skybox::CreateFromEquirectangularMap("res/textures/equirectangularMap/equirectangularMap2.hdr");
-	m_IrradianceMap = m_Skybox->GetIrradianceMap();
-	m_PrefilterMap = m_Skybox->GetPrefilterMap();
-	m_BRDFLUT = m_Skybox->GetBRDFLUT();
 }
 
 void Scene::Begin()
@@ -75,6 +61,8 @@ void Scene::Render()
 
 	m_CameraVertexUniformBuffer->Bind();
 	m_CameraVertexUniformBuffer->SetUniform(0, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewProjectionMatrix()));
+	m_CameraVertexUniformBuffer->SetUniform(GLSL_MAT4_SIZE, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetViewMatrix()));
+	m_CameraVertexUniformBuffer->SetUniform(GLSL_MAT4_SIZE * 2, sizeof(glm::mat4), glm::value_ptr(m_Camera->GetProjectionMatrix()));
 	m_CameraVertexUniformBuffer->Unbind();
 
 	m_CameraFragmentUniformBuffer->Bind();
@@ -88,15 +76,6 @@ void Scene::Render()
 	m_LightsFragmentUniformBuffer->SetUniform(0, GLSL_SCALAR_SIZE, &pointLightsCount);
 	m_LightsFragmentUniformBuffer->SetUniform(GLSL_SCALAR_SIZE, GLSL_SCALAR_SIZE, &spotLightsCount);
 	m_LightsFragmentUniformBuffer->Unbind();
-
-	if (m_IsSkybox)
-	{
-		glm::mat4 skyboxProjection = m_Camera->GetProjectionMatrix();
-		glm::mat4 skyboxView = glm::mat4(glm::mat3(m_Camera->GetViewMatrix()));
-		glm::mat4 skyboxViewProjection = skyboxProjection * skyboxView;
-
-		m_Skybox->Render(skyboxView, skyboxProjection);
-	}
 
 	RenderEntity(GetRoot());
 }

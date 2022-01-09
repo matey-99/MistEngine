@@ -7,6 +7,7 @@
 #include "Scene/Component/Light/DirectionalLight.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
+#include "Scene/Component/Light/SkyLight.h"
 #include "Scene/Component/ParticleSystemComponent.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -206,6 +207,26 @@ void EntityDetailsPanel::Render()
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 
+    if (auto skyLight = m_Entity->GetComponent<SkyLight>())
+    {
+        ImGui::Text("Sky Light");
+
+        std::string path = skyLight->GetPath();
+        std::string name = path.substr(path.find_last_of("/") + 1);
+
+        if (ImGui::BeginCombo("Path", name.c_str()))
+        {
+            std::vector<std::string> extensions = std::vector<std::string>();
+            extensions.push_back("hdr");
+            DisplayResources(extensions);
+
+            ImGui::EndCombo();
+        }
+        ImGui::DragFloat("Intensity", &skyLight->m_Intensity, 0.01f, 0.0f, 1.0f);
+
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+    }
+
     if (auto particles = m_Entity->GetComponent<ParticleSystemComponent>())
     {
         ImGui::Text("Particle System");
@@ -249,6 +270,7 @@ void EntityDetailsPanel::Render()
     bool dirLight = false;
     bool pointLight = false;
     bool spotLight = false;
+    bool skyLight = false;
     bool particleSystem = false;
     if (ImGui::BeginPopupContextWindow())
     {
@@ -261,6 +283,7 @@ void EntityDetailsPanel::Render()
                 ImGui::MenuItem("Directional Light", "", &dirLight);
                 ImGui::MenuItem("Point Light", "", &pointLight);
                 ImGui::MenuItem("Spot Light", "", &spotLight);
+                ImGui::MenuItem("Sky Light", "", &skyLight);
 
                 ImGui::EndMenu();
             }
@@ -282,6 +305,8 @@ void EntityDetailsPanel::Render()
         m_Entity->AddComponent<PointLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
     if (spotLight)
         m_Entity->AddComponent<SpotLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
+    if (skyLight)
+        m_Entity->AddComponent<SkyLight>("res/textures/equirectangularMap/default.hdr");
     if (particleSystem)
         m_Entity->AddComponent<ParticleSystemComponent>();
 
@@ -325,6 +350,11 @@ void EntityDetailsPanel::DisplayResources(std::vector<std::string> extensions, i
                             mesh->ChangeMaterial(index, path);
                         else if (auto mesh = m_Entity->GetComponent<InstanceRenderedMeshComponent>())
                             mesh->ChangeMaterial(index, path);
+                    }
+                    else if (ext == "hdr")
+                    {
+                        if (auto skyLight = m_Entity->GetComponent<SkyLight>())
+                            skyLight->Load(path);
                     }
                 }
             }

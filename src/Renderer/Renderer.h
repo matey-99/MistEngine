@@ -6,7 +6,8 @@
 #include <glad/glad.h>
 
 #define CHECK_OPENGL_ERRORS()	while (GLenum error = glGetError()) \
-									std::cout << "OpenGL Error: " << error << std::endl;
+								{ std::cout << "OpenGL Error: " << error << std::endl; __debugbreak(); }
+									
 
 class Framebuffer;
 class Scene;
@@ -38,6 +39,9 @@ private:
 
 	uint32_t m_PostProcessingVAO;
 	uint32_t m_PostProcessingVBO;
+
+	uint32_t m_PointLightShadowMapsPlaceholders[16];
+	uint32_t m_SpotLightShadowMapsPlaceholders[16];
 
 	bool m_PostProcessing;
 	
@@ -79,7 +83,13 @@ public:
 	inline Ref<Framebuffer> GetPointLightShadowMapFramebuffer() const { return m_PointLightShadowMapFramebuffer; }
 	inline Ref<Framebuffer> GetSpotLightShadowMapFramebuffer() const { return m_SpotLightShadowMapFramebuffer; }
 
+	inline uint32_t GetPointLightShadowMapPlaceholder(int index) const { return m_PointLightShadowMapsPlaceholders[index]; }
+	inline uint32_t GetSpotLightShadowMapPlaceholder(int index) const { return m_SpotLightShadowMapsPlaceholders[index]; }
+
 	inline bool IsPostProcessing() const { return m_PostProcessing; }
+
+private:
+	void CreateShadowMapsPlaceholders();
 
 	friend class RendererSettingsPanel;
 };
