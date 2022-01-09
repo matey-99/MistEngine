@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 #include "Scene/Component/Component.h"
 #include "Scene/Component/RenderComponent.h"
+#include "Scene/Component/InGameComponent.h"
 #include "Scene/Component/Transform.h"
 
 class Scene;
@@ -21,6 +22,10 @@ public:
 	void PreRender();
 	void Render();
 	void Destroy();
+
+	void BeginPlay();
+	void Tick(float deltaTime);
+	void EndPlay();
 
 	template<typename T, typename ... Args>
 	Ref<T> AddComponent(Args&& ... args)

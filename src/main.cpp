@@ -24,6 +24,7 @@
 #include "Scene/Component/StaticMeshComponent.h"
 #include "Scene/Component/Light/Light.h"
 #include "Renderer/Framebuffer.h"
+#include "Input/Input.h"
 
 #define FPS 60.0f
 #define MS_PER_UPDATE 1 / FPS
@@ -37,6 +38,7 @@ float lag = 0.0f;
 bool rotateCamera = false;
 bool moveCamera = false;
 
+bool isPlayMode = false;
 bool isViewportHovered = false;
 
 const float mouseSensitivity = 0.1f;
@@ -123,7 +125,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    if (isViewportHovered)
+    if (isViewportHovered && !isPlayMode)
         scene->GetCamera()->Move(yoffset, deltaTime);
 
     ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
@@ -186,6 +188,8 @@ int main(int, char**)
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
+    auto input = Input::GetInstance();
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -201,17 +205,37 @@ int main(int, char**)
         lastFrame = currentFrame;
         lag += deltaTime;
 
+        if (imGuiRenderer.GetEditor()->IsPlayMode() && !isPlayMode)
+        {
+            isPlayMode = true;
+            
+            scene->BeginPlay();
+        }
+        else if (!imGuiRenderer.GetEditor()->IsPlayMode() && isPlayMode)
+        {
+            isPlayMode = false;
+
+            scene->EndPlay();
+        }
+
         isViewportHovered = imGuiRenderer.GetEditor()->GetViewport()->IsHovered();
         
-        if (isViewportHovered)
+        if (isViewportHovered && !isPlayMode)
             ProcessKeyboardInput(window);
 
-        ProcessMouseInput(window);
+        if (!isPlayMode)
+            ProcessMouseInput(window);
+        else
+            input->ProcessKeyboardInput(window);
+
         glfwPollEvents();
 
         while (lag >= MS_PER_UPDATE)
         {
             scene->Update();
+
+            if (isPlayMode)
+                scene->Tick(deltaTime);
 
             shouldRender = true;
             lag -= MS_PER_UPDATE;

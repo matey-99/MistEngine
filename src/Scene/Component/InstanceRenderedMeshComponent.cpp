@@ -7,6 +7,7 @@
 #include "Scene/Scene.h"
 #include "Light/PointLight.h"
 #include "Light/SpotLight.h"
+#include "Light/SkyLight.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -64,21 +65,47 @@ void InstanceRenderedMeshComponent::PreRender()
 
 void InstanceRenderedMeshComponent::Render()
 {
+	uint32_t irradianceMap;
+	uint32_t prefilterMap;
+	uint32_t BRDFLUT;
+	float intensity;
+	bool isSkyLight = false;
+
+	auto components = m_Owner->GetScene()->GetComponents<SkyLight>();
+	if (components.size() > 0)
+	{
+		if (auto skyLight = Cast<SkyLight>(components[0]))
+		{
+			isSkyLight = true;
+			intensity = skyLight->GetIntensity();
+
+			irradianceMap = skyLight->GetIrradianceMap();
+			prefilterMap = skyLight->GetPrefilterMap();
+			BRDFLUT = skyLight->GetBRDFLUT();
+		}
+
+	}
+
 	for (auto material : GetMaterials())
 	{
 		material->Use();
-		glActiveTexture(GL_TEXTURE0 + 20);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_Owner->GetScene()->m_IrradianceMap);
-		material->GetShader()->SetInt("u_IrradianceMap", 20);
-		glActiveTexture(GL_TEXTURE0 + 21);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_Owner->GetScene()->m_PrefilterMap);
-		material->GetShader()->SetInt("u_PrefilterMap", 21);
-		glActiveTexture(GL_TEXTURE0 + 22);
-		glBindTexture(GL_TEXTURE_2D, m_Owner->GetScene()->m_BRDFLUT);
-		material->GetShader()->SetInt("u_BRDFLUT", 22);
-		glActiveTexture(GL_TEXTURE0 + 23);
-		glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetDirectionalLightShadowMapFramebuffer()->GetDepthAttachment());
-		material->GetShader()->SetInt("u_DirectionalLightShadowMap", 23);
+
+		material->GetShader()->SetBool("u_IsSkyLight", isSkyLight);
+
+		if (isSkyLight)
+		{
+			material->GetShader()->SetFloat("u_SkyLightIntensity", intensity);
+
+			glActiveTexture(GL_TEXTURE0 + 20);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+			material->GetShader()->SetInt("u_IrradianceMap", 20);
+			glActiveTexture(GL_TEXTURE0 + 21);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+			material->GetShader()->SetInt("u_PrefilterMap", 21);
+			glActiveTexture(GL_TEXTURE0 + 22);
+			glBindTexture(GL_TEXTURE_2D, BRDFLUT);
+			material->GetShader()->SetInt("u_BRDFLUT", 22);
+		}
 
 		auto pointLights = m_Owner->GetScene()->GetComponents<PointLight>();
 		for (int i = 0; i < MAX_POINT_LIGHTS; i++)
@@ -94,7 +121,7 @@ void InstanceRenderedMeshComponent::Render()
 			else
 			{
 				glActiveTexture(GL_TEXTURE0 + 24 + i);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, m_Owner->GetScene()->m_IrradianceMap);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->GetPointLightShadowMapPlaceholder(i));
 				material->GetShader()->SetInt("u_PointLightShadowMaps[" + std::to_string(i) + "]", 24 + i);
 			}
 		}
@@ -113,7 +140,7 @@ void InstanceRenderedMeshComponent::Render()
 			else
 			{
 				glActiveTexture(GL_TEXTURE0 + 24 + MAX_POINT_LIGHTS + i);
-				glBindTexture(GL_TEXTURE_2D, m_Owner->GetScene()->m_BRDFLUT);
+				glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetSpotLightShadowMapPlaceholder(i));
 				material->GetShader()->SetInt("u_SpotLightShadowMaps[" + std::to_string(i) + "]", 24 + MAX_POINT_LIGHTS + i);
 			}
 		}

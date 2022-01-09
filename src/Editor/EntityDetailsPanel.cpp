@@ -9,6 +9,7 @@
 #include "Scene/Component/Light/SpotLight.h"
 #include "Scene/Component/Light/SkyLight.h"
 #include "Scene/Component/ParticleSystemComponent.h"
+#include "Scene/Component/PlayerComponent.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -264,6 +265,12 @@ void EntityDetailsPanel::Render()
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
     }
 
+    if (auto player = m_Entity->GetComponent<PlayerComponent>())
+    {
+        ImGui::Text("Player");
+        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+    }
+
     bool addComponent = false;
     bool staticMesh = false;
     bool instanceRenderedMesh = false;
@@ -272,6 +279,7 @@ void EntityDetailsPanel::Render()
     bool spotLight = false;
     bool skyLight = false;
     bool particleSystem = false;
+    bool player = false;
     if (ImGui::BeginPopupContextWindow())
     {
         if (ImGui::BeginMenu("Add Component"))
@@ -288,6 +296,7 @@ void EntityDetailsPanel::Render()
                 ImGui::EndMenu();
             }
             ImGui::MenuItem("Particle System", "", &particleSystem);
+            ImGui::MenuItem("Player", "", &player);
 
             ImGui::EndMenu();
         }
@@ -309,6 +318,8 @@ void EntityDetailsPanel::Render()
         m_Entity->AddComponent<SkyLight>("res/textures/equirectangularMap/default.hdr");
     if (particleSystem)
         m_Entity->AddComponent<ParticleSystemComponent>();
+    if (player)
+        m_Entity->AddComponent<PlayerComponent>();
 
     if (ImGui::Button("Close"))
     {

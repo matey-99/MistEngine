@@ -72,6 +72,33 @@ void Entity::Destroy()
 	}
 }
 
+void Entity::BeginPlay()
+{
+	for (auto component : m_Components)
+	{
+		if (auto igc = Cast<InGameComponent>(component))
+			igc->BeginPlay();
+	}
+}
+
+void Entity::Tick(float deltaTime)
+{
+	for (auto component : m_Components)
+	{
+		if (auto igc = Cast<InGameComponent>(component))
+			igc->Tick(deltaTime);
+	}
+}
+
+void Entity::EndPlay()
+{
+	for (auto component : m_Components)
+	{
+		if (auto igc = Cast<InGameComponent>(component))
+			igc->EndPlay();
+	}
+}
+
 void Entity::SetEnable(bool enable)
 {
 	m_Enable = enable;

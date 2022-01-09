@@ -15,6 +15,8 @@ Editor::Editor()
 
 	m_DetailsPanel = false;
 	m_MaterialEditor = false;
+
+	m_PlayMode = false;
 }
 
 
@@ -87,6 +89,14 @@ void Editor::ShowMaterialEditor(Ref<Material> material)
 void Editor::HideMaterialEditor()
 {
 	m_MaterialEditor = false;
+}
+
+void Editor::ManagePlayMode()
+{
+	if (m_PlayMode)
+		m_PlayMode = false;
+	else
+		m_PlayMode = true;
 }
 
 Ref<Editor> Editor::GetReference()

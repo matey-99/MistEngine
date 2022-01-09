@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [50.9171371, 21.6128273, 18.1695538]
-  Yaw: 182.578644
-  Pitch: -19.860096
+  Position: [53.835453, 32.3772659, 102.711029]
+  Yaw: 239.46347
+  Pitch: -20.2850266
   Movement Speed: 55
 Entities:
   - Entity: Root
@@ -26,43 +26,45 @@ Entities:
     Transform:
       Position: [0, 0, 14.6971836]
       Rotation: [0, 0, 0]
-      Scale: [12.9249611, 1, 17.8765278]
+      Scale: [63.1425209, 1, 59.5664062]
     Model:
       Mesh: ../../res/models/defaults/default_cube.obj
       Materials:
         - Material: 0
           Path: ../../res/materials/Default.mat
-  - Entity: Cube
+  - Entity: Chest
     ID: 670737612
     Parent: 0
     Transform:
-      Position: [0, 3.08800459, 14.7266827]
+      Position: [15.8156996, 1.48042655, 6.9125104]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [2, 2, 2]
     Model:
-      Mesh: ../../res/models/defaults/default_cube.obj
+      Mesh: ../../res/models/chest/chest.dae
       Materials:
         - Material: 0
-          Path: ../../res/materials/Default.mat
-  - Entity: New Entity
+          Path: ../../res/materials/M_Chest.mat
+        - Material: 1
+          Path: ../../res/materials/M_Chest.mat
+  - Entity: Point Light 1
     ID: 643321389
     Parent: 0
     Transform:
-      Position: [0, 5.64436245, 4.43914032]
+      Position: [20.0992241, 3.50737667, 6.06964588]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
-      Color: [1, 1, 1]
-  - Entity: New Entity (1)
+      Color: [50, 50, 50]
+  - Entity: Point Light 2
     ID: 793234452
     Parent: 0
     Transform:
-      Position: [-6.18995476, 4.42853355, 21.664053]
+      Position: [8.98387527, 4.42853355, -0.994438648]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
-      Color: [1, 1, 1]
-  - Entity: New Entity (2)
+      Color: [50, 50, 50]
+  - Entity: Sky Light
     ID: 693773029
     Parent: 0
     Transform:
@@ -71,3 +73,112 @@ Entities:
       Scale: [1, 1, 1]
     Sky Light:
       Path: res/textures/equirectangularMap/default.hdr
+  - Entity: Player
+    ID: 442242801
+    Parent: 0
+    Transform:
+      Position: [-8.73686123, 3.76190114, 31.7069969]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Player:
+      {}
+  - Entity: Body
+    ID: 250067705
+    Parent: 442242801
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.785302162, 1, 0.351158082]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Leg_L
+    ID: 186903208
+    Parent: 250067705
+    Transform:
+      Position: [-0.655635118, -1.75816655, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.330000013, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Leg_R
+    ID: 613947917
+    Parent: 250067705
+    Transform:
+      Position: [0.674439907, -1.95635271, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.330000013, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Arm_L
+    ID: 743153772
+    Parent: 250067705
+    Transform:
+      Position: [-1.36023843, 0, 0]
+      Rotation: [0, -0, -40]
+      Scale: [0.330000013, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Arm_R
+    ID: 93375737
+    Parent: 250067705
+    Transform:
+      Position: [1.3194344, 0, 0]
+      Rotation: [0, 0, 40]
+      Scale: [0.330000013, 1, 1]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Head
+    ID: 998775388
+    Parent: 442242801
+    Transform:
+      Position: [0, 1.74795556, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.800000012, 0.800000012, 0.800000012]
+    Model:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/Default.mat
+  - Entity: Bloom Text
+    ID: 515638511
+    Parent: 0
+    Transform:
+      Position: [-25.2033443, 5.67389965, 14.978631]
+      Rotation: [-4.2814932e-07, 53.8702583, -7.20593221e-07]
+      Scale: [5, 5, 5]
+    Model:
+      Mesh: ../../res/models/defaults/bloom_text.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 0.mat
+  - Entity: Cube Instanced
+    ID: 850874805
+    Parent: 0
+    Transform:
+      Position: [0, -2.46850777, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Instance Rendered Mesh:
+      Mesh: ../../res/models/defaults/default_cube.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/DefaultInstanced.mat
+      Radius: 200
+      Instances Count: 100000
+      Min Mesh Scale: 0.200000003
+      Max Mesh Scale: 0.300000012

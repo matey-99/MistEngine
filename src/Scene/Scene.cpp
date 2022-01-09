@@ -11,7 +11,7 @@
 
 Scene::Scene()
 {
-	m_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 5.0f));
+	m_Camera = CreateRef<Camera>(this, glm::vec3(0.0f, 0.0f, 5.0f));
 
 	m_Root = Ref<Entity>();
 	m_Entities = std::vector<Ref<Entity>>();
@@ -82,6 +82,34 @@ void Scene::Render()
 
 void Scene::Destroy()
 {
+}
+
+void Scene::BeginPlay()
+{
+	m_Camera->BeginPlay();
+
+	for (auto entity : m_Entities)
+	{
+		entity->BeginPlay();
+	}
+}
+
+void Scene::Tick(float deltaTime)
+{
+	m_Camera->Tick(deltaTime);
+
+	for (auto entity : m_Entities)
+	{
+		entity->Tick(deltaTime);
+	}
+}
+
+void Scene::EndPlay()
+{
+	for (auto entity : m_Entities)
+	{
+		entity->EndPlay();
+	}
 }
 
 void Scene::RenderEntity(Ref<Entity> entity)

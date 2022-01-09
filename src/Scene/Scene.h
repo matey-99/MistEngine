@@ -39,6 +39,11 @@ public:
 	void Render();
 	void Destroy();
 
+	// In Game
+	void BeginPlay();
+	void Tick(float deltaTime);
+	void EndPlay();
+
 	void RenderEntity(Ref<Entity> entity);
 
 	Ref<Entity> AddRoot();

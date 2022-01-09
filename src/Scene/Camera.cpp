@@ -2,8 +2,12 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float yaw, float pitch, float movementSpeed)
-	: Position(position), Front(front), Up(up), Yaw(yaw), Pitch(pitch), MovementSpeed(movementSpeed)
+#include "Scene.h"
+#include "Entity.h"
+#include "Component/PlayerComponent.h"
+
+Camera::Camera(Scene* scene, glm::vec3 position, glm::vec3 front, glm::vec3 up, float yaw, float pitch, float movementSpeed)
+	: m_Scene(scene), Position(position), Front(front), Up(up), Yaw(yaw), Pitch(pitch), MovementSpeed(movementSpeed)
 {
 	Right = CalculateRightVector();
 
@@ -17,6 +21,23 @@ void Camera::Update()
 {
 	Front = CalculateFrontVector();
 	Right = CalculateRightVector();
+}
+
+void Camera::BeginPlay()
+{
+
+}
+
+void Camera::Tick(float deltaTime)
+{
+	auto players = m_Scene->GetEntitiesWithComponent<PlayerComponent>();
+	if (players.size() > 0)
+	{
+		glm::vec3 targetPosition = players[0]->GetWorldPosition();
+
+		Position = targetPosition + glm::vec3(0.0f, 5.0f, 20.0f);
+		Front = targetPosition - Position;
+	}
 }
 
 void Camera::Move(CameraMovement movementDirection, float deltaTime)

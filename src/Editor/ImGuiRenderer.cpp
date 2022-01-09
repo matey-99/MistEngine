@@ -61,6 +61,11 @@ void ImGuiRenderer::Render()
     ImGui::SameLine();
     if (ImGui::Button("Scale"))
         m_Editor->SetGizmoOperation(ImGuizmo::OPERATION::SCALE);
+
+    std::string buttonText = m_Editor->IsPlayMode() ? "Exit" : "Play";
+    ImGui::SameLine();
+    if (ImGui::Button(buttonText.c_str()))
+        m_Editor->ManagePlayMode();
     ImGui::End();
 
     m_Editor->Render();

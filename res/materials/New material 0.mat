@@ -23,7 +23,7 @@ Float Parameters:
     Value: 1
 Vec3 Parameters:
   - Name: u_Material.albedo
-    Value: [14.7490196, 9, 1.69803917]
+    Value: [30.7490005, 20, 6.69799995]
 Texture Parameters:
   - Name: u_Material.metallicMap
     Path: "null"

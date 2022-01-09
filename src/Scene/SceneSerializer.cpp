@@ -8,6 +8,7 @@
 #include "Scene/Component/Light/SpotLight.h"
 #include "Scene/Component/Light/SkyLight.h"
 #include "Scene/Component/ParticleSystemComponent.h"
+#include "Scene/Component/PlayerComponent.h"
 
 void SceneSerializer::Serialize(Ref<Scene> scene)
 {
@@ -178,7 +179,12 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 				int count = particle["Particles Count"].as<int>();
 
 				auto p = e->AddComponent<ParticleSystemComponent>();
-				//p->m_ParticlesCount = count;
+				p->m_ParticlesCount = count;
+			}
+
+			if (auto player = entity["Player"])
+			{
+				e->AddComponent<PlayerComponent>();
 			}
 		}
 
@@ -286,6 +292,13 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Particle System";
 		out << YAML::BeginMap;
 		out << YAML::Key << "Particles Count" << YAML::Value << particleSystem->m_ParticlesCount;
+		out << YAML::EndMap;
+	}
+
+	if (auto player = entity->GetComponent<PlayerComponent>())
+	{
+		out << YAML::Key << "Player";
+		out << YAML::BeginMap;
 		out << YAML::EndMap;
 	}
 

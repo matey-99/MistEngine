@@ -29,6 +29,8 @@ private:
 	Ref<DebugPanel> m_DebugPanel;
 	Ref<Viewport> m_Viewport;
 
+	bool m_PlayMode;
+
 	bool m_DetailsPanel;
 	bool m_MaterialEditor;
 	ImGuizmo::OPERATION m_Operation = ImGuizmo::OPERATION::TRANSLATE;
@@ -51,11 +53,14 @@ public:
 	void ShowMaterialEditor(Ref<Material> material);
 	void HideMaterialEditor();
 
+	void ManagePlayMode();
+
 	inline ImGuizmo::OPERATION GetGizmoOperation() const { return m_Operation; }
 	inline void SetGizmoOperation(ImGuizmo::OPERATION operation) { m_Operation = operation; }
 
 	inline Ref<SceneHierarchyPanel> GetSceneHierarchyPanel() const { return m_SceneHierarchyPanel; }
 	inline Ref<Viewport> GetViewport() const { return m_Viewport; }
+	inline bool IsPlayMode() const { return m_PlayMode; }
 
 private:
 	Ref<Editor> GetReference();
