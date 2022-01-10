@@ -46,20 +46,11 @@ Entities:
           Path: ../../res/materials/M_Chest.mat
         - Material: 1
           Path: ../../res/materials/M_Chest.mat
-  - Entity: Point Light 1
+  - Entity: Point Light
     ID: 643321389
     Parent: 0
     Transform:
       Position: [20.0992241, 3.50737667, 6.06964588]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    Point Light:
-      Color: [50, 50, 50]
-  - Entity: Point Light 2
-    ID: 793234452
-    Parent: 0
-    Transform:
-      Position: [8.98387527, 4.42853355, -0.994438648]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Point Light:
@@ -179,6 +170,6 @@ Entities:
         - Material: 0
           Path: ../../res/materials/DefaultInstanced.mat
       Radius: 200
-      Instances Count: 100000
+      Instances Count: 2500
       Min Mesh Scale: 0.200000003
       Max Mesh Scale: 0.300000012
