@@ -1,0 +1,13 @@
+Material: New material 2
+ID: 330803722
+Shader: GrassInstanced
+Bool Parameters:
+  - Name: u_MaterialVS.flipVerticallyUV
+    Value: true
+Float Parameters:
+  []
+Vec3 Parameters:
+  []
+Texture Parameters:
+  - Name: u_Material.grassTexture
+    Path: ../../res/textures/Grass/green_alpha_tall_grass.png

@@ -20,6 +20,8 @@ private:
 	static Ref<Editor> s_Instance;
 	static std::mutex s_Mutex;
 
+	Ref<Scene> m_Scene;
+
 	Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
 	Ref<EntityDetailsPanel> m_EntityDetailsPanel;
 	Ref<ContentBrowserPanel> m_ContentBrowserPanel;
@@ -58,6 +60,7 @@ public:
 	inline ImGuizmo::OPERATION GetGizmoOperation() const { return m_Operation; }
 	inline void SetGizmoOperation(ImGuizmo::OPERATION operation) { m_Operation = operation; }
 
+	inline Ref<Scene> GetScene() const { return m_Scene; }
 	inline Ref<SceneHierarchyPanel> GetSceneHierarchyPanel() const { return m_SceneHierarchyPanel; }
 	inline Ref<Viewport> GetViewport() const { return m_Viewport; }
 	inline bool IsPlayMode() const { return m_PlayMode; }

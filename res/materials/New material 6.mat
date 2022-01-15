@@ -1,0 +1,43 @@
+Material: New material 6
+ID: 911033262
+Shader: Standard
+Bool Parameters:
+  - Name: u_Material.isAOMap
+    Value: true
+  - Name: u_Material.isOpacityMap
+    Value: false
+  - Name: u_Material.isMetallicMap
+    Value: false
+  - Name: u_Material.isAlbedoMap
+    Value: true
+  - Name: u_Material.isNormalMap
+    Value: true
+  - Name: u_MaterialVS.flipVerticallyUV
+    Value: true
+  - Name: u_Material.isRoughnessMap
+    Value: true
+Float Parameters:
+  - Name: u_Material.ao
+    Value: 0
+  - Name: u_Material.opacity
+    Value: 1
+  - Name: u_Material.metallic
+    Value: 0
+  - Name: u_Material.roughness
+    Value: 0
+Vec3 Parameters:
+  - Name: u_Material.albedo
+    Value: [0, 0, 0]
+Texture Parameters:
+  - Name: u_Material.opacityMap
+    Path: "null"
+  - Name: u_Material.metallicMap
+    Path: "null"
+  - Name: u_Material.albedoMap
+    Path: ../../res/textures/Arch_Stone/Stone_arch_Arch_Mat_BaseColor.jpg
+  - Name: u_Material.aoMap
+    Path: ../../res/textures/Arch_Stone/Stone_arch_Arch_Mat_Occlusion.jpg
+  - Name: u_Material.normalMap
+    Path: ../../res/textures/Arch_Stone/Stone_arch_Arch_Mat_Normal.jpg
+  - Name: u_Material.roughnessMap
+    Path: ../../res/textures/Arch_Stone/Stone_arch_Arch_Mat_Roughness.jpg

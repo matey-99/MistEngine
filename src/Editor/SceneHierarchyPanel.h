@@ -16,6 +16,9 @@ public:
 	SceneHierarchyPanel(Ref<Editor> editor, Ref<Scene> scene);
 	void Render();
 
+	void DuplicateSelectedEntity();
+
+	void SelectEntity(Ref<Entity> entity);
 	void UnselectEntity();
 
 	inline Ref<Entity> GetSelectedEntity() const { return m_SelectedEntity; }

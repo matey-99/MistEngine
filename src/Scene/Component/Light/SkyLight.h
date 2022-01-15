@@ -11,6 +11,7 @@ class SkyLight : public RenderComponent
 {
 private:
 	std::string m_Path;
+	bool m_SkyVisibility;
 	float m_Intensity;
 
 	uint32_t m_ID;

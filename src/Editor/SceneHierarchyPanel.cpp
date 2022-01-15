@@ -1,6 +1,11 @@
 #include "SceneHierarchyPanel.h"
 
 #include "Editor.h"
+#include "Scene/Component/StaticMeshComponent.h"
+#include "Scene/Component/InstanceRenderedMeshComponent.h"
+#include "Scene/Component/ParticleSystemComponent.h"
+#include "Scene/Component/Light/PointLight.h"
+#include "Scene/Component/Light/SpotLight.h"
 
 SceneHierarchyPanel::SceneHierarchyPanel(Ref<Editor> editor, Ref<Scene> scene) : m_Editor(editor), m_Scene(scene)
 {
@@ -53,6 +58,48 @@ void SceneHierarchyPanel::Render()
 	ImGui::End();
 }
 
+void SceneHierarchyPanel::DuplicateSelectedEntity()
+{
+	std::string name = m_SelectedEntity->GetName();
+	Entity* parent = m_SelectedEntity->GetParent();
+
+	auto newEntity = m_Scene->AddEntity(name);
+	newEntity->SetParent(parent);
+
+	newEntity->SetLocalPosition(m_SelectedEntity->GetTransform().LocalPosition);
+	newEntity->SetLocalRotation(m_SelectedEntity->GetTransform().LocalRotation);
+	newEntity->SetLocalScale(m_SelectedEntity->GetTransform().LocalScale);
+
+	if (auto smc = m_SelectedEntity->GetComponent<StaticMeshComponent>())
+	{
+		auto newSMC = newEntity->AddComponent<StaticMeshComponent>();
+		newSMC->ChangeMesh(smc->GetPath());
+		for (int i = 0; i < smc->GetMaterialsPaths().size(); i++)
+			newSMC->ChangeMaterial(i, smc->GetMaterialsPaths()[i]);
+	}
+
+	if (auto irmc = m_SelectedEntity->GetComponent<InstanceRenderedMeshComponent>())
+	{
+		auto newIRMC = newEntity->AddComponent<InstanceRenderedMeshComponent>();
+		newIRMC->ChangeMesh(irmc->GetPath());
+		for (int i = 0; i < irmc->GetMaterialsPaths().size(); i++)
+			newIRMC->ChangeMaterial(i, irmc->GetMaterialsPaths()[i]);
+
+		newIRMC->SetInstancesCount(irmc->GetInstancesCount());
+		newIRMC->SetRadius(irmc->GetRadius());
+		newIRMC->SetMinMeshScale(irmc->GetMinMeshScale());
+		newIRMC->SetMaxMeshScale(irmc->GetMaxMeshScale());
+	}
+
+	SelectEntity(newEntity);
+}
+
+void SceneHierarchyPanel::SelectEntity(Ref<Entity> entity)
+{
+	m_SelectedEntity = entity;
+	m_Editor->ShowDetails(m_SelectedEntity);
+}
+
 void SceneHierarchyPanel::UnselectEntity()
 {
 	m_SelectedEntity = Ref<Entity>();
@@ -84,8 +131,7 @@ void SceneHierarchyPanel::TreeChildren(Ref<Entity> entity)
 
 		if (ImGui::IsItemClicked())
 		{
-			m_SelectedEntity = e;
-			m_Editor->ShowDetails(e);
+			SelectEntity(e);
 		}
 
 		if (ImGui::BeginDragDropTarget())

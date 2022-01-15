@@ -62,6 +62,8 @@ public:
 
 	static Ref<Renderer> GetInstance();
 
+	void Initialize();
+
 	void InitializeMainSceneFramebuffer();
 	void InitializePostProcessingFramebuffer();
 	void InitializeShadowMapFramebuffers();

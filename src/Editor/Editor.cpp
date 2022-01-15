@@ -5,6 +5,8 @@ std::mutex Editor::s_Mutex;
 
 Editor::Editor()
 {
+	m_Scene = Ref<Scene>();
+
 	m_SceneHierarchyPanel = Ref<SceneHierarchyPanel>();
 	m_EntityDetailsPanel = Ref<EntityDetailsPanel>();
 	m_ContentBrowserPanel = Ref<ContentBrowserPanel>();
@@ -35,6 +37,8 @@ Ref<Editor> Editor::GetInstance()
 
 void Editor::Initialize(Ref<Scene> scene)
 {
+	m_Scene = scene;
+
 	m_SceneHierarchyPanel = CreateRef<SceneHierarchyPanel>(GetReference(), scene);
 	m_EntityDetailsPanel = CreateRef<EntityDetailsPanel>(GetReference());
 	m_ContentBrowserPanel = CreateRef<ContentBrowserPanel>(GetReference(), scene);

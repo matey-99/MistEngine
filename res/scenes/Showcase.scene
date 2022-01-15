@@ -1,0 +1,621 @@
+Scene: Untitled
+Camera:
+  Position: [-22.5824261, 4.17778444, -33.6634331]
+  Yaw: 56.2707138
+  Pitch: -2.84014893
+  Movement Speed: 12
+Entities:
+  - Entity: Root
+    ID: 0
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: Arch_Stone_Base 1
+    ID: 257900931
+    Parent: 0
+    Transform:
+      Position: [-17.7253609, -4.46641451e-07, -2.89331675]
+      Rotation: [179.999985, -64.4396515, 180]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Sky Light
+    ID: 376326610
+    Parent: 0
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Sky Light:
+      Path: ../../res/textures/sky/winter.hdr
+  - Entity: Ground
+    ID: 64277161
+    Parent: 0
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [25.959671, 1, 33.8834267]
+    Model:
+      Mesh: ../../res/models/defaults/default_plane.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 0.mat
+  - Entity: Tree2
+    ID: 868126867
+    Parent: 0
+    Transform:
+      Position: [-13.888236, 0, 10.7243824]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Mountain
+    ID: 733774935
+    Parent: 0
+    Transform:
+      Position: [0, 0, 379.354126]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Arch Stone
+    ID: 128579444
+    Parent: 0
+    Transform:
+      Position: [-5.58991241, 2.91789579, 0]
+      Rotation: [0, -7.9070549, 0]
+      Scale: [0.0299999993, 0.0299999993, 0.0299999993]
+    Model:
+      Mesh: ../../res/models/Arch_Stone.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 6.mat
+  - Entity: Arch Stone Base
+    ID: 187510120
+    Parent: 128579444
+    Transform:
+      Position: [-154.238998, -97.5, 19.5]
+      Rotation: [0, -90, 0]
+      Scale: [0.699999988, 0.699999988, 0.699999988]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Arch Stone Base1
+    ID: 198184313
+    Parent: 128579444
+    Transform:
+      Position: [131, -97.5, 19.5]
+      Rotation: [0, 90, 0]
+      Scale: [0.699999988, 0.699999988, 0.699999988]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Tree
+    ID: 696470229
+    Parent: 0
+    Transform:
+      Position: [16.8106518, 0, 8.16178989]
+      Rotation: [0, -25.4722748, 0]
+      Scale: [1.11000001, 1.11000001, 1.11000001]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Grass
+    ID: 172578747
+    Parent: 0
+    Transform:
+      Position: [-5.98687458, 0.958433151, 0.814865589]
+      Rotation: [90, 0, 0]
+      Scale: [1, 1, 1]
+    Instance Rendered Mesh:
+      Mesh: ../../res/models/defaults/default_plane.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 2.mat
+      Radius: 200
+      Instances Count: 500000
+      Min Mesh Scale: 0.0500000007
+      Max Mesh Scale: 0.100000001
+  - Entity: Tree23
+    ID: 478539820
+    Parent: 0
+    Transform:
+      Position: [-37.1531448, 0, -17.2270622]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree24
+    ID: 288213771
+    Parent: 0
+    Transform:
+      Position: [-63.3277168, 0, 19.5518417]
+      Rotation: [-180, 27.6198807, -180]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree25
+    ID: 852707939
+    Parent: 0
+    Transform:
+      Position: [-63.3277168, 0, -44.7424088]
+      Rotation: [180, -69.6673431, 180]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree26
+    ID: 664687712
+    Parent: 0
+    Transform:
+      Position: [33.1543198, 0, -16.7699814]
+      Rotation: [180, 66.0238571, 180]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 841635045
+    Parent: 0
+    Transform:
+      Position: [16.7071667, 0, -46.9199677]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 837052094
+    Parent: 0
+    Transform:
+      Position: [36.6602516, 0, -32.7767372]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 85600109
+    Parent: 0
+    Transform:
+      Position: [33.093483, 0, 9.58164787]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 398735448
+    Parent: 0
+    Transform:
+      Position: [18.0805836, 0, -19.3837395]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 498772455
+    Parent: 0
+    Transform:
+      Position: [-25.991806, 0, -1.57317913]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 402613832
+    Parent: 0
+    Transform:
+      Position: [-54.464016, 0, -19.1040516]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 717033353
+    Parent: 0
+    Transform:
+      Position: [-48.9322166, 0, -40.5970459]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 256783198
+    Parent: 0
+    Transform:
+      Position: [-29.854044, 0, -30.5838966]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Tree27
+    ID: 874645676
+    Parent: 0
+    Transform:
+      Position: [-38.3373985, 0, -51.2210732]
+      Rotation: [0, -48.8577728, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 4.mat
+        - Material: 1
+          Path: ../../res/materials/New material 3.mat
+  - Entity: Directional Light
+    ID: 653938162
+    Parent: 0
+    Transform:
+      Position: [-20.3475266, 36.5955658, -44.1647797]
+      Rotation: [-4, -1, 0]
+      Scale: [1, 1, 1]
+    Directional Light:
+      Color: [5, 5, 5]
+  - Entity: Trees
+    ID: 183741334
+    Parent: 0
+    Transform:
+      Position: [-5.98687458, 0, 0.814865589]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Instance Rendered Mesh:
+      Mesh: ../../res/models/Tree.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 9.mat
+        - Material: 1
+          Path: ../../res/materials/New material 10.mat
+      Radius: 200
+      Instances Count: 100
+      Min Mesh Scale: 0.5
+      Max Mesh Scale: 0.75
+  - Entity: Arch_Stone_Base 1
+    ID: 5396837
+    Parent: 0
+    Transform:
+      Position: [5.00016069, -6.63502851e-06, -1.75311589]
+      Rotation: [-2.12744975, -37.9157448, 3.45941377]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Arch_Stone_Base 1
+    ID: 872790216
+    Parent: 0
+    Transform:
+      Position: [6.58073711, -8.90601859e-06, -8.51514721]
+      Rotation: [-2.02308273, -23.4385262, 5.07486391]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Arch_Stone_Base 1
+    ID: 655223382
+    Parent: 0
+    Transform:
+      Position: [-22.2136593, 4.06732897e-06, -8.47407436]
+      Rotation: [-16.6713963, 50.1751785, 0.426975131]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Arch_Stone_Base 1
+    ID: 225187387
+    Parent: 0
+    Transform:
+      Position: [-19.4665318, -0.411146253, -11.5048666]
+      Rotation: [-0.0413397513, 44.5744095, -2.95329846e-05]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Arch_Stone_Base 1
+    ID: 50866975
+    Parent: 0
+    Transform:
+      Position: [-0.810988069, -1.14501333, -13.242732]
+      Rotation: [-160.95372, 47.6204262, -153.568893]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    Model:
+      Mesh: ../../res/models/Arch_Stone_Base.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 7.mat
+  - Entity: Stone Rune
+    ID: 562403412
+    Parent: 0
+    Transform:
+      Position: [-9.37482166, 2.01218915, -9.74949455]
+      Rotation: [-66.901123, 6.12894678, -1.35305011]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Stone_Rune.fbx
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/M_Stone_Rune.mat
+  - Entity: Rune Particle
+    ID: 699618635
+    Parent: 0
+    Transform:
+      Position: [-5.09846401, -1.20536256, -5.89313984]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Particle System:
+      Particles Count: 1000
+      Sphere Radius: 5
+      Min Velocity: [0.00100000005, 0.00100000005, 0.00100000005]
+      Max Velocity: [0.00300000003, 0.00499999989, 0.00300000003]
+  - Entity: Lantern
+    ID: 625563080
+    Parent: 0
+    Transform:
+      Position: [-19.0745316, 3.35269022, -10.7114534]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Lantern.dae
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/M_Lantern_Candle.mat
+        - Material: 1
+          Path: ../../res/materials/M_Lantern_Metal.mat
+        - Material: 2
+          Path: ../../res/materials/M_Lantern_Metal.mat
+        - Material: 3
+          Path: ../../res/materials/M_Lantern_Metal.mat
+        - Material: 4
+          Path: ../../res/materials/M_Lantern_Metal.mat
+  - Entity: LanternLight
+    ID: 539690458
+    Parent: 625563080
+    Transform:
+      Position: [0.0043182373, -0.481942177, -0.00120449066]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Color: [47, 42.5, 32.1500015]
+  - Entity: Lantern 2
+    ID: 786559926
+    Parent: 0
+    Transform:
+      Position: [-11.3172827, 4.03699732, -0.805064917]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Model:
+      Mesh: ../../res/models/Lantern.dae
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/M_Lantern_Candle.mat
+        - Material: 1
+          Path: ../../res/materials/M_Lantern_Metal.mat
+        - Material: 2
+          Path: ../../res/materials/M_Lantern_Metal.mat
+        - Material: 3
+          Path: ../../res/materials/M_Lantern_Metal.mat
+        - Material: 4
+          Path: ../../res/materials/M_Lantern_Metal.mat
+  - Entity: LanternLight
+    ID: 597628313
+    Parent: 786559926
+    Transform:
+      Position: [0.0043182373, -0.528092384, -0.00120449066]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    Point Light:
+      Color: [47, 42.5, 32.1500015]
+  - Entity: Mountain
+    ID: 887664423
+    Parent: 0
+    Transform:
+      Position: [-193.134354, 0, 501.557404]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 326035376
+    Parent: 0
+    Transform:
+      Position: [-394.056854, 0, 251.976639]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 443627000
+    Parent: 0
+    Transform:
+      Position: [-597.749878, -32.0266495, 129.866837]
+      Rotation: [0, 0, 0]
+      Scale: [44.1000023, 44.1000023, 44.1000023]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 578802336
+    Parent: 0
+    Transform:
+      Position: [-385.610016, 0, 20.7847633]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 996392073
+    Parent: 0
+    Transform:
+      Position: [-486.58725, 0, -604.473694]
+      Rotation: [0, 0, 0]
+      Scale: [42, 42, 42]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 402368838
+    Parent: 0
+    Transform:
+      Position: [-34.8883705, 0, -593.952942]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 992863645
+    Parent: 0
+    Transform:
+      Position: [249.230682, 0, -581.753174]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 977087362
+    Parent: 0
+    Transform:
+      Position: [534.430054, 0, -330.652954]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 491097278
+    Parent: 0
+    Transform:
+      Position: [534.430054, 0, 170.838242]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 158584265
+    Parent: 0
+    Transform:
+      Position: [-561.422302, 0, -195.217926]
+      Rotation: [0, 0, 0]
+      Scale: [30, 30, 30]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat
+  - Entity: Mountain
+    ID: 14571196
+    Parent: 0
+    Transform:
+      Position: [463.531708, 0, 607.560669]
+      Rotation: [0, 0, 0]
+      Scale: [47.3999977, 47.3999977, 47.3999977]
+    Model:
+      Mesh: ../../res/models/Mountain.obj
+      Materials:
+        - Material: 0
+          Path: ../../res/materials/New material 5.mat

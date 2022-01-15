@@ -223,6 +223,7 @@ void EntityDetailsPanel::Render()
 
             ImGui::EndCombo();
         }
+        ImGui::Checkbox("Sky Visibility", &skyLight->m_SkyVisibility);
         ImGui::DragFloat("Intensity", &skyLight->m_Intensity, 0.01f, 0.0f, 1.0f);
 
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
@@ -315,7 +316,7 @@ void EntityDetailsPanel::Render()
     if (spotLight)
         m_Entity->AddComponent<SpotLight>(m_Entity->m_Scene->m_LightsVertexUniformBuffer, m_Entity->m_Scene->m_LightsFragmentUniformBuffer);
     if (skyLight)
-        m_Entity->AddComponent<SkyLight>("res/textures/equirectangularMap/default.hdr");
+        m_Entity->AddComponent<SkyLight>("res/textures/sky/default.exr");
     if (particleSystem)
         m_Entity->AddComponent<ParticleSystemComponent>();
     if (player)

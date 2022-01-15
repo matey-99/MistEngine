@@ -62,12 +62,14 @@ void MaterialEditorPanel::Render()
         {
             filename = param.second->GetPath().substr(param.second->GetPath().find_last_of('/'));
         }
+        ImGui::PushID(index - 1);
         if (ImGui::BeginMenu(filename.c_str()))
         {
             DisplayTextures(param.first);
 
             ImGui::EndMenu();
         }
+        ImGui::PopID();
     }
     ImGui::Dummy(ImVec2(0.0f, 10.0f));
 

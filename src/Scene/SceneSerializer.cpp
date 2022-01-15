@@ -30,7 +30,7 @@ void SceneSerializer::Serialize(Ref<Scene> scene)
 	out << YAML::EndSeq;
 	out << YAML::EndMap;
 
-	std::ofstream file("../../res/scenes/untitled.scene");
+	std::ofstream file("../../res/scenes/Showcase.scene");
 	file << out.c_str();
 	file.close();
 }
@@ -177,9 +177,17 @@ Ref<Scene> SceneSerializer::Deserialize(std::string path)
 			if (auto particle = entity["Particle System"])
 			{
 				int count = particle["Particles Count"].as<int>();
+				float radius = particle["Sphere Radius"].as<float>();
+				glm::vec3 minVelocity = particle["Min Velocity"].as<glm::vec3>();
+				glm::vec3 maxVelocity = particle["Max Velocity"].as<glm::vec3>();
 
 				auto p = e->AddComponent<ParticleSystemComponent>();
 				p->m_ParticlesCount = count;
+				p->m_Radius = radius;
+				p->m_MinVelocity = minVelocity;
+				p->m_MaxVelocity = maxVelocity;
+
+				p->Reset();
 			}
 
 			if (auto player = entity["Player"])
@@ -292,6 +300,9 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& out, Ref<Entity> entity)
 		out << YAML::Key << "Particle System";
 		out << YAML::BeginMap;
 		out << YAML::Key << "Particles Count" << YAML::Value << particleSystem->m_ParticlesCount;
+		out << YAML::Key << "Sphere Radius" << YAML::Value << particleSystem->m_Radius;
+		out << YAML::Key << "Min Velocity" << YAML::Value << particleSystem->m_MinVelocity;
+		out << YAML::Key << "Max Velocity" << YAML::Value << particleSystem->m_MaxVelocity;
 		out << YAML::EndMap;
 	}
 

@@ -15,6 +15,7 @@ SkyLight::SkyLight(Entity* owner, std::string path)
     SetupMesh();
 
     m_ID = 0;
+    m_SkyVisibility = true;
     m_Intensity = 1.0f;
 
     glGenFramebuffers(1, &m_CaptureFBO);
@@ -104,18 +105,21 @@ void SkyLight::SetupMesh()
 
 void SkyLight::Render()
 {
-    glDepthFunc(GL_LEQUAL);
+    if (m_SkyVisibility)
+    {
+        glDepthFunc(GL_LEQUAL);
 
-    m_Shader->Use();
+        m_Shader->Use();
 
-    glBindVertexArray(m_VAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
+        glBindVertexArray(m_VAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
 
-    glDepthFunc(GL_LESS);
+        glDepthFunc(GL_LESS);
+    }
 }
 
 void SkyLight::Destroy()

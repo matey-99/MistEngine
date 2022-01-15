@@ -51,11 +51,18 @@ public:
 	inline std::vector<Ref<Material>> GetMaterials() const { return m_Materials; }
 	inline std::vector<std::string> GetMaterialsPaths() const { return m_MaterialsPaths; }
 	inline int32_t GetInstancesCount() const { return m_InstancesCount; }
+	inline float GetRadius() const { return m_Radius; }
+	inline float GetMinMeshScale() const { return m_MinMeshScale; }
+	inline float GetMaxMeshScale() const { return m_MaxMeshScale; }
 	inline std::vector<glm::mat4> GetModelMatrices() const { return m_ModelMatrices; }
 	inline uint32_t GetModelMatricesBuffer() const { return m_ModelMatricesBuffer; }
 	uint32_t GetRenderedVerticesCount();
 
 	inline void SetMaterial(int index, Ref<Material> material) { m_Materials.at(index) = material; }
+	inline void SetInstancesCount(int32_t count) { m_InstancesCount = count; }
+	inline void SetRadius(float radius) { m_Radius = radius; }
+	inline void SetMinMeshScale(float minMeshScale) { m_MinMeshScale = minMeshScale; }
+	inline void SetMaxMeshScale(float maxMeshScale) { m_MaxMeshScale = maxMeshScale; }
 
 	friend class EntityDetailsPanel;
 	friend class SceneSerializer;

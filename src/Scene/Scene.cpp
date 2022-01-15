@@ -16,7 +16,7 @@ Scene::Scene()
 	m_Root = Ref<Entity>();
 	m_Entities = std::vector<Ref<Entity>>();
 
-	m_BackgroundColor = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+	m_BackgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_CameraVertexUniformBuffer = CreateRef<UniformBuffer>(sizeof(glm::mat4) * 3, 0);
 	m_LightsVertexUniformBuffer = CreateRef<UniformBuffer>(GLSL_MAT4_SIZE + (MAX_SPOT_LIGHTS * GLSL_MAT4_SIZE), 1);

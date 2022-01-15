@@ -7,8 +7,7 @@ ShaderLibrary::ShaderLibrary()
 {
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Standard", CreateRef<Shader>("Standard", "res/shaders/Material/Standard.vert", "res/shaders/Material/Standard.frag")));
 	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("StandardInstanced", CreateRef<Shader>("StandardInstanced", "res/shaders/Material/StandardInstanced.vert", "res/shaders/Material/Standard.frag")));
-	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Shiny", CreateRef<Shader>("Shiny", "res/shaders/Material/Shiny.vert", "res/shaders/Material/Shiny.frag")));
-	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("Refraction", CreateRef<Shader>("Refraction", "res/shaders/Material/Refraction.vert", "res/shaders/Material/Refraction.frag")));
+	m_MaterialShaders.insert(std::make_pair<std::string, Ref<Shader>>("GrassInstanced", CreateRef<Shader>("GrassInstanced", "res/shaders/Material/StandardInstanced.vert", "res/shaders/Material/Grass.frag")));
 
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("PostProcessing", CreateRef<Shader>("PostProcessing", "res/shaders/PostProcessing/PostProcessing.vert", "res/shaders/PostProcessing/PostProcessing.frag")));
 	m_PostProcessingShaders.insert(std::make_pair<std::string, Ref<Shader>>("Threshold", CreateRef<Shader>("Threshold", "res/shaders/PostProcessing/Threshold.vert", "res/shaders/PostProcessing/Threshold.frag")));

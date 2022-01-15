@@ -18,17 +18,25 @@ struct Material
     bool isMetallicMap;
     bool isRoughnessMap;
     bool isAOMap;
+    bool isOpacityMap;
+    bool isEmissiveMap;
 
     sampler2D albedoMap;
     sampler2D metallicMap;
     sampler2D normalMap;
     sampler2D roughnessMap;
     sampler2D aoMap;
+    sampler2D opacityMap;
+    sampler2D emissiveMap;
 
     vec3 albedo;
     float metallic;
     float roughness;
     float ao;
+    float opacity;
+    vec3 emissive;
+
+    float emissiveStrength;
 };
 
 struct DirectionalLight
@@ -75,14 +83,14 @@ layout (std140, binding = 3) uniform u_FragmentLights
 };
 
 layout (location = 2) uniform Material u_Material;
-layout (location = 16) uniform bool u_IsSkyLight;
-layout (location = 17) uniform float u_SkyLightIntensity;
-layout (location = 18) uniform samplerCube u_IrradianceMap;
-layout (location = 19) uniform samplerCube u_PrefilterMap;
-layout (location = 20) uniform sampler2D u_BRDFLUT;
-layout (location = 21) uniform sampler2D u_DirectionalLightShadowMap;
-layout (location = 22) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowMaps;
-layout (location = 22 + MAX_POINT_LIGHTS) uniform sampler2D[MAX_SPOT_LIGHTS] u_SpotLightShadowMaps;
+layout (location = 23) uniform bool u_IsSkyLight;
+layout (location = 24) uniform float u_SkyLightIntensity;
+layout (location = 25) uniform samplerCube u_IrradianceMap;
+layout (location = 26) uniform samplerCube u_PrefilterMap;
+layout (location = 27) uniform sampler2D u_BRDFLUT;
+layout (location = 28) uniform sampler2D u_DirectionalLightShadowMap;
+layout (location = 29) uniform samplerCube[MAX_POINT_LIGHTS] u_PointLightShadowMaps;
+layout (location = 29 + MAX_POINT_LIGHTS) uniform sampler2D[MAX_SPOT_LIGHTS] u_SpotLightShadowMaps;
 
 const float PI = 3.14159265359;
 
@@ -298,6 +306,8 @@ void main()
     float metallic;
     float roughness;
     float ao;
+    float opacity;
+    vec3 emissive;
     if (u_Material.isAlbedoMap)
         albedo = pow(texture(u_Material.albedoMap, v_TexCoord).rgb, vec3(2.2));
     else
@@ -322,6 +332,19 @@ void main()
         ao = texture(u_Material.aoMap, v_TexCoord).r;
     else
         ao = u_Material.ao;
+
+    if (u_Material.isOpacityMap)
+        opacity = texture(u_Material.opacityMap, v_TexCoord).r;
+    else
+        opacity = u_Material.opacity;
+
+    if (u_Material.isEmissiveMap)
+        emissive = texture(u_Material.emissiveMap, v_TexCoord).rgb;
+    else
+        emissive = u_Material.emissive;
+
+    if (opacity < 0.1)
+        discard;
 
     vec3 V = normalize(u_ViewPosition - v_Position);
     vec3 R = reflect(-V, N);
@@ -374,7 +397,7 @@ void main()
     shadow = clamp(shadow, 0.0, 1.0);
 
     vec3 ambient = (kD * diffuse + specular) * ao;
-    vec3 color = ambient + Lo * (1.0 - shadow);
+    vec3 color = ambient + Lo * (1.0 - shadow) + emissive * u_Material.emissiveStrength;
 
     f_Color = vec4(color, 1.0);
 }

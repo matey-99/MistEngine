@@ -106,6 +106,18 @@ void InstanceRenderedMeshComponent::Render()
 			glBindTexture(GL_TEXTURE_2D, BRDFLUT);
 			material->GetShader()->SetInt("u_BRDFLUT", 22);
 		}
+		else
+		{
+			glActiveTexture(GL_TEXTURE0 + 20);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->GetPointLightShadowMapPlaceholder(0));
+			material->GetShader()->SetInt("u_IrradianceMap", 20);
+			glActiveTexture(GL_TEXTURE0 + 21);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->GetPointLightShadowMapPlaceholder(0));
+			material->GetShader()->SetInt("u_PrefilterMap", 21);
+			glActiveTexture(GL_TEXTURE0 + 22);
+			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetSpotLightShadowMapPlaceholder(0));
+			material->GetShader()->SetInt("u_BRDFLUT", 22);
+		}
 
 		auto pointLights = m_Owner->GetScene()->GetComponents<PointLight>();
 		for (int i = 0; i < MAX_POINT_LIGHTS; i++)
@@ -235,7 +247,7 @@ void InstanceRenderedMeshComponent::Generate()
 		Transform t = Transform(m_Owner);
 		t.LocalPosition = glm::vec3(x, center.y, z);
 		t.LocalScale = glm::vec3(scale);
-		t.LocalRotation = glm::vec3(0.0f, rotationY, 0.0f);
+		t.LocalRotation = glm::vec3(m_Owner->GetTransform().LocalRotation.x, rotationY, m_Owner->GetTransform().LocalRotation.z);
 		t.CalculateModelMatrix();
 
 		m_ModelMatrices.push_back(t.ModelMatrix);
@@ -246,7 +258,7 @@ void InstanceRenderedMeshComponent::Generate()
 
 	glGenBuffers(1, &m_ModelMatricesBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_ModelMatricesBuffer);
-	glBufferData(GL_ARRAY_BUFFER, m_InstancesCount * sizeof(glm::mat4), &m_ModelMatrices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_ModelMatrices.size() * sizeof(glm::mat4), &m_ModelMatrices[0], GL_STATIC_DRAW);
 
 	for (int i = 0; i < m_Meshes.size(); i++)
 	{

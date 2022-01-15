@@ -45,6 +45,9 @@ const float mouseSensitivity = 0.1f;
 const float scrollSensitivity = 0.1f;
 float lastMouseX = 400, lastMouseY = 300;
 
+bool leftCtrlClicked = false;
+bool keyDClicked = false;
+
 void ProcessKeyboardInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -100,6 +103,30 @@ void ProcessMouseInput(GLFWwindow* window)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         rotateCamera = false;
     }
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_LEFT_CONTROL)
+    {
+        if (action == GLFW_PRESS)
+            leftCtrlClicked = true;
+        else if (action == GLFW_RELEASE)
+            leftCtrlClicked = false;
+    }
+
+    if (key == GLFW_KEY_D)
+    {
+        if (action == GLFW_PRESS)
+            keyDClicked = true;
+        else if (action == GLFW_RELEASE)
+            keyDClicked = false;
+    }
+
+    if (leftCtrlClicked && keyDClicked)
+        Editor::GetInstance()->GetSceneHierarchyPanel()->DuplicateSelectedEntity();
+
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -173,13 +200,15 @@ int main(int, char**)
         return 1;
     }
 
+    Renderer::GetInstance()->Initialize();
+
     Renderer::GetInstance()->InitializeMainSceneFramebuffer();
     Renderer::GetInstance()->InitializePostProcessingFramebuffer();
     Renderer::GetInstance()->InitializeShadowMapFramebuffers();
 
     Renderer::GetInstance()->InitializePostProcessing();
 
-    if (!(scene = SceneSerializer::Deserialize("../../res/scenes/untitled.scene")))
+    if (!(scene = SceneSerializer::Deserialize("../../res/scenes/Showcase.scene")))
         scene = CreateRef<Scene>();
 
     ImGuiRenderer imGuiRenderer = ImGuiRenderer();
@@ -187,12 +216,9 @@ int main(int, char**)
 
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     auto input = Input::GetInstance();
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
 
     bool shouldRender = false;
     lastFrame = glfwGetTime();

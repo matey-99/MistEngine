@@ -1,0 +1,43 @@
+Material: New material 9
+ID: 171183413
+Shader: StandardInstanced
+Bool Parameters:
+  - Name: u_Material.isAOMap
+    Value: true
+  - Name: u_Material.isOpacityMap
+    Value: false
+  - Name: u_Material.isMetallicMap
+    Value: false
+  - Name: u_Material.isAlbedoMap
+    Value: true
+  - Name: u_Material.isNormalMap
+    Value: true
+  - Name: u_MaterialVS.flipVerticallyUV
+    Value: false
+  - Name: u_Material.isRoughnessMap
+    Value: false
+Float Parameters:
+  - Name: u_Material.ao
+    Value: 0
+  - Name: u_Material.opacity
+    Value: 1
+  - Name: u_Material.metallic
+    Value: 0
+  - Name: u_Material.roughness
+    Value: 0
+Vec3 Parameters:
+  - Name: u_Material.albedo
+    Value: [0, 0, 0]
+Texture Parameters:
+  - Name: u_Material.opacityMap
+    Path: "null"
+  - Name: u_Material.metallicMap
+    Path: "null"
+  - Name: u_Material.albedoMap
+    Path: ../../res/textures/Tree/Tree_Trunk_basecolor.jpg
+  - Name: u_Material.aoMap
+    Path: ../../res/textures/Tree/Tree_Trunk_Ao.jpg
+  - Name: u_Material.normalMap
+    Path: ../../res/textures/Tree/Tree_Trunk_normal.jpg
+  - Name: u_Material.roughnessMap
+    Path: "null"

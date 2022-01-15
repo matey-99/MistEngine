@@ -1,0 +1,51 @@
+Material: M_Lantern_Candle
+ID: 436715371
+Shader: Standard
+Bool Parameters:
+  - Name: u_Material.isAOMap
+    Value: false
+  - Name: u_Material.isOpacityMap
+    Value: false
+  - Name: u_Material.isMetallicMap
+    Value: true
+  - Name: u_Material.isAlbedoMap
+    Value: true
+  - Name: u_Material.isEmissiveMap
+    Value: false
+  - Name: u_Material.isNormalMap
+    Value: true
+  - Name: u_MaterialVS.flipVerticallyUV
+    Value: false
+  - Name: u_Material.isRoughnessMap
+    Value: true
+Float Parameters:
+  - Name: u_Material.ao
+    Value: 1
+  - Name: u_Material.roughness
+    Value: 0
+  - Name: u_Material.emissiveStrength
+    Value: 0
+  - Name: u_Material.opacity
+    Value: 1
+  - Name: u_Material.metallic
+    Value: 0
+Vec3 Parameters:
+  - Name: u_Material.albedo
+    Value: [0, 0, 0]
+  - Name: u_Material.emissive
+    Value: [0, 0, 0]
+Texture Parameters:
+  - Name: u_Material.opacityMap
+    Path: "null"
+  - Name: u_Material.metallicMap
+    Path: ../../res/textures/Lantern/Candlke_metallic.jpg
+  - Name: u_Material.albedoMap
+    Path: ../../res/textures/Lantern/Candlke_albedo.jpg
+  - Name: u_Material.aoMap
+    Path: ../../res/textures/Stone_Rune/stone_rune_BaseColor.jpg
+  - Name: u_Material.emissiveMap
+    Path: ../../res/textures/Stone_Rune/stone_rune_Emissive.jpg
+  - Name: u_Material.normalMap
+    Path: ../../res/textures/Lantern/Candlke_normal.png
+  - Name: u_Material.roughnessMap
+    Path: ../../res/textures/Lantern/Candlke_roughness.jpg

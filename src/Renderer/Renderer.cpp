@@ -8,6 +8,7 @@
 #include "Scene/Component/Light/Light.h"
 #include "Scene/Component/Light/PointLight.h"
 #include "Scene/Component/Light/SpotLight.h"
+#include "Scene/Component/Light/SkyLight.h"
 
 #include <glad/glad.h>
 
@@ -36,6 +37,20 @@ Ref<Renderer> Renderer::GetInstance()
 		s_Instance = CreateRef<Renderer>();
 
 	return s_Instance;
+}
+
+void Renderer::Initialize()
+{
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
 void Renderer::InitializeMainSceneFramebuffer()
@@ -205,15 +220,12 @@ void Renderer::RenderScene(Ref<Scene> scene)
 
 	m_MainSceneFramebuffer->Bind();
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
 
 	glClearColor(scene->GetBackgroundColor()->x, scene->GetBackgroundColor()->y, scene->GetBackgroundColor()->z, scene->GetBackgroundColor()->w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	scene->Render();
-
-	glDisable(GL_BLEND);
 
 	m_MainSceneFramebuffer->Unbind();
 }

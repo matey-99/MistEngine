@@ -92,6 +92,18 @@ void StaticMeshComponent::Render()
 			glBindTexture(GL_TEXTURE_2D, BRDFLUT);
 			material->GetShader()->SetInt("u_BRDFLUT", 22);
 		}
+		else
+		{
+			glActiveTexture(GL_TEXTURE0 + 20);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->GetPointLightShadowMapPlaceholder(0));
+			material->GetShader()->SetInt("u_IrradianceMap", 20);
+			glActiveTexture(GL_TEXTURE0 + 21);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, Renderer::GetInstance()->GetPointLightShadowMapPlaceholder(0));
+			material->GetShader()->SetInt("u_PrefilterMap", 21);
+			glActiveTexture(GL_TEXTURE0 + 22);
+			glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetSpotLightShadowMapPlaceholder(0));
+			material->GetShader()->SetInt("u_BRDFLUT", 22);
+		}
 
 		glActiveTexture(GL_TEXTURE0 + 23);
 		glBindTexture(GL_TEXTURE_2D, Renderer::GetInstance()->GetDirectionalLightShadowMapFramebuffer()->GetDepthAttachment());
