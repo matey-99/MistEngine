@@ -1,8 +1,8 @@
 Scene: Untitled
 Camera:
-  Position: [-22.5824261, 4.17778444, -33.6634331]
-  Yaw: 56.2707138
-  Pitch: -2.84014893
+  Position: [-24.5137558, 5.60436392, -36.7349281]
+  Yaw: 55.8490219
+  Pitch: -3.32450867
   Movement Speed: 12
 Entities:
   - Entity: Root
@@ -31,7 +31,7 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     Sky Light:
-      Path: ../../res/textures/sky/winter.hdr
+      Path: ../../res/textures/sky/fall.hdr
   - Entity: Ground
     ID: 64277161
     Parent: 0
@@ -136,7 +136,7 @@ Entities:
       Instances Count: 500000
       Min Mesh Scale: 0.0500000007
       Max Mesh Scale: 0.100000001
-  - Entity: Tree23
+  - Entity: Tree3
     ID: 478539820
     Parent: 0
     Transform:
@@ -150,7 +150,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree24
+  - Entity: Tree4
     ID: 288213771
     Parent: 0
     Transform:
@@ -164,7 +164,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree25
+  - Entity: Tree5
     ID: 852707939
     Parent: 0
     Transform:
@@ -178,7 +178,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree26
+  - Entity: Tree6
     ID: 664687712
     Parent: 0
     Transform:
@@ -192,7 +192,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree7
     ID: 841635045
     Parent: 0
     Transform:
@@ -206,7 +206,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree8
     ID: 837052094
     Parent: 0
     Transform:
@@ -220,7 +220,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree9
     ID: 85600109
     Parent: 0
     Transform:
@@ -234,7 +234,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree10
     ID: 398735448
     Parent: 0
     Transform:
@@ -248,7 +248,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree11
     ID: 498772455
     Parent: 0
     Transform:
@@ -262,7 +262,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree12
     ID: 402613832
     Parent: 0
     Transform:
@@ -276,7 +276,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree13
     ID: 717033353
     Parent: 0
     Transform:
@@ -290,7 +290,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree14
     ID: 256783198
     Parent: 0
     Transform:
@@ -304,7 +304,7 @@ Entities:
           Path: ../../res/materials/New material 4.mat
         - Material: 1
           Path: ../../res/materials/New material 3.mat
-  - Entity: Tree27
+  - Entity: Tree15
     ID: 874645676
     Parent: 0
     Transform:
@@ -357,7 +357,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 7.mat
-  - Entity: Arch_Stone_Base 1
+  - Entity: Arch_Stone_Base 2
     ID: 872790216
     Parent: 0
     Transform:
@@ -369,7 +369,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 7.mat
-  - Entity: Arch_Stone_Base 1
+  - Entity: Arch_Stone_Base 3
     ID: 655223382
     Parent: 0
     Transform:
@@ -381,7 +381,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 7.mat
-  - Entity: Arch_Stone_Base 1
+  - Entity: Arch_Stone_Base 4
     ID: 225187387
     Parent: 0
     Transform:
@@ -393,7 +393,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 7.mat
-  - Entity: Arch_Stone_Base 1
+  - Entity: Arch_Stone_Base 5
     ID: 50866975
     Parent: 0
     Transform:
@@ -487,7 +487,7 @@ Entities:
       Scale: [1, 1, 1]
     Point Light:
       Color: [47, 42.5, 32.1500015]
-  - Entity: Mountain
+  - Entity: Mountain 1
     ID: 887664423
     Parent: 0
     Transform:
@@ -499,7 +499,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 2
     ID: 326035376
     Parent: 0
     Transform:
@@ -511,7 +511,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 3
     ID: 443627000
     Parent: 0
     Transform:
@@ -523,7 +523,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 4
     ID: 578802336
     Parent: 0
     Transform:
@@ -535,7 +535,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 5
     ID: 996392073
     Parent: 0
     Transform:
@@ -547,7 +547,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 6
     ID: 402368838
     Parent: 0
     Transform:
@@ -559,7 +559,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 7
     ID: 992863645
     Parent: 0
     Transform:
@@ -571,7 +571,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 8
     ID: 977087362
     Parent: 0
     Transform:
@@ -583,7 +583,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 9
     ID: 491097278
     Parent: 0
     Transform:
@@ -595,7 +595,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 10
     ID: 158584265
     Parent: 0
     Transform:
@@ -607,7 +607,7 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/New material 5.mat
-  - Entity: Mountain
+  - Entity: Mountain 11
     ID: 14571196
     Parent: 0
     Transform:

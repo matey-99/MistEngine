@@ -32,20 +32,6 @@ Entities:
       Materials:
         - Material: 0
           Path: ../../res/materials/Default.mat
-  - Entity: Chest
-    ID: 670737612
-    Parent: 0
-    Transform:
-      Position: [15.8156996, 1.48042655, 6.9125104]
-      Rotation: [0, 0, 0]
-      Scale: [2, 2, 2]
-    Model:
-      Mesh: ../../res/models/chest/chest.dae
-      Materials:
-        - Material: 0
-          Path: ../../res/materials/M_Chest.mat
-        - Material: 1
-          Path: ../../res/materials/M_Chest.mat
   - Entity: Point Light
     ID: 643321389
     Parent: 0
