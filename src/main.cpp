@@ -181,7 +181,7 @@ int main(int, char**)
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1440, 900, "Graphics Programming Project by Mateusz Michalak", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1440, 900, "Mist Engine", NULL, NULL);
     if (window == NULL)
         return 1;
 
